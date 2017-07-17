@@ -51,3 +51,10 @@ a {
 	color: inherit;
 	text-decoration: inherit;
 }
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+	outline: none;
+}

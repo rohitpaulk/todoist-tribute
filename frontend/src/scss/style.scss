@@ -1,6 +1,5 @@
 @import "vendor/reset.css";
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800');
-@import url('https://fonts.googleapis.com/css?family=Raleway');
 
 $top-bar-height: 43px;
 $content-width: 950px;
@@ -10,7 +9,10 @@ $content-top-padding: 30px;
 $checkbox-diameter: 20px;
 
 $color-red: #db4c3f;
+$color-darker-red: #c53727;
 $color-black-text: #303333;
+$color-very-light-gray: #eee;
+$color-light-gray: #ddd;
 
 // Prep
 
@@ -163,15 +165,11 @@ body {
         }
 
         .task-item {
-            border-bottom: 1px solid #eee;
-
-            span.contents-holder span.task-title {
-                font-family: 'Raleway', sans-serif;
-            }
+            border-bottom: 1px solid $color-very-light-gray;
 
             span.icon-holder span.checkbox {
                 display: block;
-                border: 1px solid #ddd;
+                border: 1px solid $color-light-gray;
                 width: $checkbox-diameter;
                 height: $checkbox-diameter;
                 border-radius: $checkbox-diameter / 2;
@@ -211,6 +209,52 @@ body {
 
             a:hover {
                 text-decoration: underline;
+            }
+        }
+
+        .task-creator {
+            margin-top: 7px;
+
+            input {
+                margin-bottom: 7px;
+                font-size: 14px;
+                width: 100%;
+
+                line-height: 24px;
+
+                padding: 6px 6px 6px 10px;
+                font-weight: lighter;
+
+                &, &:hover {
+                    // Overrides blue focus on hover
+                    border: 1px solid $color-light-gray;
+                }
+            }
+
+            button, a {
+                font-size: 12px;
+                font-weight: lighter;
+            }
+
+            button {
+                background-color: $color-red;
+                color: #fff;
+                padding: 8px 12px 8px 12px;
+                border-radius: 2px;
+                border: none;
+                &:hover {
+                    cursor: pointer;
+                    background-color: $color-darker-red;
+                }
+            }
+
+            a {
+                color: lighten($color-black-text, 30);
+                padding-left: 5px;
+
+                &:hover {
+                    text-decoration: underline;
+                }
             }
         }
     }
