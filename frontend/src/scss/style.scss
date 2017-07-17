@@ -153,7 +153,7 @@ body {
     .task-list {
         font-size: 14px;
 
-        .task-item, .add-task {
+        .task-item {
             & > span {
                 display: inline-block;
                 vertical-align: middle;
@@ -162,9 +162,7 @@ body {
             .icon-holder {
                 margin-right: 5px;
             }
-        }
 
-        .task-item {
             border-bottom: 1px solid $color-very-light-gray;
 
             span.icon-holder span.checkbox {
@@ -177,14 +175,24 @@ body {
                 margin-bottom: 13px;
             }
         }
+    }
 
+    .task-creator {
         .add-task {
+            & > span {
+                display: inline-block;
+                vertical-align: middle;
+            }
+
+            .icon-holder {
+                margin-right: 5px;
+            }
+
             color: $color-red;
             opacity: 0.4;
             transition: opacity 150ms ease-in;
 
             &:hover {
-
                 opacity: 1;
                 cursor: pointer;
             }
@@ -212,7 +220,7 @@ body {
             }
         }
 
-        .task-creator {
+        .task-form {
             margin-top: 7px;
 
             input {

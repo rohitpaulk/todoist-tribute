@@ -10,8 +10,12 @@ module.exports = {
     path: path.resolve(__dirname, 'dist')
   },
   resolve: {
-    extensions: ['.ts', '.js']
+    extensions: ['.ts', '.js'],
+    alias: {
+      'handlebars': 'handlebars/dist/handlebars.js'
+    }
   },
+  devtool: 'inline-source-map',
   module: {
     rules: [
       {

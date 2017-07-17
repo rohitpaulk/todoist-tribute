@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     // "outDir": "./dist/",
-    "sourceMap": true
+    "sourceMap": true,
+    "lib": ["es2015", "es2015.iterable", "dom"]
     // "noImplicitAny": true,
     // "module": "commonjs",
     // "target": "es5"

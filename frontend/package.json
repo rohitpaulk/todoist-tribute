@@ -4,6 +4,7 @@
   "description": "Tudu's frontend",
   "main": "index.js",
   "devDependencies": {
+    "@types/handlebars": "^4.0.34",
     "@types/jquery": "^3.2.8",
     "css-loader": "^0.28.4",
     "node-sass": "^4.5.3",
@@ -20,5 +21,8 @@
     "start": "webpack-dev-server --open"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "handlebars": "^4.0.10"
+  }
 }
