@@ -1,0 +1,217 @@
+@import "vendor/reset.css";
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800');
+@import url('https://fonts.googleapis.com/css?family=Raleway');
+
+$top-bar-height: 43px;
+$content-width: 950px;
+$sidebar-left-padding: 35px;
+$content-top-padding: 30px;
+
+$checkbox-diameter: 20px;
+
+$color-red: #db4c3f;
+$color-black-text: #303333;
+
+// Prep
+
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
+// Layout
+
+.page-background {
+    height: 100vh;
+}
+
+.top-bar {
+    position: fixed;
+    height: $top-bar-height;
+    width: 100%;
+}
+
+.all-holder, .top-bar-inner {
+    max-width: $content-width;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.left-menu, .content {
+    display: inline-block;
+    vertical-align: top;
+
+    height: 100vh;
+}
+
+.left-menu {
+    width: 30%;
+}
+
+.content {
+    width: 70%;
+}
+
+// Styling
+
+.page-background {
+    background-color: #fafafa;
+}
+
+.top-bar {
+    background-color: $color-red;
+    border-bottom: solid 1px #ca2100;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+
+    .top-bar-inner {
+        padding-left: $sidebar-left-padding;
+        color: white;
+    }
+
+    h1 {
+        line-height: 43px;
+        font-size: 20px;
+        font-weight: 800;
+        // text-transform: uppercase;
+    }
+}
+
+.left-menu, .content {
+    padding-top: $top-bar-height + $content-top-padding;
+    color: $color-black-text;
+    font-weight: lighter;
+
+    border-right: 1px solid #f1f1f1;
+}
+
+.left-menu {
+    padding-left: $sidebar-left-padding;
+    padding-right: 10px;
+
+    .view-link {
+        display: block;
+        padding: 10px 10px 10px 10px;
+
+        font-size: 14px;
+        font-weight: normal;
+
+        span {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        i {
+            color: lighten($color-black-text, 10);
+            font-size: 20px;
+            margin-right: 6px;
+        }
+
+        span.counter {
+            font-weight: 300;
+            font-size: 10px;
+            color: lighten($color-black-text, 50);
+            margin-left: 3px;
+            line-height: 25px;
+        }
+
+        &:hover, &.selected {
+            background-color: #fff;
+        }
+
+        &.selected {
+            .title .text {
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+.content {
+    padding-left: 30px;
+    padding-right: 30px;
+    background-color: #fff;
+
+    .section-header {
+        margin-top: 10px;
+        margin-bottom: 15px;
+
+        h2 {
+            font-weight: normal;
+            font-size: 20px;
+        }
+    }
+
+    .task-list {
+        font-size: 14px;
+
+        .task-item, .add-task {
+            & > span {
+                display: inline-block;
+                vertical-align: middle;
+            }
+
+            .icon-holder {
+                margin-right: 5px;
+            }
+        }
+
+        .task-item {
+            border-bottom: 1px solid #eee;
+
+            span.contents-holder span.task-title {
+                font-family: 'Raleway', sans-serif;
+            }
+
+            span.icon-holder span.checkbox {
+                display: block;
+                border: 1px solid #ddd;
+                width: $checkbox-diameter;
+                height: $checkbox-diameter;
+                border-radius: $checkbox-diameter / 2;
+                margin-top: 13px;
+                margin-bottom: 13px;
+            }
+        }
+
+        .add-task {
+            color: $color-red;
+            opacity: 0.4;
+            transition: opacity 150ms ease-in;
+
+            &:hover {
+
+                opacity: 1;
+                cursor: pointer;
+            }
+
+            @keyframes opacity {
+                from {
+                    opacity: 0.5;
+                }
+
+                to {
+                    opacity: 1;
+                }
+            }
+
+            span.icon-holder span.add-icon {
+                font-size: 24px;
+                width: $checkbox-diameter;
+                line-height: 40px;
+                text-align: center;
+                display: inline-block;
+            }
+
+            a:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}
