@@ -1,13 +1,16 @@
 var path = require('path');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/index.ts',
   devServer: {
     contentBase: './dist'
   },
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')
+  },
+  resolve: {
+    extensions: ['.ts', '.js']
   },
   module: {
     rules: [
@@ -18,6 +21,10 @@ module.exports = {
           'css-loader',
           'sass-loader'
         ]
+      },
+      {
+        test: /\.ts$/,
+        use: 'ts-loader',
       }
     ]
   }
