@@ -22,6 +22,10 @@ export default {
     methods: {
         showTaskForm: function() {
             this.isAddingTask = true;
+
+            // We need to trigger a focus event on the input element. It
+            // will not be in the DOM as of this moment, so we mark this flag
+            // so that .focus() is called after the component updates
             this.inputFocusPending = true;
         },
 
@@ -32,8 +36,14 @@ export default {
 
     updated: function() {
         if (this.inputFocusPending) {
-            console.log(this.$refs.input);
-            // .focus();
+            let input = this.$refs['input'];
+            // $ref['key'] is typed as either Vue or HTMLElement.
+            // Check type so that we can use `focus`.
+            if (input instanceof HTMLElement) {
+                input.focus()
+            }
+
+            this.inputFocusPending = false;
         }
     },
 

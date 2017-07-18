@@ -5,7 +5,6 @@ import Vue from 'vue';
 import * as $ from "jquery";
 import { Task } from "./models";
 import TaskList from "./components/task_list";
-import { TaskCreator } from "./components/task_creator";
 import { Store } from "./store"
 
 Vue.component('task-list', TaskList)
