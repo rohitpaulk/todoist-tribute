@@ -12,7 +12,8 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.js'],
     alias: {
-      'handlebars': 'handlebars/dist/handlebars.js'
+      'handlebars': 'handlebars/dist/handlebars.js',
+      'vue': 'vue/dist/vue.js' // Include the template compiler
     }
   },
   devtool: 'inline-source-map',

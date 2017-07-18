@@ -1,43 +1,75 @@
-import * as Handlebars from 'handlebars';
-import * as $ from "jquery";
+import Vue, { ComponentOptions } from 'vue';
 
 import { Task } from '../models';
 
-class TaskList {
-    static taskListTemplate = `
-        {{#each tasks}}
-            <li class="task-item">
-                <span class="icon-holder">
-                    <span class="checkbox"></span>
-                </span>
-                <span class="text-holder">
-                    <span class="task-title">
-                        {{ title }}
-                    </span>
-                </span>
-            </li>
-        {{/each}}
-    `
-
-    tasks: Task[]
-    container: JQuery<HTMLElement>
-
-    constructor(tasks: Task[], container: JQuery<HTMLElement>) {
-        this.tasks = tasks;
-        this.container = container;
-    }
-
-    setTasks(tasks: Task[]) {
-        this.tasks = tasks;
-        this.render();
-    }
-
-    render() {
-        let template = Handlebars.compile(TaskList.taskListTemplate);
-        let html = template({tasks: this.tasks});
-
-        this.container.html(html);
-    }
+interface TaskList extends Vue {
+    tasks: Task[],
+    isAddingTask: boolean,
+    inputFocusPending: boolean
 }
 
-export { TaskList };
+export default {
+    data: function() {
+        return {
+            tasks: [
+                {title: 'This is the first task'},
+                {title: 'This is the second task'},
+            ],
+            isAddingTask: false
+        }
+    },
+
+    methods: {
+        showTaskForm: function() {
+            this.isAddingTask = true;
+            this.inputFocusPending = true;
+        },
+
+        hideTaskForm: function() {
+            this.isAddingTask = false;
+        }
+    },
+
+    updated: function() {
+        if (this.inputFocusPending) {
+            console.log(this.$refs.input);
+            // .focus();
+        }
+    },
+
+    template: `
+        <div>
+            <ul class="task-list">
+                <li v-for="task in tasks" class="task-item">
+                    <span class="icon-holder">
+                        <span class="checkbox"></span>
+                    </span>
+                    <span class="text-holder">
+                        <span class="task-title">
+                            {{ task.title }}
+                        </span>
+                    </span>
+                </li>
+            </ul>
+            <div class="task-creator">
+                <div v-if="isAddingTask" class="task-form">
+                    <form>
+                        <input type="text" ref="input">
+                        <button type="submit">Add Task</button>
+                        <a href="#" class="cancel-link" @click="hideTaskForm()">Cancel</a>
+                    </form>
+                </div>
+                <div v-else class="add-task" @click="showTaskForm()">
+                    <span class="icon-holder">
+                        <span class="add-icon">
+                            +
+                        </span>
+                    </span>
+                    <span class="text-holder">
+                        <a href="#" class="add-task-link"">Add Task</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    `
+} as ComponentOptions<TaskList>

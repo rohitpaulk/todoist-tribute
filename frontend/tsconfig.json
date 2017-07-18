@@ -2,10 +2,11 @@
   "compilerOptions": {
     // "outDir": "./dist/",
     "sourceMap": true,
-    "lib": ["es2015", "es2015.iterable", "dom"],
-    "allowSyntheticDefaultImports": true
+    "lib": ["es2015", "es5", "es2015.iterable", "dom"],
+    "allowSyntheticDefaultImports": true,
     // "noImplicitAny": true,
-    // "module": "commonjs",
+    "module": "es2015",
+    "moduleResolution": "node"
     // "target": "es5"
     // "allowJs": true
   }

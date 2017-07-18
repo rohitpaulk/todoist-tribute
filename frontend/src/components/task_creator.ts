@@ -3,26 +3,6 @@ import * as $ from "jquery";
 
 class TaskCreator {
     static template = `
-        {{#if isAddingTask}}
-            <div class="task-form">
-                <form>
-                    <input type="text">
-                    <button type="submit">Add Task</button>
-                    <a href="#" class="cancel-link">Cancel</a>
-                </form>
-            </div>
-        {{else}}
-            <div class="add-task">
-                <span class="icon-holder">
-                    <span class="add-icon">
-                        +
-                    </span>
-                </span>
-                <span class="text-holder">
-                    <a href="#" class="add-task-link">Add Task</a>
-                </span>
-            </div>
-        {{/if}}
     `
 
     isAddingTask: boolean
