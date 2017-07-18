@@ -2,6 +2,8 @@ class TasksController < ApplicationController
   skip_before_action :verify_authenticity_token # API, no CSRF required.
 
   def index
+    headers['Access-Control-Allow-Origin'] = '*'
+
     render json: Task.all
   end
 

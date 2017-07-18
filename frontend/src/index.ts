@@ -14,7 +14,7 @@ $(document).ready(function() {
     let $taskCreatorContainer = $('.task-creator');
     new TaskCreator().render($taskCreatorContainer);
 
-    new Store('fake_url').getTasks(function (tasks) {
+    new Store('http://localhost:3000/').getTasks(function (tasks) {
         taskList.setTasks(tasks);
     });
 });
