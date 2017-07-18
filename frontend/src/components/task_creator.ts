@@ -26,9 +26,11 @@ class TaskCreator {
     `
 
     isAddingTask: boolean
+    createTaskFunc: (title: string, sortOrder: number, cb: any) => void
 
-    constructor() {
+    constructor(createTaskFunc: (title: string, sortOrder: number, cb: any) => void) {
         this.isAddingTask = false;
+        this.createTaskFunc = createTaskFunc;
     }
 
     render(container: JQuery<HTMLElement>) {
@@ -73,6 +75,15 @@ class TaskCreator {
 
         container.find('.task-form form').submit(function (e) {
             e.preventDefault();
+
+            let title = 'Testing 2';
+            let sortOrder = 32;
+
+            taskCreator.createTaskFunc(title, sortOrder, function (task) {
+                alert('got something back!');
+                // Send event upwards?
+            });
+
             alert('Submitting form!');
         });
 

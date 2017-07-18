@@ -23,6 +23,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "handlebars": "^4.0.10"
+    "handlebars": "^4.0.10",
+    "vue": "^2.4.1"
   }
 }

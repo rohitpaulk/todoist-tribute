@@ -8,10 +8,16 @@ class Store {
         this.url = url;
     }
 
+    static error() {
+        console.log(arguments);
+        alert('error! check console');
+    }
+
     getTasks(cb: (data: Task[]) => void): void {
+        let store = this;
         $.ajax({
             method: "GET",
-            url: this.url + "api/v1/tasks",
+            url: store.url + "api/v1/tasks",
             success: function(data: any[]) {
                 let tasks = data.map(function(item) {
                     return {title: item.title};
@@ -19,10 +25,23 @@ class Store {
 
                 cb(tasks);
             },
-            error: function() {
-                console.log(arguments);
-                alert('error!');
-            }
+            error: Store.error
+        });
+    }
+
+    createTask(title: string, sort_order: number, cb: (data: Task) => void): void {
+        let store = this;
+        $.ajax({
+            method: "POST",
+            url: store.url + "api/v1/tasks",
+            data: {
+                title: title,
+                sort_order: sort_order
+            },
+            success: function(data: any) {
+                cb({title: data.title});
+            },
+            error: Store.error
         });
     }
 }
