@@ -20,16 +20,23 @@ class TaskList {
     `
 
     tasks: Task[]
+    container: JQuery<HTMLElement>
 
-    constructor(tasks: Task[]) {
+    constructor(tasks: Task[], container: JQuery<HTMLElement>) {
         this.tasks = tasks;
+        this.container = container;
     }
 
-    render(container: JQuery<HTMLElement>) {
+    setTasks(tasks: Task[]) {
+        this.tasks = tasks;
+        this.render();
+    }
+
+    render() {
         let template = Handlebars.compile(TaskList.taskListTemplate);
         let html = template({tasks: this.tasks});
 
-        container.html(html);
+        this.container.html(html);
     }
 }
 
