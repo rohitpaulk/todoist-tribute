@@ -4,10 +4,12 @@ class TasksController < ApplicationController
   def index
     headers['Access-Control-Allow-Origin'] = '*'
 
-    render json: Task.all
+    render json: Task.order(sort_order: :asc).all
   end
 
   def create
+    headers['Access-Control-Allow-Origin'] = '*'
+
     title = params[:title]
     sort_order = params[:sort_order]
 
