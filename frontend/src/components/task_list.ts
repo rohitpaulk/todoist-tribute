@@ -55,11 +55,11 @@ let taskListOptions = {
                     </span>
                 </li>
             </ul>
-            <task-creator
-                ref='task-creator'
+            <task-editor
+                ref='task-editor'
                 :nextSortOrder="nextSortOrder"
                 @addedTask="addTask">
-            </task-creator>
+            </task-editor>
         </div>
     `
 } as ComponentOptions<TaskList>

@@ -5,7 +5,7 @@ import { Store } from '../store';
 import * as _ from 'lodash';
 import * as Mousetrap from 'mousetrap';
 
-interface TaskCreator extends Vue {
+interface TaskEditor extends Vue {
     // data
     isAddingTask: boolean,
     inputFocusPending: boolean,
@@ -21,8 +21,8 @@ interface TaskCreator extends Vue {
     showTaskForm: () => void
 }
 
-let taskCreatorOptions = {
-    name: 'task-creator',
+let taskEditorOptions = {
+    name: 'task-editor',
 
     data: function() {
         return {
@@ -53,11 +53,11 @@ let taskCreatorOptions = {
         },
 
         createTask: function() {
-            let taskCreator = this;
+            let taskEditor = this;
 
             let store = new Store('http://localhost:3000/');
             store.createTask(this.newTask.title, this.nextSortOrder).then(function(task: Task) {
-                taskCreator.$emit('addedTask', task);
+                taskEditor.$emit('addedTask', task);
             });
 
             this.newTask.title = '';
@@ -66,10 +66,10 @@ let taskCreatorOptions = {
     },
 
     created: function() {
-        let taskCreator = this;
+        let taskEditor = this;
 
         Mousetrap.bind('a', function() {
-            taskCreator.showTaskForm();
+            taskEditor.showTaskForm();
         });
     },
 
@@ -82,7 +82,7 @@ let taskCreatorOptions = {
     },
 
     template: `
-        <div class="task-creator">
+        <div class="task-editor">
             <div v-if="isAddingTask" class="task-form">
                 <form @submit="createTask()" @keydown.esc="hideTaskForm()">
                     <input type="text" ref="input" v-model="newTask.title">
@@ -102,7 +102,7 @@ let taskCreatorOptions = {
             </div>
         </div>
     `
-} as ComponentOptions<TaskCreator>
+} as ComponentOptions<TaskEditor>
 
-export { taskCreatorOptions as TaskCreatorOptions }
-export { TaskCreator }
+export { taskEditorOptions as TaskEditorOptions }
+export { TaskEditor }
