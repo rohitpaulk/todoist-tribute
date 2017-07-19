@@ -1,15 +1,17 @@
 class TasksController < ApplicationController
   skip_before_action :verify_authenticity_token # API, no CSRF required.
 
-  def index
-    headers['Access-Control-Allow-Origin'] = '*'
+  before_action :allow_cors
 
+  def allow_cors
+    headers['Access-Control-Allow-Origin'] = '*'
+  end
+
+  def index
     render json: Task.order(sort_order: :asc).all
   end
 
   def create
-    headers['Access-Control-Allow-Origin'] = '*'
-
     title = params[:title]
     sort_order = params[:sort_order]
 
@@ -29,7 +31,13 @@ class TasksController < ApplicationController
   end
 
   def preflight
-    headers['Access-Control-Allow-Origin'] = '*'
     headers['Access-Control-Allow-Headers'] = 'Content-Type'
+  end
+
+  def update
+    is_completed = params[:is_completed]
+    task_id = params[:task_id]
+
+    Task.find(task_id).update(is_completed: is_completed)
   end
 end
