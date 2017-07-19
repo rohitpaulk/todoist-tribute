@@ -22,7 +22,3 @@ let vueInstance = new Vue({
         'task-list': TaskListOptions
     }
 });
-
-Mousetrap.bind('a', function() {
-    app.keyboardShortcuts.$emit('key-press-a');
-});

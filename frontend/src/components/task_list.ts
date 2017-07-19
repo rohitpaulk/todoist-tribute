@@ -18,6 +18,10 @@ let taskListOptions = {
 
     computed: {
         nextSortOrder(): number {
+            if (_.isEmpty(this.tasks)) {
+                return 0;
+            }
+
             return _.last(this.tasks).sortOrder + 1;
         }
     },
@@ -54,7 +58,7 @@ let taskListOptions = {
             <task-creator
                 ref='task-creator'
                 :nextSortOrder="nextSortOrder"
-                @addedTask="addTask(task)">
+                @addedTask="addTask">
             </task-creator>
         </div>
     `

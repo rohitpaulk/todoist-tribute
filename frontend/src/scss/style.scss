@@ -38,6 +38,7 @@ body {
     position: fixed;
     height: $top-bar-height;
     width: 100%;
+    z-index: 3; // To hide scrollbar underneath.
 }
 
 .all-holder, .top-bar-inner {
@@ -51,6 +52,7 @@ body {
     vertical-align: top;
 
     height: 100vh;
+    overflow: scroll;
 }
 
 .left-menu {

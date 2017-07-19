@@ -3,6 +3,7 @@ import Vue, { ComponentOptions } from 'vue';
 import { Task } from '../models';
 import { Store } from '../store';
 import * as _ from 'lodash';
+import * as Mousetrap from 'mousetrap';
 
 interface TaskCreator extends Vue {
     // data
@@ -62,6 +63,14 @@ let taskCreatorOptions = {
             this.newTask.title = '';
             this.hideTaskForm();
         }
+    },
+
+    created: function() {
+        let taskCreator = this;
+
+        Mousetrap.bind('a', function() {
+            taskCreator.showTaskForm();
+        });
     },
 
     updated: function() {
