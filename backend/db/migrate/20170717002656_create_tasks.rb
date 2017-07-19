@@ -3,7 +3,7 @@ class CreateTasks < ActiveRecord::Migration[5.1]
     create_table :tasks do |t|
       t.string :title
       t.integer :sort_order
-      t.boolean :is_completed
+      t.boolean :is_completed, default: false
 
       t.timestamps
     end
