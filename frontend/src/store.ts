@@ -25,7 +25,7 @@ class Store {
                     return {
                         title: item.title,
                         id: item.id,
-                        sortOrder: item.sortOrder
+                        sortOrder: item.sort_order
                     };
                 }));
             };
@@ -34,20 +34,20 @@ class Store {
         })
     }
 
-    createTask(title: string, sort_order: number): Promise<Task> {
+    createTask(title: string, sortOrder: number): Promise<Task> {
         let url = this.url + "api/v1/tasks";
 
         return new Promise(function(resolve, reject) {
             let axiosPromise = axios.post(url, {
                 title: title,
-                sort_order: sort_order
+                sort_order: sortOrder
             });
 
             let resolver = function(axiosResponse) {
                 resolve({
                     title: axiosResponse.data.title,
                     id: axiosResponse.data.id,
-                    sortOrder: axiosResponse.data.number
+                    sortOrder: axiosResponse.data.sort_order
                 });
             };
 

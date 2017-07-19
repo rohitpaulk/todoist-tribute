@@ -6,15 +6,13 @@ import * as _ from 'lodash';
 
 interface TaskList extends Vue {
     tasks: Task[],
-    isAddingTask: boolean,
-    inputFocusPending: boolean
+    nextSortOrder: number,
 }
 
-export default {
+let taskListOptions = {
     data: function() {
         return {
             tasks: [],
-            isAddingTask: false
         }
     },
 
@@ -24,35 +22,19 @@ export default {
         }
     },
 
-    methods: {
-        showTaskForm: function() {
-            this.isAddingTask = true;
-
-            // We need to trigger a focus event on the input element. It
-            // will not be in the DOM as of this moment, so we mark this flag
-            // so that .focus() is called after the component updates
-            this.inputFocusPending = true;
-        },
-
-        hideTaskForm: function() {
-            this.isAddingTask = false;
-        }
-    },
-
     created: function() {
         let taskList = this;
+
         let store = new Store('http://localhost:3000/');
         store.getTasks().then(function(tasks) {
             taskList.tasks = tasks;
         });
     },
 
-    updated: function() {
-        if (this.inputFocusPending) {
-            (this.$refs['input'] as HTMLElement).focus();
+    methods: {
+        addTask: function(task) {
+            this.tasks.push(task);
         }
-
-        this.inputFocusPending = false;
     },
 
     template: `
@@ -69,25 +51,14 @@ export default {
                     </span>
                 </li>
             </ul>
-            <div class="task-creator">
-                <div v-if="isAddingTask" class="task-form">
-                    <form>
-                        <input type="text" ref="input">
-                        <button type="submit">Add Task</button>
-                        <a href="#" class="cancel-link" @click="hideTaskForm()">Cancel</a>
-                    </form>
-                </div>
-                <div v-else class="add-task" @click="showTaskForm()">
-                    <span class="icon-holder">
-                        <span class="add-icon">
-                            +
-                        </span>
-                    </span>
-                    <span class="text-holder">
-                        <a href="#" class="add-task-link"">Add Task</a>
-                    </span>
-                </div>
-            </div>
+            <task-creator
+                ref='task-creator'
+                :nextSortOrder="nextSortOrder"
+                @addedTask="addTask(task)">
+            </task-creator>
         </div>
     `
 } as ComponentOptions<TaskList>
+
+export { taskListOptions as TaskListOptions }
+export { TaskList }

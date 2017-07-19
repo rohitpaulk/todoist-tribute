@@ -27,4 +27,9 @@ class TasksController < ApplicationController
 
     render json: task
   end
+
+  def preflight
+    headers['Access-Control-Allow-Origin'] = '*'
+    headers['Access-Control-Allow-Headers'] = 'Content-Type'
+  end
 end
