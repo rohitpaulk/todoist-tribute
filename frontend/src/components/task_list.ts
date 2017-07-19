@@ -57,6 +57,9 @@ let taskListOptions = {
         <div>
             <ul class="task-list">
                 <li v-for="task in tasks" class="task-item">
+                    <span class="dragbars-holder">
+                        <i class="fa fa-bars drag-bars"></i>
+                    </span>
                     <span class="icon-holder">
                         <span class="checkbox" @click="completeTask(task)">
                         </span>

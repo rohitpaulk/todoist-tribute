@@ -5,6 +5,7 @@ $top-bar-height: 43px;
 $content-width: 950px;
 $sidebar-left-padding: 35px;
 $content-top-padding: 30px;
+$content-left-padding: 30px;
 
 $checkbox-diameter: 20px;
 
@@ -138,11 +139,12 @@ body {
 }
 
 .content {
-    padding-left: 30px;
+    // Left padding is applied selectively to components!
     padding-right: 30px;
     background-color: #fff;
 
     .section-header {
+        padding-left: $content-left-padding;
         margin-top: 10px;
         margin-bottom: 15px;
 
@@ -153,9 +155,12 @@ body {
     }
 
    .task-list {
+        padding-left: 10px;
         font-size: 14px;
 
         .task-item {
+            position: relative;
+
             & > span {
                 display: inline-block;
                 vertical-align: middle;
@@ -163,6 +168,35 @@ body {
 
             .icon-holder {
                 margin-right: 5px;
+            }
+
+            .dragbars-holder {
+                visibility: hidden;
+            }
+
+            &:hover {
+                .dragbars-holder {
+                    visibility: visible;
+                }
+            }
+
+            .dragbars-holder {
+                display: inline-block;
+                // Hack for wide-font
+                width: $checkbox-diameter * 0.75;
+                height: $checkbox-diameter;
+
+                .drag-bars {
+                    color: $color-light-gray;
+                    line-height: $checkbox-diameter;
+
+                    // Hack for wide-font
+                    transform: scale(0.5, 1);
+
+                    &:hover {
+                        cursor: move;
+                    }
+                }
             }
 
             border-bottom: 1px solid $color-very-light-gray;
@@ -196,6 +230,8 @@ body {
 
     .task-editor {
         .add-task {
+            padding-left: $content-left-padding;
+
             & > span {
                 display: inline-block;
                 vertical-align: middle;
