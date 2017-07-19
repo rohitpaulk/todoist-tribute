@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(version: 20170717002656) do
     t.boolean "is_completed", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["sort_order"], name: "index_tasks_on_sort_order", unique: true
   end
 
 end

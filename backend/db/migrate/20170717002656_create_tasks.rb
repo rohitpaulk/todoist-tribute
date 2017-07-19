@@ -7,5 +7,7 @@ class CreateTasks < ActiveRecord::Migration[5.1]
 
       t.timestamps
     end
+
+    add_index :tasks, :sort_order, unique: true
   end
 end

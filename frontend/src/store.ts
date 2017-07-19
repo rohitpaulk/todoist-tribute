@@ -11,14 +11,14 @@ class Store {
 
     static error() {
         console.log(arguments);
-        alert('error! check console');
+        alert('Error contacting backend! Check console.');
     }
 
     getTasks(): Promise<Task[]> {
-        let store = this;
+        let url = this.url + "api/v1/tasks.json";
 
         return new Promise(function(resolve, reject) {
-            let axiosPromise = axios.get(store.url + "api/v1/tasks");
+            let axiosPromise = axios.get(url);
 
             let resolver = function(axiosResponse) {
                 resolve(axiosResponse.data.map(function(item): Task {
@@ -30,17 +30,16 @@ class Store {
                 }));
             };
 
-            axiosPromise.then(resolver, reject);
+            axiosPromise.then(resolver, Store.error);
         })
     }
 
-    createTask(title: string, sortOrder: number): Promise<Task> {
-        let url = this.url + "api/v1/tasks";
+    createTask(title: string): Promise<Task> {
+        let url = this.url + "api/v1/tasks.json";
 
         return new Promise(function(resolve, reject) {
             let axiosPromise = axios.post(url, {
-                title: title,
-                sort_order: sortOrder
+                title: title
             });
 
             let resolver = function(axiosResponse) {
@@ -51,7 +50,25 @@ class Store {
                 });
             };
 
-            axiosPromise.then(resolver, reject);
+            axiosPromise.then(resolver, Store.error);
+        })
+    }
+
+    updateTask(id: string, properties: {[ key: string]: any}): Promise<Task> {
+        let url = this.url + "api/v1/tasks/" + id + ".json";
+
+        return new Promise(function(resolve, reject) {
+            let axiosPromise = axios.put(url, properties);
+
+            let resolver = function(axiosResponse) {
+                resolve({
+                    title: axiosResponse.data.title,
+                    id: axiosResponse.data.id,
+                    sortOrder: axiosResponse.data.sort_order
+                });
+            };
+
+            axiosPromise.then(resolver, Store.error);
         })
     }
 }

@@ -17,6 +17,7 @@ let taskListOptions = {
     },
 
     computed: {
+        // TODO: Change this to be active sortOrder?
         nextSortOrder(): number {
             if (_.isEmpty(this.tasks)) {
                 return 0;
@@ -36,9 +37,20 @@ let taskListOptions = {
     },
 
     methods: {
-        addTask: function(task) {
+        addTask: function(task: Task): void {
             this.tasks.push(task);
-        }
+        },
+
+        completeTask: function(task: Task): void {
+            let taskList = this;
+
+            let store = new Store('http://localhost:3000/');
+            store.updateTask(task.id, {is_completed: true}).then(function() {
+                taskList.tasks = _.filter(taskList.tasks, function(x): boolean {
+                    return x.id !== task.id;
+                });
+            });
+        },
     },
 
     template: `
@@ -46,7 +58,8 @@ let taskListOptions = {
             <ul class="task-list">
                 <li v-for="task in tasks" class="task-item">
                     <span class="icon-holder">
-                        <span class="checkbox"></span>
+                        <span class="checkbox" @click="completeTask(task)">
+                        </span>
                     </span>
                     <span class="text-holder">
                         <span class="task-title">

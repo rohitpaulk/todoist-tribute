@@ -56,7 +56,7 @@ let taskEditorOptions = {
             let taskEditor = this;
 
             let store = new Store('http://localhost:3000/');
-            store.createTask(this.newTask.title, this.nextSortOrder).then(function(task: Task) {
+            store.createTask(this.newTask.title).then(function(task: Task) {
                 taskEditor.$emit('addedTask', task);
             });
 
@@ -84,7 +84,7 @@ let taskEditorOptions = {
     template: `
         <div class="task-editor">
             <div v-if="isAddingTask" class="task-form">
-                <form @submit="createTask()" @keydown.esc="hideTaskForm()">
+                <form @submit.prevent="createTask()" @keydown.esc="hideTaskForm()">
                     <input type="text" ref="input" v-model="newTask.title">
                     <button type="submit">Add Task</button>
                     <a href="#" class="cancel-link" @click="hideTaskForm()">Cancel</a>
