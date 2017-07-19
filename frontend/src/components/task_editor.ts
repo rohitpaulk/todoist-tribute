@@ -58,10 +58,9 @@ let taskEditorOptions = {
             let store = new Store('http://localhost:3000/');
             store.createTask(this.newTask.title).then(function(task: Task) {
                 taskEditor.$emit('addedTask', task);
+                taskEditor.newTask.title = '';
+                taskEditor.hideTaskForm();
             });
-
-            this.newTask.title = '';
-            this.hideTaskForm();
         }
     },
 

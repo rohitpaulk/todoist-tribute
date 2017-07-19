@@ -152,7 +152,7 @@ body {
         }
     }
 
-    .task-list {
+   .task-list {
         font-size: 14px;
 
         .task-item {
@@ -175,6 +175,21 @@ body {
                 border-radius: $checkbox-diameter / 2;
                 margin-top: 13px;
                 margin-bottom: 13px;
+
+                background-color: white;
+                transition: background-color 150ms;
+
+                &:hover {
+                    cursor: pointer;
+                    background-color: lighten($color-very-light-gray, 0.5);
+                }
+
+                &:active {
+                    background-image: url('/images/checkmark.png');
+                    background-size: $checkbox-diameter * 0.5;
+                    background-repeat: no-repeat;
+                    background-position: center;
+                }
             }
         }
     }

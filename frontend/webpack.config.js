@@ -3,7 +3,7 @@ var path = require('path');
 module.exports = {
   entry: './src/index.ts',
   devServer: {
-    contentBase: './dist'
+    contentBase: ['./dist', './src']
   },
   output: {
     filename: 'bundle.js',
