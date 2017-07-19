@@ -12,22 +12,3 @@ Vue.component('task-list', TaskList)
 new Vue({
     el: '#vue-root'
 });
-
-$(document).ready(function() {
-    // let store = new Store('http://localhost:3000/');
-
-    // store.getTasks(function (tasks) {
-    //     taskList.setTasks(tasks);
-    // });
-
-    // let $taskCreatorContainer = $('.task-creator');
-    // let createTask = function(title, sortOrder, cb) {
-    //     store.createTask(title, sortOrder, cb);
-    // }
-    // let taskCreator = new TaskCreator(createTask);
-    // taskCreator.render($taskCreatorContainer);
-
-    // store.getTasks(function (tasks) {
-    //     taskList.setTasks(tasks);
-    // });
-});

@@ -1,6 +1,8 @@
 import Vue, { ComponentOptions } from 'vue';
 
 import { Task } from '../models';
+import { Store } from '../store';
+import * as _ from 'lodash';
 
 interface TaskList extends Vue {
     tasks: Task[],
@@ -11,11 +13,14 @@ interface TaskList extends Vue {
 export default {
     data: function() {
         return {
-            tasks: [
-                {title: 'This is the first task'},
-                {title: 'This is the second task'},
-            ],
+            tasks: [],
             isAddingTask: false
+        }
+    },
+
+    computed: {
+        nextSortOrder(): number {
+            return _.last(this.tasks).sortOrder + 1;
         }
     },
 
@@ -34,17 +39,20 @@ export default {
         }
     },
 
+    created: function() {
+        let taskList = this;
+        let store = new Store('http://localhost:3000/');
+        store.getTasks().then(function(tasks) {
+            taskList.tasks = tasks;
+        });
+    },
+
     updated: function() {
         if (this.inputFocusPending) {
-            let input = this.$refs['input'];
-            // $ref['key'] is typed as either Vue or HTMLElement.
-            // Check type so that we can use `focus`.
-            if (input instanceof HTMLElement) {
-                input.focus()
-            }
-
-            this.inputFocusPending = false;
+            (this.$refs['input'] as HTMLElement).focus();
         }
+
+        this.inputFocusPending = false;
     },
 
     template: `

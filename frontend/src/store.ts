@@ -1,5 +1,6 @@
 import { Task } from './models';
 import * as $ from 'jquery';
+import axios from 'axios';
 
 class Store {
     url: string
@@ -13,36 +14,45 @@ class Store {
         alert('error! check console');
     }
 
-    getTasks(cb: (data: Task[]) => void): void {
+    getTasks(): Promise<Task[]> {
         let store = this;
-        $.ajax({
-            method: "GET",
-            url: store.url + "api/v1/tasks",
-            success: function(data: any[]) {
-                let tasks = data.map(function(item) {
-                    return {title: item.title};
-                });
 
-                cb(tasks);
-            },
-            error: Store.error
-        });
+        return new Promise(function(resolve, reject) {
+            let axiosPromise = axios.get(store.url + "api/v1/tasks");
+
+            let resolver = function(axiosResponse) {
+                resolve(axiosResponse.data.map(function(item): Task {
+                    return {
+                        title: item.title,
+                        id: item.id,
+                        sortOrder: item.sortOrder
+                    };
+                }));
+            };
+
+            axiosPromise.then(resolver, reject);
+        })
     }
 
-    createTask(title: string, sort_order: number, cb: (data: Task) => void): void {
-        let store = this;
-        $.ajax({
-            method: "POST",
-            url: store.url + "api/v1/tasks",
-            data: {
+    createTask(title: string, sort_order: number): Promise<Task> {
+        let url = this.url + "api/v1/tasks";
+
+        return new Promise(function(resolve, reject) {
+            let axiosPromise = axios.post(url, {
                 title: title,
                 sort_order: sort_order
-            },
-            success: function(data: any) {
-                cb({title: data.title});
-            },
-            error: Store.error
-        });
+            });
+
+            let resolver = function(axiosResponse) {
+                resolve({
+                    title: axiosResponse.data.title,
+                    id: axiosResponse.data.id,
+                    sortOrder: axiosResponse.data.number
+                });
+            };
+
+            axiosPromise.then(resolver, reject);
+        })
     }
 }
 
