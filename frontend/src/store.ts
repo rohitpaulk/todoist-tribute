@@ -2,6 +2,13 @@ import { Task } from './models';
 import * as $ from 'jquery';
 import axios from 'axios';
 
+interface APITask {
+    title: string,
+    id: number, // TODO: Change this to id on backend?
+    sort_order: number,
+    indent_level: number
+}
+
 class Store {
     url: string
 
@@ -64,11 +71,12 @@ class Store {
         })
     }
 
-    static TaskFromAPI(data: {[key: string]: any}): Task {
+    static TaskFromAPI(data: APITask): Task {
         return {
             title: data.title,
             id: String(data.id), // TODO: Make API return string
-            sortOrder: data.sort_order
+            sortOrder: data.sort_order,
+            indentLevel: data.indent_level
         };
     }
 }
