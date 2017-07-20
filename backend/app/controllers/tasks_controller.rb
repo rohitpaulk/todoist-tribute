@@ -25,6 +25,18 @@ class TasksController < ApplicationController
     render json: task
   end
 
+  def reorder
+    task_ids = params[:task_ids]
+
+    unless task_ids
+      render json: {'msg' => 'task_ids param missing'}, status: 400 and return
+    end
+
+    Task.reorder!(task_ids)
+
+    render json: Task.where(is_completed: false).order(sort_order: :asc).all
+  end
+
   def preflight
     headers['Access-Control-Allow-Headers'] = 'Content-Type'
     headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT'

@@ -8,6 +8,14 @@ class CreateTasks < ActiveRecord::Migration[5.1]
       t.timestamps
     end
 
-    add_index :tasks, :sort_order, unique: true
+    execute <<-SQL
+      ALTER TABLE tasks ADD CONSTRAINT unique_sort_order
+                                       UNIQUE (sort_order)
+                                       DEFERRABLE
+                                       INITIALLY DEFERRED
+
+    SQL
+
+    enable_extension "intarray"
   end
 end
