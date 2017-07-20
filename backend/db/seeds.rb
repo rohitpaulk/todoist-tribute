@@ -10,8 +10,9 @@ puts "Creating tasks..."
 
 Task.create!(sort_order: 1, title: 'This is the first task')
 Task.create!(sort_order: 2, title: 'da second task is here')
-Task.create!(sort_order: 3, indent_level: 2, title: 'Indented under second task')
+# Task.create!(sort_order: 3, indent_level: 2, title: 'Indented under second task')
 Task.create!(sort_order: 4, title: '3rd task yo')
-Task.create!(sort_order: 5, indent_level: 3, title: 'Indented under third task')
+# Task.create!(sort_order: 5, indent_level: 2, title: 'Indented under third task')
+# Task.create!(sort_order: 6, indent_level: 3, title: 'Indented under the indented task task')
 
 puts "Tasks created."
