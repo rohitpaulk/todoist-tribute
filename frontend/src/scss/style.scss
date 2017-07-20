@@ -229,9 +229,9 @@ body {
     }
 
     .task-editor {
-        .add-task {
-            padding-left: $content-left-padding;
+        padding-left: $content-left-padding;
 
+        .add-task {
             & > span {
                 display: inline-block;
                 vertical-align: middle;
