@@ -44,9 +44,9 @@ class API {
         return API.PromiseForSingleTask(axiosPromise);
     }
 
-    reorderTasks(tasks: Task[]): Promise<Task[]> {
+    reorderTasks(task_ids: string[]): Promise<Task[]> {
         let url = this.url + "api/v1/tasks/reorder.json";
-        let axiosPromise = axios.post(url, {task_ids: tasks.map(x => Number(x.id))});
+        let axiosPromise = axios.post(url, {task_ids: task_ids.map(x => Number(x))});
 
         return API.PromiseForMultipleTasks(axiosPromise);
     }

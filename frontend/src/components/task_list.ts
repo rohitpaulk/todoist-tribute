@@ -6,15 +6,16 @@ import * as _ from 'lodash';
 
 interface TaskList extends Vue {
     // data
-    dragState: null | {
-        currentDraggedTask: Task,
-        orderBeforeDrag: string[]
+    dragState?: {
+        draggedTask: Task,
+        orderBeforeDrag: string[] // Array of IDs
         currentOrder: string[] // Array of IDs
     }
 
     // computed
     nextSortOrder: number,
     tasks: Task[] // Pulled from global store
+    tasksOrderedLocally: Task[]
 }
 
 let taskListOptions = {
@@ -36,8 +37,16 @@ let taskListOptions = {
 
         // Might have to filter by something?
         tasks(): Task[] {
-            return this.$store.state.tasks;
-        }
+            let taskList = this;
+            if (_.isNull(this.dragState)) {
+                return this.$store.state.tasks;
+            } else {
+                // Order locally, according to drag state
+                return _.sortBy(taskList.$store.state.tasks, function (task: Task) {
+                    return _.indexOf(taskList.dragState.currentOrder, task.id);
+                });
+            }
+        },
     },
 
     created: function() {
@@ -54,8 +63,9 @@ let taskListOptions = {
             event.dataTransfer.setDragImage(event.target.parentNode, 0, 0);
 
             this.dragState = {
-                currentDraggedTask: task,
-                tasksBeforeDrag: this.tasks.slice() // Copy, not reference!
+                draggedTask: task,
+                orderBeforeDrag: this.tasks.map(x => x.id),
+                currentOrder: this.tasks.map(x => x.id)
             };
 
             return false;
@@ -64,7 +74,6 @@ let taskListOptions = {
         endDrag: function() {
             if (!_.isNull(this.dragState)) {
                 // The drag was aborted halfway
-                this.tasks = this.dragState.tasksBeforeDrag;
                 this.dragState = null;
             } else {
                 // Nothing to do, the drop successfully happened.
@@ -77,40 +86,37 @@ let taskListOptions = {
                 return true;
             }
 
-            let currentTaskPosition = _.findIndex(this.tasks, function(x) {
-                return x.id === currentTask.id;
-            });
+            let taskOrder = this.dragState.currentOrder.slice();
+            let draggedTask = this.dragState.draggedTask;
 
-            let draggedTaskPosition = _.findIndex(this.tasks, function(x) {
-                return x.id === taskList.dragState.currentDraggedTask.id;
-            });
+            let currentTaskPosition = _.indexOf(taskOrder, currentTask.id);
+            let draggedTaskPosition = _.indexOf(taskOrder, draggedTask.id);
 
             let cp = currentTaskPosition;
             let dp = draggedTaskPosition;
 
-            [this.tasks[cp], this.tasks[dp]] = [this.tasks[dp], this.tasks[cp]]
-            this.$forceUpdate(); // TODO: Figure out why?
+            let newOrder = taskOrder.slice();
+            newOrder[cp] = taskOrder[dp];
+            newOrder[dp] = taskOrder[cp];
+
+            this.dragState.currentOrder = newOrder;
 
             return false;
         },
 
         droppedTask(event, task: Task) {
-            let taskList = this;
+            // TODO: Wait for result via promise!
+            this.$store.dispatch('reorderTasks', this.dragState.currentOrder);
+
             this.dragState = null;
-
-            this.$store.dispatch('reorderTasks', this.tasks);
-
-            let store = new API('http://localhost:3000/');
-            store.reorderTasks(this.tasks).then(function(tasks) {
-                taskList.tasks = tasks;
-            });
         },
 
         taskItemClass(task: Task) {
             // Note: This has to be manually forced to updated!
+            // TODO: Convert to dict for ALL tasks, only picked required.
             return {
                 'task-item': true,
-                'is-dragged': this.dragState && (this.dragState.currentDraggedTask.id === task.id),
+                'is-dragged': this.dragState && (this.dragState.draggedTask.id === task.id),
                 'indent-1': task.indentLevel == 1,
                 'indent-2': task.indentLevel == 2,
                 'indent-3': task.indentLevel == 3,

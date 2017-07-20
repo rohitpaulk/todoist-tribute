@@ -52,8 +52,8 @@ let storeOptions = {
             });
         },
 
-        reorderTasks(context, tasks: Task[]) {
-            api.reorderTasks(tasks).then(function(tasksFromAPI) {
+        reorderTasks(context, task_ids: string[]) {
+            api.reorderTasks(task_ids).then(function(tasksFromAPI) {
                 context.commit('setTasks', tasksFromAPI);
             });
         }
