@@ -4,6 +4,7 @@ class CreateTasks < ActiveRecord::Migration[5.1]
       t.string :title
       t.integer :sort_order
       t.boolean :is_completed, default: false
+      t.integer :indent_level, default: 1
 
       t.timestamps
     end

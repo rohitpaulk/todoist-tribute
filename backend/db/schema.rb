@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(version: 20170717002656) do
     t.string "title"
     t.integer "sort_order"
     t.boolean "is_completed", default: false
+    t.integer "indent_level", default: 1
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["sort_order"], name: "unique_sort_order", unique: true
