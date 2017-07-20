@@ -14,7 +14,7 @@ class Task < ApplicationRecord
     Task.connection.execute <<-SQL
       UPDATE tasks
          SET sort_order = (
-           idx(#{pg_array}, tasks.id::int) -- TODO: Make this work with bigint!
+           idx(#{pg_array}::int[], tasks.id::int) -- TODO: Make this work with bigint!
          )
     SQL
   end

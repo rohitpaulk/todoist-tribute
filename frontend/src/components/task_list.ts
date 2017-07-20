@@ -106,7 +106,13 @@ let taskListOptions = {
         },
 
         droppedTask(event, task: Task) {
+            let taskList = this;
             this.dragState = null;
+
+            let store = new Store('http://localhost:3000/');
+            store.reorderTasks(this.tasks).then(function(tasks) {
+                taskList.tasks = tasks;
+            });
         },
 
         taskItemClass(task: Task) {

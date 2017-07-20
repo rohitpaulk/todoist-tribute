@@ -16,10 +16,36 @@ class Store {
 
     getTasks(): Promise<Task[]> {
         let url = this.url + "api/v1/tasks.json";
+        let axiosPromise = axios.get(url);
 
+        return Store.PromiseForMultipleTasks(axiosPromise);
+    }
+
+    createTask(title: string): Promise<Task> {
+        let url = this.url + "api/v1/tasks.json";
+        let axiosPromise = axios.post(url, {
+            title: title
+        });
+
+        return Store.PromiseForSingleTask(axiosPromise);
+    }
+
+    updateTask(id: string, properties: {[ key: string]: any}): Promise<Task> {
+        let url = this.url + "api/v1/tasks/" + id + ".json";
+        let axiosPromise = axios.put(url, properties);
+
+        return Store.PromiseForSingleTask(axiosPromise);
+    }
+
+    reorderTasks(tasks: Task[]): Promise<Task[]> {
+        let url = this.url + "api/v1/tasks/reorder.json";
+        let axiosPromise = axios.post(url, {task_ids: tasks.map(x => Number(x.id))});
+
+        return Store.PromiseForMultipleTasks(axiosPromise);
+    }
+
+    static PromiseForMultipleTasks(axiosPromise): Promise<Task[]> {
         return new Promise(function(resolve, reject) {
-            let axiosPromise = axios.get(url);
-
             let resolver = function(axiosResponse) {
                 resolve(axiosResponse.data.map(Store.TaskFromAPI));
             };
@@ -28,28 +54,8 @@ class Store {
         })
     }
 
-    createTask(title: string): Promise<Task> {
-        let url = this.url + "api/v1/tasks.json";
-
+    static PromiseForSingleTask(axiosPromise): Promise<Task> {
         return new Promise(function(resolve, reject) {
-            let axiosPromise = axios.post(url, {
-                title: title
-            });
-
-            let resolver = function(axiosResponse) {
-                resolve(Store.TaskFromAPI(axiosResponse.data));
-            };
-
-            axiosPromise.then(resolver, Store.error);
-        })
-    }
-
-    updateTask(id: string, properties: {[ key: string]: any}): Promise<Task> {
-        let url = this.url + "api/v1/tasks/" + id + ".json";
-
-        return new Promise(function(resolve, reject) {
-            let axiosPromise = axios.put(url, properties);
-
             let resolver = function(axiosResponse) {
                 resolve(Store.TaskFromAPI(axiosResponse.data));
             };
