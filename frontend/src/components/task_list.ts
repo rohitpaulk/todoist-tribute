@@ -1,25 +1,25 @@
 import Vue, { ComponentOptions } from 'vue';
 
 import { Task } from '../models';
-import { Store } from '../store';
+import { API } from '../API';
 import * as _ from 'lodash';
 
 interface TaskList extends Vue {
     // data
-    tasks: Task[],
     dragState: null | {
         currentDraggedTask: Task,
-        tasksBeforeDrag: Task[]
+        orderBeforeDrag: string[]
+        currentOrder: string[] // Array of IDs
     }
 
     // computed
     nextSortOrder: number,
+    tasks: Task[] // Pulled from global store
 }
 
 let taskListOptions = {
     data: function() {
         return {
-            tasks: [],
             dragState: null
         }
     },
@@ -32,32 +32,21 @@ let taskListOptions = {
             }
 
             return _.last(this.tasks).sortOrder + 1;
+        },
+
+        // Might have to filter by something?
+        tasks(): Task[] {
+            return this.$store.state.tasks;
         }
     },
 
     created: function() {
-        let taskList = this;
-
-        let store = new Store('http://localhost:3000/');
-        store.getTasks().then(function(tasks) {
-            taskList.tasks = tasks;
-        });
+        this.$store.dispatch('refreshTasks');
     },
 
     methods: {
-        addTask: function(task: Task): void {
-            this.tasks.push(task);
-        },
-
         completeTask: function(task: Task): void {
-            let taskList = this;
-
-            let store = new Store('http://localhost:3000/');
-            store.updateTask(task.id, {is_completed: true}).then(function() {
-                taskList.tasks = _.filter(taskList.tasks, function(x): boolean {
-                    return x.id !== task.id;
-                });
-            });
+            this.$store.dispatch('completeTask', task)
         },
 
         startDrag: function(event, task: Task): boolean {
@@ -109,7 +98,9 @@ let taskListOptions = {
             let taskList = this;
             this.dragState = null;
 
-            let store = new Store('http://localhost:3000/');
+            this.$store.dispatch('reorderTasks', this.tasks);
+
+            let store = new API('http://localhost:3000/');
             store.reorderTasks(this.tasks).then(function(tasks) {
                 taskList.tasks = tasks;
             });
@@ -156,12 +147,10 @@ let taskListOptions = {
             </ul>
             <task-editor
                 ref='task-editor'
-                :nextSortOrder="nextSortOrder"
-                @addedTask="addTask">
+                :nextSortOrder="nextSortOrder">
             </task-editor>
         </div>
     `
 } as ComponentOptions<TaskList>
 
 export { taskListOptions as TaskListOptions }
-export { TaskList }

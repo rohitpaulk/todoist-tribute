@@ -1,20 +1,20 @@
 import './scss/style.scss';
 
 import Vue from 'vue';
-import * as Mousetrap from 'mousetrap';
+import Vuex from 'vuex'
 
-import { Task } from "./models";
-import { TaskListOptions, TaskList } from "./components/task_list";
-import { TaskEditorOptions, TaskEditor } from "./components/task_editor";
-import { Store } from "./store"
+import { TaskListOptions } from "./components/task_list";
+import { TaskEditorOptions } from "./components/task_editor";
+import { TuduStoreOptions } from "./store";
 
-var app = {
-    keyboardShortcuts: new Vue()
-};
+Vue.use(Vuex);
+
+let store = new Vuex.Store(TuduStoreOptions);
 
 Vue.component('task-editor', TaskEditorOptions);
 Vue.component('task-list', TaskListOptions);
 
 let vueInstance = new Vue({
-    el: '#vue-root'
+    el: '#vue-root',
+    store
 });

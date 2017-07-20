@@ -27,6 +27,7 @@
     "handlebars": "^4.0.10",
     "lodash": "^4.17.4",
     "vue": "^2.4.1",
-    "vue-class-component": "^5.0.2"
+    "vue-class-component": "^5.0.2",
+    "vuex": "^2.3.1"
   }
 }

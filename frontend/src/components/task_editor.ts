@@ -1,7 +1,7 @@
 import Vue, { ComponentOptions } from 'vue';
 
 import { Task } from '../models';
-import { Store } from '../store';
+import { API } from '../API';
 import * as _ from 'lodash';
 import * as Mousetrap from 'mousetrap';
 
@@ -55,12 +55,11 @@ let taskEditorOptions = {
         createTask: function() {
             let taskEditor = this;
 
-            let store = new Store('http://localhost:3000/');
-            store.createTask(this.newTask.title).then(function(task: Task) {
-                taskEditor.$emit('addedTask', task);
-                taskEditor.newTask.title = '';
-                taskEditor.hideTaskForm();
-            });
+            this.$store.dispatch('createTask', {title: this.newTask.title});
+
+            // TODO: Only after promise!
+            taskEditor.newTask.title = '';
+            taskEditor.hideTaskForm();
         }
     },
 
@@ -104,4 +103,3 @@ let taskEditorOptions = {
 } as ComponentOptions<TaskEditor>
 
 export { taskEditorOptions as TaskEditorOptions }
-export { TaskEditor }

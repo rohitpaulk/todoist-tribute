@@ -1,84 +1,63 @@
+import Vuex, { StoreOptions } from 'vuex';
+import * as _ from 'lodash';
+
 import { Task } from './models';
-import * as $ from 'jquery';
-import axios from 'axios';
+import { API } from './API'
 
-interface APITask {
-    title: string,
-    id: number, // TODO: Change this to id on backend?
-    sort_order: number,
-    indent_level: number
+
+interface TuduStoreOptions {
+    tasks: Task[]
 }
 
-class Store {
-    url: string
-
-    constructor(url: string) {
-        this.url = url;
-    }
-
-    static error() {
-        console.log(arguments);
-        alert('Error contacting backend! Check console.');
-    }
-
-    getTasks(): Promise<Task[]> {
-        let url = this.url + "api/v1/tasks.json";
-        let axiosPromise = axios.get(url);
-
-        return Store.PromiseForMultipleTasks(axiosPromise);
-    }
-
-    createTask(title: string): Promise<Task> {
-        let url = this.url + "api/v1/tasks.json";
-        let axiosPromise = axios.post(url, {
-            title: title
-        });
-
-        return Store.PromiseForSingleTask(axiosPromise);
-    }
-
-    updateTask(id: string, properties: {[ key: string]: any}): Promise<Task> {
-        let url = this.url + "api/v1/tasks/" + id + ".json";
-        let axiosPromise = axios.put(url, properties);
-
-        return Store.PromiseForSingleTask(axiosPromise);
-    }
-
-    reorderTasks(tasks: Task[]): Promise<Task[]> {
-        let url = this.url + "api/v1/tasks/reorder.json";
-        let axiosPromise = axios.post(url, {task_ids: tasks.map(x => Number(x.id))});
-
-        return Store.PromiseForMultipleTasks(axiosPromise);
-    }
-
-    static PromiseForMultipleTasks(axiosPromise): Promise<Task[]> {
-        return new Promise(function(resolve, reject) {
-            let resolver = function(axiosResponse) {
-                resolve(axiosResponse.data.map(Store.TaskFromAPI));
-            };
-
-            axiosPromise.then(resolver, Store.error);
-        })
-    }
-
-    static PromiseForSingleTask(axiosPromise): Promise<Task> {
-        return new Promise(function(resolve, reject) {
-            let resolver = function(axiosResponse) {
-                resolve(Store.TaskFromAPI(axiosResponse.data));
-            };
-
-            axiosPromise.then(resolver, Store.error);
-        })
-    }
-
-    static TaskFromAPI(data: APITask): Task {
-        return {
-            title: data.title,
-            id: String(data.id), // TODO: Make API return string
-            sortOrder: data.sort_order,
-            indentLevel: data.indent_level
-        };
-    }
+interface CreateTaskPayload {
+    title: string
 }
 
-export { Store };
+let api = new API('http://localhost:3000/');
+
+let storeOptions = {
+    strict: true, // Disable on production?
+    state: {
+        tasks: []
+    },
+    mutations: {
+        addTask(state, task: Task) {
+            state.tasks.push(task);
+        },
+
+        removeTask(state, task: Task) {
+            state.tasks = _.filter(state.tasks, (x) => x.id !== task.id);
+        },
+
+        setTasks(state, tasks: Task[]) {
+            state.tasks = tasks;
+        }
+    },
+    actions: { // TODO: Return promises?
+        createTask(context, payload: CreateTaskPayload) {
+            api.createTask(payload.title).then(function(task: Task) {
+                context.commit('addTask', task)
+            });
+        },
+
+        refreshTasks(context) {
+            api.getTasks().then(function(tasks: Task[]) {
+                context.commit('setTasks', tasks);
+            });
+        },
+
+        completeTask(context, task: Task) {
+            api.updateTask(task.id, {is_completed: true}).then(function() {
+                context.commit('removeTask', task);
+            });
+        },
+
+        reorderTasks(context, tasks: Task[]) {
+            api.reorderTasks(tasks).then(function(tasksFromAPI) {
+                context.commit('setTasks', tasksFromAPI);
+            });
+        }
+    }
+} as StoreOptions<TuduStoreOptions>
+
+export { storeOptions as TuduStoreOptions }
