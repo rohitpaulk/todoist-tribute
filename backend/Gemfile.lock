@@ -61,6 +61,7 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.0.5)
+    database_cleaner (1.6.1)
     erubi (1.6.1)
     execjs (2.7.0)
     factory_girl (4.8.0)
@@ -179,6 +180,7 @@ DEPENDENCIES
   byebug
   capybara (~> 2.13)
   coffee-rails (~> 4.2)
+  database_cleaner
   factory_girl
   jbuilder (~> 2.5)
   listen (>= 3.0.5, < 3.2)

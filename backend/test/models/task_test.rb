@@ -31,6 +31,17 @@ class TaskTest < ActiveSupport::TestCase
   end
 
   test "#reorder handles missing tasks?" do
-    skip "Not implemented yet"
+    first_task = FactoryGirl.create(:task, sort_order: 1)
+    second_task = FactoryGirl.create(:task, sort_order: 2)
+    third_task = FactoryGirl.create(:task, sort_order: 3)
+    fourth_task = FactoryGirl.create(:task, sort_order: 4)
+
+    Task.reorder!([third_task.id, fourth_task.id])
+    assert_equal 1, Task.find(third_task.id).sort_order
+    assert_equal 2, Task.find(fourth_task.id).sort_order
+
+    # The tasks that weren't mentioned appear at the end
+    assert_equal 3, Task.find(first_task.id).sort_order
+    assert_equal 4, Task.find(second_task.id).sort_order
   end
 end

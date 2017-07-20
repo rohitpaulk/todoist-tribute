@@ -18,7 +18,7 @@ class TasksController < ApplicationController
       render json: {'msg' => 'title param missing'}, status: 400 and return
     end
 
-    task = Task.create_with_next_sort_order!(title: title)
+    task = Task.create_with_next_sort_order!(title: title, project: Project.find_by_name('Inbox'))
 
     # TODO: Support in-between sort_orders
 

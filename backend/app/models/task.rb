@@ -10,12 +10,13 @@ class Task < ApplicationRecord
 
   def self.reorder!(task_ids)
     quoted_ids = task_ids.map {|x| ActiveRecord::Base.connection.quote(x) }
-    pg_array = "ARRAY[#{quoted_ids.join(', ')}]"
+    pg_array = "ARRAY[#{quoted_ids.join(', ')}]::int[]"
 
+    # TODO: Make this work with bigint!
     Task.connection.execute <<-SQL
       UPDATE tasks
          SET sort_order = (
-           idx(#{pg_array}::int[], tasks.id::int) -- TODO: Make this work with bigint!
+           idx(#{pg_array} + (ARRAY(SELECT id::int FROM tasks) - #{pg_array}), tasks.id::int)
          )
     SQL
   end
