@@ -162,10 +162,10 @@ body {
         .task-item {
             position: relative;
 
-            &.indent-1 { margin-left: $task-indent-padding; }
-            &.indent-2 { margin-left: $task-indent-padding * 2; }
-            &.indent-3 { margin-left: $task-indent-padding * 3; }
-            &.indent-4 { margin-left: $task-indent-padding * 4; }
+            &.indent-1 { margin-left: 0; }
+            &.indent-2 { margin-left: $task-indent-padding; }
+            &.indent-3 { margin-left: $task-indent-padding * 2; }
+            &.indent-4 { margin-left: $task-indent-padding * 3; }
 
             &.is-dragged {
                 background-color: $color-light-gray;
