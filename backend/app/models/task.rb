@@ -1,5 +1,6 @@
 class Task < ApplicationRecord
   validates :title, presence: true
+  belongs_to :project
 
   def self.create_with_next_sort_order!(properties)
     # TODO: Make this atomic

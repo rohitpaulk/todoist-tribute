@@ -6,4 +6,6 @@ Rails.application.routes.draw do
   match 'api/v1/tasks/reorder', to: 'tasks#preflight', via: :options
   match 'api/v1/tasks', to: 'tasks#preflight', via: :options
   match 'api/v1/tasks/:id', to: 'tasks#preflight', via: :options
+
+  get 'api/v1/projects', to: 'projects#index'
 end

@@ -18,7 +18,8 @@ ActiveRecord::Schema.define(version: 20170720094226) do
 
   create_table "projects", force: :cascade do |t|
     t.string "name"
-    t.string "hex_color"
+    t.string "color_hex"
+    t.boolean "is_system", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -30,7 +31,9 @@ ActiveRecord::Schema.define(version: 20170720094226) do
     t.integer "indent_level", default: 1
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "project_id"
     t.index ["sort_order"], name: "unique_sort_order", unique: true
   end
 
+  add_foreign_key "tasks", "projects", on_delete: :cascade
 end

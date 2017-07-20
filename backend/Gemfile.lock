@@ -63,6 +63,8 @@ GEM
     concurrent-ruby (1.0.5)
     erubi (1.6.1)
     execjs (2.7.0)
+    factory_girl (4.8.0)
+      activesupport (>= 3.0.0)
     ffi (1.9.18)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
@@ -177,6 +179,7 @@ DEPENDENCIES
   byebug
   capybara (~> 2.13)
   coffee-rails (~> 4.2)
+  factory_girl
   jbuilder (~> 2.5)
   listen (>= 3.0.5, < 3.2)
   pg
