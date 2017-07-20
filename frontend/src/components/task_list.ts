@@ -119,7 +119,11 @@ let taskListOptions = {
             // Note: This has to be manually forced to updated!
             return {
                 'task-item': true,
-                'is-dragged': this.dragState && (this.dragState.currentDraggedTask.id === task.id)
+                'is-dragged': this.dragState && (this.dragState.currentDraggedTask.id === task.id),
+                'indent-1': task.indentLevel == 1,
+                'indent-2': task.indentLevel == 2,
+                'indent-3': task.indentLevel == 3,
+                'indent-4': task.indentLevel == 4
             };
         }
     },

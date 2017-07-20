@@ -6,6 +6,7 @@ $content-width: 950px;
 $sidebar-left-padding: 35px;
 $content-top-padding: 30px;
 $content-left-padding: 30px;
+$task-indent-padding: 25px;
 
 $checkbox-diameter: 20px;
 
@@ -160,6 +161,11 @@ body {
 
         .task-item {
             position: relative;
+
+            &.indent-1 { margin-left: $task-indent-padding; }
+            &.indent-2 { margin-left: $task-indent-padding * 2; }
+            &.indent-3 { margin-left: $task-indent-padding * 3; }
+            &.indent-4 { margin-left: $task-indent-padding * 4; }
 
             &.is-dragged {
                 background-color: $color-light-gray;
