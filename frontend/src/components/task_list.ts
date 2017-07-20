@@ -5,7 +5,14 @@ import { Store } from '../store';
 import * as _ from 'lodash';
 
 interface TaskList extends Vue {
+    // data
     tasks: Task[],
+    dragState: null | {
+        currentDraggedTask: Task,
+        tasksBeforeDrag: Task[]
+    }
+
+    // computed
     nextSortOrder: number,
 }
 
@@ -13,6 +20,7 @@ let taskListOptions = {
     data: function() {
         return {
             tasks: [],
+            dragState: null
         }
     },
 
@@ -51,13 +59,78 @@ let taskListOptions = {
                 });
             });
         },
+
+        startDrag: function(event, task: Task): boolean {
+            event.dataTransfer.setData('tudu/x-task', task.id);
+            event.dataTransfer.setDragImage(event.target.parentNode, 0, 0);
+
+            this.dragState = {
+                currentDraggedTask: task,
+                tasksBeforeDrag: this.tasks.slice() // Copy, not reference!
+            };
+
+            return false;
+        },
+
+        endDrag: function() {
+            if (!_.isNull(this.dragState)) {
+                // The drag was aborted halfway
+                this.tasks = this.dragState.tasksBeforeDrag;
+                this.dragState = null;
+            } else {
+                // Nothing to do, the drop successfully happened.
+            }
+        },
+
+        dragEnter: function(event, currentTask: Task): boolean {
+            let taskList = this;
+            if (!_.includes(event.dataTransfer.types, 'tudu/x-task')) {
+                return true;
+            }
+
+            let currentTaskPosition = _.findIndex(this.tasks, function(x) {
+                return x.id === currentTask.id;
+            });
+
+            let draggedTaskPosition = _.findIndex(this.tasks, function(x) {
+                return x.id === taskList.dragState.currentDraggedTask.id;
+            });
+
+            let cp = currentTaskPosition;
+            let dp = draggedTaskPosition;
+
+            [this.tasks[cp], this.tasks[dp]] = [this.tasks[dp], this.tasks[cp]]
+            this.$forceUpdate(); // TODO: Figure out why?
+
+            return false;
+        },
+
+        droppedTask(event, task: Task) {
+            this.dragState = null;
+        },
+
+        taskItemClass(task: Task) {
+            // Note: This has to be manually forced to updated!
+            return {
+                'task-item': true,
+                'is-dragged': this.dragState && (this.dragState.currentDraggedTask.id === task.id)
+            };
+        }
     },
 
     template: `
         <div>
             <ul class="task-list">
-                <li v-for="task in tasks" class="task-item">
-                    <span class="dragbars-holder">
+                <li v-for="task in tasks"
+                    v-bind:class="taskItemClass(task)"
+                    @drop="droppedTask($event, task)"
+                    @dragover.prevent
+                    @dragenter="dragEnter($event, task)">
+
+                    <span class="dragbars-holder"
+                          draggable="true"
+                          @dragstart="startDrag($event, task)"
+                          @dragend="endDrag()">
                         <i class="fa fa-bars drag-bars"></i>
                     </span>
                     <span class="icon-holder">

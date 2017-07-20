@@ -161,6 +161,11 @@ body {
         .task-item {
             position: relative;
 
+            &.is-dragged {
+                background-color: $color-light-gray;
+                box-shadow: 0px 0px 5px 0px $color-light-gray;
+            }
+
             & > span {
                 display: inline-block;
                 vertical-align: middle;
@@ -170,20 +175,11 @@ body {
                 margin-right: 5px;
             }
 
-            .dragbars-holder {
-                visibility: hidden;
-            }
-
-            &:hover {
-                .dragbars-holder {
-                    visibility: visible;
-                }
-            }
-
+            // TODO: Find a way to hide dragbars!
             .dragbars-holder {
                 display: inline-block;
                 // Hack for wide-font
-                width: $checkbox-diameter * 0.75;
+                width: $checkbox-diameter * 0.6;
                 height: $checkbox-diameter;
 
                 .drag-bars {

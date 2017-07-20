@@ -21,13 +21,7 @@ class Store {
             let axiosPromise = axios.get(url);
 
             let resolver = function(axiosResponse) {
-                resolve(axiosResponse.data.map(function(item): Task {
-                    return {
-                        title: item.title,
-                        id: item.id,
-                        sortOrder: item.sort_order
-                    };
-                }));
+                resolve(axiosResponse.data.map(Store.TaskFromAPI));
             };
 
             axiosPromise.then(resolver, Store.error);
@@ -43,11 +37,7 @@ class Store {
             });
 
             let resolver = function(axiosResponse) {
-                resolve({
-                    title: axiosResponse.data.title,
-                    id: axiosResponse.data.id,
-                    sortOrder: axiosResponse.data.sort_order
-                });
+                resolve(Store.TaskFromAPI(axiosResponse.data));
             };
 
             axiosPromise.then(resolver, Store.error);
@@ -61,15 +51,19 @@ class Store {
             let axiosPromise = axios.put(url, properties);
 
             let resolver = function(axiosResponse) {
-                resolve({
-                    title: axiosResponse.data.title,
-                    id: axiosResponse.data.id,
-                    sortOrder: axiosResponse.data.sort_order
-                });
+                resolve(Store.TaskFromAPI(axiosResponse.data));
             };
 
             axiosPromise.then(resolver, Store.error);
         })
+    }
+
+    static TaskFromAPI(data: {[key: string]: any}): Task {
+        return {
+            title: data.title,
+            id: String(data.id), // TODO: Make API return string
+            sortOrder: data.sort_order
+        };
     }
 }
 
