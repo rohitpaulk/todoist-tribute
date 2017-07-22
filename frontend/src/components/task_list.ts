@@ -44,6 +44,22 @@ let taskListOptions = {
                 });
             }
         },
+
+        taskItemClasses(): {[key: string]: any} {
+            let classObjectMap = {};
+            // TODO: Is there a more functional way to do this?
+            //       i.e. return [task_id, {}] and then turn into a Map?
+            let dragState = this.dragState;
+            _.forEach(this.tasks, function(task: Task) {
+                classObjectMap[task.id] = {
+                    'task-item': true,
+                    'resource-item': true,
+                    'is-dragged': dragState && (dragState.draggedTask.id === task.id)
+                };
+            });
+
+            return classObjectMap;
+        }
     },
 
     created: function() {
@@ -120,27 +136,13 @@ let taskListOptions = {
 
             this.dragState = null;
         },
-
-        taskItemClass(task: Task) {
-            // Note: This has to be manually forced to updated!
-            // TODO: Convert to dict for ALL tasks, only picked required.
-            return {
-                'task-item': true,
-                'resource-item': true,
-                'is-dragged': this.dragState && (this.dragState.draggedTask.id === task.id),
-                'indent-1': task.indentLevel == 1,
-                'indent-2': task.indentLevel == 2,
-                'indent-3': task.indentLevel == 3,
-                'indent-4': task.indentLevel == 4
-            };
-        }
     },
 
     template: `
         <div>
             <ul class="task-list resource-list">
                 <li v-for="task in tasks"
-                    v-bind:class="taskItemClass(task)"
+                    v-bind:class="taskItemClasses[task.id]"
                     @drop="droppedTask($event, task)"
                     @dragover.prevent
                     @dragenter="dragEnter($event, task)">
