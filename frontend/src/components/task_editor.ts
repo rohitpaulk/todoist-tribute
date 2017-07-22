@@ -33,7 +33,7 @@ let taskEditorOptions = {
 
     props: {
         initialProject: { required: true }
-    }
+    },
 
     methods: {
         emitClose: function() {

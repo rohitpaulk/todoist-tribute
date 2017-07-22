@@ -43,12 +43,14 @@ let taskListOptions = {
         // Might have to filter by something?
         localTasks(): Task[] {
             let taskList = this;
-            if (_.isNull(this.dragState)) {
+            if (taskList.dragState === undefined) {
                 return this.tasks;
             } else {
+                let dragState = taskList.dragState
+
                 // Order locally, according to drag state
                 return _.sortBy(taskList.tasks, function (task: Task) {
-                    return _.indexOf(taskList.dragState.currentOrder, task.id);
+                    return _.indexOf(dragState.currentOrder, task.id);
                 });
             }
         },
@@ -108,7 +110,7 @@ let taskListOptions = {
         endDrag: function() {
             if (!_.isNull(this.dragState)) {
                 // The drag was aborted halfway
-                this.dragState = null;
+                this.dragState = undefined;
             } else {
                 // Nothing to do, the drop successfully happened.
             }
@@ -120,8 +122,8 @@ let taskListOptions = {
                 return true;
             }
 
-            let taskOrder = this.dragState.currentOrder.slice();
-            let draggedTask = this.dragState.draggedTask;
+            let taskOrder = this.dragState!.currentOrder.slice();
+            let draggedTask = this.dragState!.draggedTask;
 
             let currentTaskPosition = _.indexOf(taskOrder, currentTask.id);
             let draggedTaskPosition = _.indexOf(taskOrder, draggedTask.id);
@@ -133,16 +135,16 @@ let taskListOptions = {
             newOrder[cp] = taskOrder[dp];
             newOrder[dp] = taskOrder[cp];
 
-            this.dragState.currentOrder = newOrder;
+            this.dragState!.currentOrder = newOrder;
 
             return false;
         },
 
         droppedTask(event, task: Task) {
             // TODO: Wait for result via promise!
-            this.$store.dispatch('reorderTasks', this.dragState.currentOrder);
+            this.$store.dispatch('reorderTasks', this.dragState!.currentOrder);
 
-            this.dragState = null;
+            this.dragState = undefined;
         },
     },
 
