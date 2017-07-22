@@ -19,9 +19,3 @@ new Vue({
     el: '#vue-root',
     store
 });
-
-// TODO: Unify into a single vue instance!
-new Vue({
-    el: '#vue-sidebar-root',
-    store
-});
