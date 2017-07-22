@@ -2,7 +2,8 @@ interface Task {
     title: string,
     id: string,
     sortOrder: number,
-    indentLevel: number
+    indentLevel: number,
+    projectId: string
 }
 
 interface Project {

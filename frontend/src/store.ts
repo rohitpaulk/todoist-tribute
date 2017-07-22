@@ -8,6 +8,7 @@ import { API } from './API'
 interface TuduStoreOptions {
     tasks: Task[],
     projects: Project[],
+    activeProject: Project,
 }
 
 interface CreateTaskPayload {
@@ -18,11 +19,27 @@ let api = new API('http://localhost:3000/');
 
 let storeOptions = {
     strict: true, // Disable on production?
+
     state: {
         tasks: [],
-        projects: []
+        projects: [],
+        // TODO: Look into avoiding hardcoding this
+        activeProject: {id: '1', name: 'Inbox', colorHex: "000000" }
     },
+
+    getters: {
+        tasksForActiveProject: function(state) {
+            return state.tasks.filter(function(task: Task) {
+                return task.projectId === state.activeProject.id
+            });
+        }
+    },
+
     mutations: {
+        setActiveProject(state, project: Project) {
+            this.activeProject = project;
+        },
+
         addTask(state, task: Task) {
             state.tasks.push(task);
         },

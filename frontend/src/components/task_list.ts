@@ -14,9 +14,11 @@ interface TaskList extends Vue {
     },
     isAddingTask: boolean,
 
+    // props
+    tasks: Task[]
+
     // computed
-    tasks: Task[] // Pulled from global store
-    tasksOrderedLocally: Task[]
+    localTasks: Task[]
 
     // methods
     showTaskForm: () => void
@@ -31,15 +33,17 @@ let taskListOptions = {
         }
     },
 
+    props: ['tasks'],
+
     computed: {
         // Might have to filter by something?
-        tasks(): Task[] {
+        localTasks(): Task[] {
             let taskList = this;
             if (_.isNull(this.dragState)) {
-                return this.$store.state.tasks;
+                return this.tasks;
             } else {
                 // Order locally, according to drag state
-                return _.sortBy(taskList.$store.state.tasks, function (task: Task) {
+                return _.sortBy(taskList.tasks, function (task: Task) {
                     return _.indexOf(taskList.dragState.currentOrder, task.id);
                 });
             }
@@ -141,7 +145,7 @@ let taskListOptions = {
     template: `
         <div>
             <ul class="task-list resource-list">
-                <li v-for="task in tasks"
+                <li v-for="task in localTasks"
                     v-bind:class="taskItemClasses[task.id]"
                     @drop="droppedTask($event, task)"
                     @dragover.prevent

@@ -6,7 +6,8 @@ interface APITask {
     title: string,
     id: number, // TODO: Change this to string on backend?
     sort_order: number,
-    indent_level: number
+    indent_level: number,
+    project_id: number // TODO: Change this to string on backend?
 }
 
 interface APIProject {
@@ -109,7 +110,8 @@ class API {
             title: data.title,
             id: String(data.id), // TODO: Make API return string
             sortOrder: data.sort_order,
-            indentLevel: data.indent_level
+            indentLevel: data.indent_level,
+            projectId: String(data.project_id)
         };
     }
 

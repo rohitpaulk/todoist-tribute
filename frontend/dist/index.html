@@ -29,17 +29,15 @@
                                 <span class="counter">(2)<span>
                             </span>
                         </a>
-                        <div>
-                            <div class="project-list-container">
-                                <project-list></project-list>
-                            </div>
+                        <div class="project-list-container">
+                            <project-list></project-list>
                         </div>
                     </div><div class="content">
                         <div class="section-header">
                             <h2>Inbox</h2>
                         </div>
                         <div>
-                            <task-list></task-list>
+                            <task-list :tasks="$store.getters.tasksForActiveProject"></task-list>
                         </div>
                     </div>
                 </div>
