@@ -1,14 +1,18 @@
 import Vue, { ComponentOptions } from 'vue';
 
-import { Task } from '../models';
+import { Task, Project } from '../models';
 import { API } from '../API';
 import * as _ from 'lodash';
 
 interface TaskEditor extends Vue {
     // data
     newTask: {
-        title: string
+        title: string,
+        project: Project
     },
+
+    // prop
+    initialProject: Project,
 
     // methods
     emitClose: () => void,
@@ -21,10 +25,15 @@ let taskEditorOptions = {
         return {
             inputFocusPending: false,
             newTask: {
-                title: ''
+                title: '',
+                project: this.initialProject
             },
         }
     },
+
+    props: {
+        initialProject: { required: true }
+    }
 
     methods: {
         emitClose: function() {
@@ -34,7 +43,10 @@ let taskEditorOptions = {
         createTask: function() {
             let taskEditor = this;
 
-            this.$store.dispatch('createTask', {title: this.newTask.title});
+            this.$store.dispatch('createTask', {
+                title: this.newTask.title,
+                project: this.newTask.project
+            });
 
             // TODO: Only after promise resolves!
             taskEditor.newTask.title = '';

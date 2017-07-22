@@ -12,7 +12,8 @@ interface TuduStoreOptions {
 }
 
 interface CreateTaskPayload {
-    title: string
+    title: string,
+    project: Project
 }
 
 let api = new API('http://localhost:3000/');
@@ -72,7 +73,7 @@ let storeOptions = {
     },
     actions: { // TODO: Return promises?
         createTask(context, payload: CreateTaskPayload) {
-            api.createTask(payload.title).then(function(task: Task) {
+            api.createTask(payload.title, payload.project.id).then(function(task: Task) {
                 context.commit('addTask', task)
             });
         },

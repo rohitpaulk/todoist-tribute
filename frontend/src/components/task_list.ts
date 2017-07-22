@@ -1,6 +1,6 @@
 import Vue, { ComponentOptions } from 'vue';
 
-import { Task } from '../models';
+import { Task, Project } from '../models';
 import { API } from '../API';
 import * as _ from 'lodash';
 import * as Mousetrap from 'mousetrap';
@@ -15,7 +15,8 @@ interface TaskList extends Vue {
     isAddingTask: boolean,
 
     // props
-    tasks: Task[]
+    tasks: Task[],
+    project: Project,
 
     // computed
     localTasks: Task[]
@@ -33,7 +34,10 @@ let taskListOptions = {
         }
     },
 
-    props: ['tasks'],
+    props: {
+        tasks: { required: true },
+        project: { required: true }
+    },
 
     computed: {
         // Might have to filter by something?
@@ -168,7 +172,11 @@ let taskListOptions = {
                     </span>
                 </li>
             </ul>
-            <task-editor v-if="isAddingTask" @close="hideTaskForm()"></task-editor>
+            <task-editor
+                v-if="isAddingTask"
+                @close="hideTaskForm()"
+                :initialProject="project">
+            </task-editor>
             <div v-else class="add-task" @click="showTaskForm()">
                 <span class="icon-holder">
                     <span class="add-icon">
@@ -176,7 +184,7 @@ let taskListOptions = {
                     </span>
                 </span>
                 <span class="text-holder">
-                    <a href="#" class="add-task-link"">Add Task</a>
+                    <a href="#" class="add-task-link">Add Task</a>
                 </span>
             </div>
         </div>

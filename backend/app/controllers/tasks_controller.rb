@@ -5,12 +5,18 @@ class TasksController < ApplicationController
 
   def create
     title = params[:title]
+    project_id = params[:project_id]
 
     unless title
       render json: {'msg' => 'title param missing'}, status: 400 and return
     end
 
-    task = Task.create_with_next_sort_order!(title: title, project: Project.find_by_name('Inbox'))
+    # TODO: Can be lax here, default to Inbox?
+    unless project_id
+      render json: {'msg' => 'project_id param missing'}, status: 400 and return
+    end
+
+    task = Task.create_with_next_sort_order!(title: title, project_id: project_id)
 
     # TODO: Support in-between sort_orders
 

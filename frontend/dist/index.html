@@ -41,7 +41,10 @@
                             <h2>Inbox</h2>
                         </div>
                         <div>
-                            <task-list :tasks="$store.getters.tasksForActiveProject"></task-list>
+                            <task-list
+                                :tasks="$store.getters.tasksForActiveProject"
+                                :project="$store.state.activeProject">
+                            </task-list>
                         </div>
                     </div>
                 </div>
