@@ -141,7 +141,6 @@ body {
 
 .project-list-container {
     margin-top: 20px;
-    margin-left: 10px;
 }
 
 .project-list .project-item {
@@ -151,7 +150,12 @@ body {
         background-color: white;
     }
 
+    &:hover {
+        cursor: pointer;
+    }
+
     span.icon-holder span.project-icon {
+        margin-left: 10px;
         display: block;
         width: $project-icon-diameter;
         height: $project-icon-diameter;
