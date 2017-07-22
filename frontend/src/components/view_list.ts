@@ -49,7 +49,9 @@ let viewListOptions = {
                 </span>
                 <span class="title">
                     <span class="text">{{ inboxProject.name }}</span>
-                    <span class="counter">{{ inboxProjectTaskCount}}</span>
+                    <span class="counter" v-if="inboxProjectTaskCount !== 0">
+                        {{ inboxProjectTaskCount }}
+                    </span>
                 </span>
             </a>
         </div>

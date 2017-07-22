@@ -65,9 +65,9 @@ let projectListOptions = {
                     <span class="text-holder">
                         <span class="project-title">
                             {{ project.name }}
-                            <span class="counter">
-                                {{ projectTaskCounts[project.id] }}
-                            </span>
+                        </span>
+                        <span class="counter" v-if="projectTaskCounts[project.id] !== 0">
+                            {{ projectTaskCounts[project.id] }}
                         </span>
                     </span>
                 </li>

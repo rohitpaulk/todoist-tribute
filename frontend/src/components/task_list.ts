@@ -29,6 +29,7 @@ interface TaskList extends Vue {
 let taskListOptions = {
     data: function() {
         return {
+            dragState: undefined,
             isAddingTask: false,
         }
     },

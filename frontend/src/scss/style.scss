@@ -125,7 +125,6 @@ body {
             font-size: 10px;
             color: lighten($color-black-text, 50);
             margin-left: 3px;
-            line-height: 25px;
         }
 
         &:hover, &.is-selected {
@@ -160,8 +159,8 @@ body {
     }
 
     span.text-holder {
-        margin-top: 6px;
-        margin-bottom: 6px;
+        margin-top: 10px;
+        margin-bottom: 10px;
     }
 
     span.counter {
@@ -169,7 +168,6 @@ body {
         font-size: 10px;
         color: lighten($color-black-text, 50);
         margin-left: 3px;
-        line-height: 25px;
     }
 }
 
