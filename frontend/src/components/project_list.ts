@@ -13,9 +13,7 @@ interface ProjectList extends Vue {
 
 let projectListOptions = {
     data: function() {
-        return {
-            dragState: null
-        }
+        return {}
     },
 
     props: {

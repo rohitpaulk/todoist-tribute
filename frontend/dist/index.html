@@ -11,24 +11,13 @@
                 </div>
                 <div class="all-holder">
                     <div class="left-menu">
-                        <a class="view-link selected" href="#">
-                            <span class="icon">
-                                <i class="fa fa-envelope-o"></i>
-                            </span>
-                            <span class="title">
-                                <span class="text">Inbox</span>
-                                <span class="counter">8</span>
-                            </span>
-                        </a>
-                        <a class="view-link" href="#">
-                            <span class="icon">
-                                <i class="fa fa-calendar-o"></i>
-                            </span>
-                            <span class="title">
-                                <span class="text">Today</span>
-                                <span class="counter">2<span>
-                            </span>
-                        </a>
+                        <div class="view-list-container">
+                           <view-list
+                               :inbox-project="$store.getters.inboxProject"
+                               :inbox-project-task-count="$store.getters.inboxProjectTaskCount"
+                               :selected-project="$store.state.activeProject">
+                           </view-list>
+                        </div>
                         <div class="project-list-container">
                             <project-list
                                 :projects="$store.state.projects"

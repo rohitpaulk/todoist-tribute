@@ -128,11 +128,11 @@ body {
             line-height: 25px;
         }
 
-        &:hover, &.selected {
+        &:hover, &.is-selected {
             background-color: #fff;
         }
 
-        &.selected {
+        &.is-selected {
             .title .text {
                 font-weight: 600;
             }

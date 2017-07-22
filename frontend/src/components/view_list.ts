@@ -1,0 +1,56 @@
+import Vue, { ComponentOptions } from 'vue';
+
+import { Project } from '../models';
+import { API } from '../API';
+import * as _ from 'lodash';
+
+// TODO: When implementing views, avoid project terminology.
+interface ViewList extends Vue {
+    // props
+    inboxProject: Project,
+    inboxProjectTaskCount: number,
+    selectedProject: Project
+}
+
+let viewListOptions = {
+    data: function() {
+        return {}
+    },
+
+    props: {
+        inboxProject: { required: true },
+        inboxProjectTaskCount: { required: true },
+        selectedProject: { required: true } // Should this be required?
+    },
+
+    computed: {
+        inboxItemClass: function() {
+            return {
+                'view-link': true,
+                'is-selected': this.inboxProject.id === this.selectedProject.id
+            };
+        }
+    },
+
+    methods: {
+        setInboxAsActiveProject: function() {
+            this.$store.commit('setActiveProject', this.inboxProject);
+        }
+    },
+
+    template: `
+        <div>
+            <a :class="inboxItemClass" href="#" v-if="inboxProject">
+                <span class="icon">
+                    <i class="fa fa-envelope-o"></i>
+                </span>
+                <span class="title">
+                    <span class="text">{{ inboxProject.name }}</span>
+                    <span class="counter">{{ inboxProjectTaskCount}}</span>
+                </span>
+            </a>
+        </div>
+    ` // TODO: Add project editor!
+} as ComponentOptions<ViewList>
+
+export { viewListOptions as ViewListOptions }

@@ -29,10 +29,20 @@ let storeOptions = {
     },
 
     getters: {
-        tasksForActiveProject: function(state) {
+        tasksForActiveProject: function(state): Task[] {
             return state.tasks.filter(function(task: Task) {
                 return task.projectId === state.activeProject.id
             });
+        },
+
+        inboxProject: function(state): Project {
+            return state.projects.find((x) => x.id === '1')!;
+        },
+
+        inboxProjectTaskCount: function(state, getters): number {
+            return state.tasks.filter(function(task: Task) {
+                return task.projectId === getters.inboxProject.id
+            }).length;
         },
 
         // TODO: Either move to backend or decorate the project with counts?
