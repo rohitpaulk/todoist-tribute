@@ -17,7 +17,7 @@
                             </span>
                             <span class="title">
                                 <span class="text">Inbox</span>
-                                <span class="counter">(8)</span>
+                                <span class="counter">8</span>
                             </span>
                         </a>
                         <a class="view-link" href="#">
@@ -26,11 +26,15 @@
                             </span>
                             <span class="title">
                                 <span class="text">Today</span>
-                                <span class="counter">(2)<span>
+                                <span class="counter">2<span>
                             </span>
                         </a>
                         <div class="project-list-container">
-                            <project-list></project-list>
+                            <project-list
+                                :projects="$store.state.projects"
+                                :selected-project="$store.state.activeProject"
+                                :project-task-counts="$store.getters.projectTaskCounts">
+                            </project-list>
                         </div>
                     </div><div class="content">
                         <div class="section-header">

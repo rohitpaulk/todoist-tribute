@@ -32,12 +32,26 @@ let storeOptions = {
             return state.tasks.filter(function(task: Task) {
                 return task.projectId === state.activeProject.id
             });
+        },
+
+        // TODO: Either move to backend or decorate the project with counts?
+        projectTaskCounts: function(state): {[key: string]: number} {
+            // TODO: A more functional way?
+            let result = {};
+
+            _.forEach(state.projects, function(project: Project) {
+                result[project.id] = _.filter(state.tasks, function(task: Task) {
+                    return task.projectId === project.id;
+                }).length;
+            })
+
+            return result;
         }
     },
 
     mutations: {
         setActiveProject(state, project: Project) {
-            this.activeProject = project;
+            state.activeProject = project;
         },
 
         addTask(state, task: Task) {

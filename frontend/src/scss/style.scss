@@ -148,7 +148,7 @@ body {
 .project-list .project-item {
     font-size: 14px;
 
-    &:hover {
+    &.is-selected, &:hover {
         background-color: white;
     }
 
@@ -162,6 +162,14 @@ body {
     span.text-holder {
         margin-top: 13px;
         margin-bottom: 13px;
+    }
+
+    span.counter {
+        font-weight: 300;
+        font-size: 10px;
+        color: lighten($color-black-text, 50);
+        margin-left: 3px;
+        line-height: 25px;
     }
 }
 
