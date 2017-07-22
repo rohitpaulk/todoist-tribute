@@ -36,6 +36,8 @@ class TasksController < ApplicationController
       render json: {'msg' => 'project_id param missing'}, status: 400 and return
     end
 
+    # TODO: validate that all tasks belong to the same project, throw 400
+
     Task.reorder!(task_ids, Project.find(project_id))
 
     render json: Task.where(is_completed: false).order(sort_order: :asc).all
