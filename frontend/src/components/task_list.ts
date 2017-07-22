@@ -9,9 +9,10 @@ import * as Mousetrap from 'mousetrap';
 interface TaskList extends Vue {
     // data
     dragState?: {
-        draggedTask: Task,
+        draggedTask: Task
         orderBeforeDrag: string[] // Array of IDs
         currentOrder: string[] // Array of IDs
+        requestInProgress: boolean
     },
     isAddingTask: boolean,
 
@@ -102,18 +103,19 @@ let taskListOptions = {
             this.dragState = {
                 draggedTask: task,
                 orderBeforeDrag: this.tasks.map(x => x.id),
-                currentOrder: this.tasks.map(x => x.id)
+                currentOrder: this.tasks.map(x => x.id),
+                requestInProgress: false
             };
 
             return false;
         },
 
         endDrag: function() {
-            if (!_.isNull(this.dragState)) {
+            if ((this.dragState === undefined) || (this.dragState.requestInProgress)) {
+                // The drop either sucessfully happened, or is in progress.
+            } else {
                 // The drag was aborted halfway
                 this.dragState = undefined;
-            } else {
-                // Nothing to do, the drop successfully happened.
             }
         },
 
@@ -142,15 +144,19 @@ let taskListOptions = {
         },
 
         droppedTask(event) {
+            let taskList = this;
             // TODO: Wait for result via promise!
             let payload: ReorderTasksPayload = {
                 task_ids: this.dragState!.currentOrder,
                 project: this.project
             };
 
-            this.$store.dispatch('reorderTasks', payload);
-            this.dragState = undefined;
-        },
+            taskList.dragState!.requestInProgress = true;
+
+            this.$store.dispatch('reorderTasks', payload).then(function() {
+                taskList.dragState = undefined;
+            });
+        }
     },
 
     template: `

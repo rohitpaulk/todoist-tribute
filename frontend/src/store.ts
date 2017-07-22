@@ -40,11 +40,15 @@ let storeOptions = {
             });
         },
 
-        inboxProject: function(state): Project {
+        inboxProject: function(state): Project | undefined {
             return state.projects.find((x) => x.id === '1')!;
         },
 
         inboxProjectTaskCount: function(state, getters): number {
+            if (getters.inboxProject === undefined) {
+                return 0;
+            }
+
             return state.tasks.filter(function(task: Task) {
                 return task.projectId === getters.inboxProject.id
             }).length;
@@ -111,9 +115,12 @@ let storeOptions = {
             });
         },
 
-        reorderTasks(context, payload: ReorderTasksPayload) {
-            api.reorderTasks(payload.project, payload.task_ids).then(function(tasksFromAPI) {
-                context.commit('setTasks', tasksFromAPI);
+        reorderTasks(context, payload: ReorderTasksPayload): Promise<void> {
+            return new Promise(function(resolve, reject) {
+                api.reorderTasks(payload.project, payload.task_ids).then(function(tasksFromAPI) {
+                    context.commit('setTasks', tasksFromAPI);
+                    resolve();
+                });
             });
         },
 
