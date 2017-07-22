@@ -19,7 +19,7 @@ puts "Creating tasks..."
 Task.create!(sort_order: 1, title: 'This is the first task', project: inbox)
 Task.create!(sort_order: 2, title: 'da second task is here', project: inbox)
 Task.create!(sort_order: 3, title: '3rd task yo', project: inbox)
-Task.create!(sort_order: 4, title: 'First task in red project', project: red_project)
-Task.create!(sort_order: 5, title: 'Second task in red project', project: red_project)
+Task.create!(sort_order: 1, title: 'First task in red project', project: red_project)
+Task.create!(sort_order: 2, title: 'Second task in red project', project: red_project)
 
 puts "Tasks created."

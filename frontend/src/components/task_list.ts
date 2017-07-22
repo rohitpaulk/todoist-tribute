@@ -2,6 +2,7 @@ import Vue, { ComponentOptions } from 'vue';
 
 import { Task, Project } from '../models';
 import { API } from '../API';
+import { ReorderTasksPayload } from '../store';
 import * as _ from 'lodash';
 import * as Mousetrap from 'mousetrap';
 
@@ -140,10 +141,14 @@ let taskListOptions = {
             return false;
         },
 
-        droppedTask(event, task: Task) {
+        droppedTask(event) {
             // TODO: Wait for result via promise!
-            this.$store.dispatch('reorderTasks', this.dragState!.currentOrder);
+            let payload: ReorderTasksPayload = {
+                task_ids: this.dragState!.currentOrder,
+                project: this.project
+            };
 
+            this.$store.dispatch('reorderTasks', payload);
             this.dragState = undefined;
         },
     },
@@ -153,7 +158,7 @@ let taskListOptions = {
             <ul class="task-list resource-list">
                 <li v-for="task in localTasks"
                     v-bind:class="taskItemClasses[task.id]"
-                    @drop="droppedTask($event, task)"
+                    @drop="droppedTask($event)"
                     @dragover.prevent
                     @dragenter="dragEnter($event, task)">
 

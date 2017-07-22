@@ -16,6 +16,11 @@ interface CreateTaskPayload {
     project: Project
 }
 
+interface ReorderTasksPayload {
+    task_ids: string[],
+    project: Project
+}
+
 let api = new API('http://localhost:3000/');
 
 let storeOptions = {
@@ -106,8 +111,8 @@ let storeOptions = {
             });
         },
 
-        reorderTasks(context, task_ids: string[]) {
-            api.reorderTasks(task_ids).then(function(tasksFromAPI) {
+        reorderTasks(context, payload: ReorderTasksPayload) {
+            api.reorderTasks(payload.project, payload.task_ids).then(function(tasksFromAPI) {
                 context.commit('setTasks', tasksFromAPI);
             });
         },
@@ -121,3 +126,4 @@ let storeOptions = {
 } as StoreOptions<TuduStoreOptions>
 
 export { storeOptions as TuduStoreOptions }
+export { ReorderTasksPayload }
