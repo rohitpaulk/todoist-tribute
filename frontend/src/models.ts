@@ -5,4 +5,10 @@ interface Task {
     indentLevel: number
 }
 
-export { Task };
+interface Project {
+    id: string,
+    name: string,
+    colorHex: string
+}
+
+export { Task, Project };

@@ -139,6 +139,15 @@ body {
     }
 }
 
+.resource-item-list {
+    .resource-item {
+        & > span {
+            display: inline-block;
+            vertical-align: middle;
+        }
+    }
+}
+
 .content {
     // Left padding is applied selectively to components!
     padding-right: 30px;

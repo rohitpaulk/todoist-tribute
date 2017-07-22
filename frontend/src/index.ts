@@ -5,16 +5,23 @@ import Vuex from 'vuex'
 
 import { TaskListOptions } from "./components/task_list";
 import { TaskEditorOptions } from "./components/task_editor";
+import { ProjectListOptions } from "./components/project_list";
 import { TuduStoreOptions } from "./store";
-
-Vue.use(Vuex);
-
-let store = new Vuex.Store(TuduStoreOptions);
 
 Vue.component('task-editor', TaskEditorOptions);
 Vue.component('task-list', TaskListOptions);
+Vue.component('project-list', ProjectListOptions);
 
-let vueInstance = new Vue({
+Vue.use(Vuex);
+let store = new Vuex.Store(TuduStoreOptions);
+
+new Vue({
     el: '#vue-root',
+    store
+});
+
+// TODO: Unify into a single vue instance!
+new Vue({
+    el: '#vue-sidebar-root',
     store
 });

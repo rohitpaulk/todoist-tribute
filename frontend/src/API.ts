@@ -1,12 +1,18 @@
-import { Task } from './models';
+import { Task, Project } from './models';
 import * as $ from 'jquery';
 import axios from 'axios';
 
 interface APITask {
     title: string,
-    id: number, // TODO: Change this to id on backend?
+    id: number, // TODO: Change this to string on backend?
     sort_order: number,
     indent_level: number
+}
+
+interface APIProject {
+    name: string,
+    id: number, // TODO: Change this to string on backend?
+    color_hex: string
 }
 
 class API {
@@ -26,6 +32,13 @@ class API {
         let axiosPromise = axios.get(url);
 
         return API.PromiseForMultipleTasks(axiosPromise);
+    }
+
+    getProjects(): Promise<Project[]> {
+        let url = this.url + "api/v1/projects.json";
+        let axiosPromise = axios.get(url);
+
+        return API.PromiseForMultipleProjects(axiosPromise);
     }
 
     createTask(title: string): Promise<Task> {
@@ -71,12 +84,40 @@ class API {
         })
     }
 
+    static PromiseForMultipleProjects(axiosPromise): Promise<Project[]> {
+        return new Promise(function(resolve, reject) {
+            let resolver = function(axiosResponse) {
+                resolve(axiosResponse.data.map(API.ProjectFromAPI));
+            };
+
+            axiosPromise.then(resolver, API.error);
+        })
+    }
+
+    static PromiseForSingleProject(axiosPromise): Promise<Project> {
+        return new Promise(function(resolve, reject) {
+            let resolver = function(axiosResponse) {
+                resolve(API.ProjectFromAPI(axiosResponse.data));
+            };
+
+            axiosPromise.then(resolver, API.error);
+        })
+    }
+
     static TaskFromAPI(data: APITask): Task {
         return {
             title: data.title,
             id: String(data.id), // TODO: Make API return string
             sortOrder: data.sort_order,
             indentLevel: data.indent_level
+        };
+    }
+
+    static ProjectFromAPI(data: APIProject): Project {
+        return {
+            name: data.name,
+            id: String(data.id), // TODO: Make API return string
+            colorHex: data.color_hex
         };
     }
 }

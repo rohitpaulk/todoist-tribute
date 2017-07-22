@@ -1,12 +1,13 @@
 import Vuex, { StoreOptions } from 'vuex';
 import * as _ from 'lodash';
 
-import { Task } from './models';
+import { Task, Project } from './models';
 import { API } from './API'
 
 
 interface TuduStoreOptions {
-    tasks: Task[]
+    tasks: Task[],
+    projects: Project[],
 }
 
 interface CreateTaskPayload {
@@ -18,7 +19,8 @@ let api = new API('http://localhost:3000/');
 let storeOptions = {
     strict: true, // Disable on production?
     state: {
-        tasks: []
+        tasks: [],
+        projects: []
     },
     mutations: {
         addTask(state, task: Task) {
@@ -31,6 +33,10 @@ let storeOptions = {
 
         setTasks(state, tasks: Task[]) {
             state.tasks = tasks;
+        },
+
+        setProjects(state, projects: Project[]) {
+            state.projects = projects;
         }
     },
     actions: { // TODO: Return promises?
@@ -56,7 +62,13 @@ let storeOptions = {
             api.reorderTasks(task_ids).then(function(tasksFromAPI) {
                 context.commit('setTasks', tasksFromAPI);
             });
-        }
+        },
+
+        refreshProjects(context) {
+            api.getProjects().then(function(projects: Project[]) {
+                context.commit('setProjects', projects);
+            });
+        },
     }
 } as StoreOptions<TuduStoreOptions>
 

@@ -127,7 +127,7 @@ let taskListOptions = {
 
     template: `
         <div>
-            <ul class="task-list">
+            <ul class="task-list resource-item-list">
                 <li v-for="task in tasks"
                     v-bind:class="taskItemClass(task)"
                     @drop="droppedTask($event, task)"
