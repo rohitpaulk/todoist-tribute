@@ -20,14 +20,15 @@
                         </div>
                         <div class="project-list-container">
                             <project-list
-                                :projects="$store.state.projects"
+                                :projects="$store.getters.projectsWithoutInbox"
                                 :selected-project="$store.state.activeProject"
                                 :project-task-counts="$store.getters.projectTaskCounts">
                             </project-list>
                         </div>
                     </div><div class="content">
                         <div class="section-header">
-                            <h2>Inbox</h2>
+                            <h2 v-text="$store.state.activeProject.name">
+                            </h2>
                         </div>
                         <div>
                             <task-list

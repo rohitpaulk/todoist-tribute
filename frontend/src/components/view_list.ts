@@ -40,7 +40,10 @@ let viewListOptions = {
 
     template: `
         <div>
-            <a :class="inboxItemClass" href="#" v-if="inboxProject">
+            <a v-if="inboxProject"
+                :class="inboxItemClass"
+                href="#"
+                @click="setInboxAsActiveProject()">
                 <span class="icon">
                     <i class="fa fa-envelope-o"></i>
                 </span>

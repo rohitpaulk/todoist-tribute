@@ -45,6 +45,12 @@ let storeOptions = {
             }).length;
         },
 
+        projectsWithoutInbox: function(state): Project[] {
+            return state.projects.filter(function(project: Project) {
+                return project.id !== '1'; // TODO: use is_inbox instead
+            });
+        },
+
         // TODO: Either move to backend or decorate the project with counts?
         projectTaskCounts: function(state): {[key: string]: number} {
             // TODO: A more functional way?
