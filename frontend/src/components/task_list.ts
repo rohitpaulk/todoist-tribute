@@ -3,6 +3,7 @@ import Vue, { ComponentOptions } from 'vue';
 import { Task } from '../models';
 import { API } from '../API';
 import * as _ from 'lodash';
+import * as Mousetrap from 'mousetrap';
 
 interface TaskList extends Vue {
     // data
@@ -10,31 +11,27 @@ interface TaskList extends Vue {
         draggedTask: Task,
         orderBeforeDrag: string[] // Array of IDs
         currentOrder: string[] // Array of IDs
-    }
+    },
+    isAddingTask: boolean,
 
     // computed
-    nextSortOrder: number,
     tasks: Task[] // Pulled from global store
     tasksOrderedLocally: Task[]
+
+    // methods
+    showTaskForm: () => void
+    hideTaskForm: () => void
 }
 
 let taskListOptions = {
     data: function() {
         return {
-            dragState: null
+            dragState: null,
+            isAddingTask: false,
         }
     },
 
     computed: {
-        // TODO: Change this to be active sortOrder?
-        nextSortOrder(): number {
-            if (_.isEmpty(this.tasks)) {
-                return 0;
-            }
-
-            return _.last(this.tasks).sortOrder + 1;
-        },
-
         // Might have to filter by something?
         tasks(): Task[] {
             let taskList = this;
@@ -51,11 +48,24 @@ let taskListOptions = {
 
     created: function() {
         this.$store.dispatch('refreshTasks');
+        let taskList = this;
+
+        Mousetrap.bind('a', function() {
+            taskList.showTaskForm();
+        });
     },
 
     methods: {
         completeTask: function(task: Task): void {
             this.$store.dispatch('completeTask', task)
+        },
+
+        showTaskForm: function() {
+            this.isAddingTask = true;
+        },
+
+        hideTaskForm: function() {
+            this.isAddingTask = false;
         },
 
         startDrag: function(event, task: Task): boolean {
@@ -116,6 +126,7 @@ let taskListOptions = {
             // TODO: Convert to dict for ALL tasks, only picked required.
             return {
                 'task-item': true,
+                'resource-item': true,
                 'is-dragged': this.dragState && (this.dragState.draggedTask.id === task.id),
                 'indent-1': task.indentLevel == 1,
                 'indent-2': task.indentLevel == 2,
@@ -127,7 +138,7 @@ let taskListOptions = {
 
     template: `
         <div>
-            <ul class="task-list resource-item-list">
+            <ul class="task-list resource-list">
                 <li v-for="task in tasks"
                     v-bind:class="taskItemClass(task)"
                     @drop="droppedTask($event, task)"
@@ -151,10 +162,17 @@ let taskListOptions = {
                     </span>
                 </li>
             </ul>
-            <task-editor
-                ref='task-editor'
-                :nextSortOrder="nextSortOrder">
-            </task-editor>
+            <task-editor v-if="isAddingTask" @close="hideTaskForm()"></task-editor>
+            <div v-else class="add-task" @click="showTaskForm()">
+                <span class="icon-holder">
+                    <span class="add-icon">
+                        +
+                    </span>
+                </span>
+                <span class="text-holder">
+                    <a href="#" class="add-task-link"">Add Task</a>
+                </span>
+            </div>
         </div>
     `
 } as ComponentOptions<TaskList>

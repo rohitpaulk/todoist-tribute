@@ -9,6 +9,7 @@ $content-left-padding: 30px;
 $task-indent-padding: 25px;
 
 $checkbox-diameter: 20px;
+$project-icon-diameter: 10px;
 
 $color-red: #db4c3f;
 $color-darker-red: #c53727;
@@ -139,12 +140,40 @@ body {
     }
 }
 
-.resource-item-list {
-    .resource-item {
-        & > span {
-            display: inline-block;
-            vertical-align: middle;
-        }
+.project-list-container {
+    margin-top: 20px;
+    margin-left: 10px;
+}
+
+.project-list .project-item {
+    font-size: 14px;
+
+    &:hover {
+        background-color: white;
+    }
+
+    span.icon-holder span.project-icon {
+        display: block;
+        width: $project-icon-diameter;
+        height: $project-icon-diameter;
+        border-radius: $project-icon-diameter / 2;
+    }
+
+    span.text-holder {
+        margin-top: 13px;
+        margin-bottom: 13px;
+    }
+}
+
+.resource-list .resource-item {
+    & > span {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .icon-holder {
+        margin-right: 5px;
+        margin-left: 5px;
     }
 }
 
@@ -171,30 +200,22 @@ body {
         .task-item {
             position: relative;
 
-            &.indent-1 { margin-left: 0; }
-            &.indent-2 { margin-left: $task-indent-padding; }
-            &.indent-3 { margin-left: $task-indent-padding * 2; }
-            &.indent-4 { margin-left: $task-indent-padding * 3; }
+            // TODO: Bring this back when working on indents!
+            // &.indent-1 { margin-left: 0; }
+            // &.indent-2 { margin-left: $task-indent-padding; }
+            // &.indent-3 { margin-left: $task-indent-padding * 2; }
+            // &.indent-4 { margin-left: $task-indent-padding * 3; }
 
             &.is-dragged {
                 background-color: $color-light-gray;
                 box-shadow: 0px 0px 5px 0px $color-light-gray;
             }
 
-            & > span {
-                display: inline-block;
-                vertical-align: middle;
-            }
-
-            .icon-holder {
-                margin-right: 5px;
-            }
-
             // TODO: Find a way to hide dragbars!
             .dragbars-holder {
                 display: inline-block;
                 // Hack for wide-font
-                width: $checkbox-diameter * 0.6;
+                width: $checkbox-diameter * 0.4;
                 height: $checkbox-diameter;
 
                 .drag-bars {
@@ -218,9 +239,6 @@ body {
                 width: $checkbox-diameter;
                 height: $checkbox-diameter;
                 border-radius: $checkbox-diameter / 2;
-                margin-top: 13px;
-                margin-bottom: 13px;
-
                 background-color: white;
                 transition: background-color 150ms;
 
@@ -236,97 +254,101 @@ body {
                     background-position: center;
                 }
             }
+
+            span.text-holder {
+                line-height: 20px;
+                margin-top: 13px;
+                margin-bottom: 13px;
+            }
         }
     }
 
-    .task-editor {
+    .add-task {
         padding-left: $content-left-padding;
+        & > span {
+            display: inline-block;
+            vertical-align: middle;
+        }
 
-        .add-task {
-            & > span {
-                display: inline-block;
-                vertical-align: middle;
+        .icon-holder {
+            margin-right: 5px;
+        }
+
+        color: $color-red;
+        opacity: 0.4;
+        transition: opacity 150ms ease-in;
+
+        &:hover {
+            opacity: 1;
+            cursor: pointer;
+        }
+
+        @keyframes opacity {
+            from {
+                opacity: 0.5;
             }
 
-            .icon-holder {
-                margin-right: 5px;
-            }
-
-            color: $color-red;
-            opacity: 0.4;
-            transition: opacity 150ms ease-in;
-
-            &:hover {
+            to {
                 opacity: 1;
-                cursor: pointer;
-            }
-
-            @keyframes opacity {
-                from {
-                    opacity: 0.5;
-                }
-
-                to {
-                    opacity: 1;
-                }
-            }
-
-            span.icon-holder span.add-icon {
-                font-size: 24px;
-                width: $checkbox-diameter;
-                line-height: 40px;
-                text-align: center;
-                display: inline-block;
-            }
-
-            a:hover {
-                text-decoration: underline;
             }
         }
 
-        .task-form {
-            margin-top: 7px;
+        span.icon-holder span.add-icon {
+            font-size: 24px;
+            width: $checkbox-diameter;
+            line-height: 40px;
+            text-align: center;
+            display: inline-block;
+        }
 
-            input {
-                margin-bottom: 7px;
-                font-size: 14px;
-                width: 100%;
+        a:hover {
+            text-decoration: underline;
+        }
+    }
 
-                line-height: 24px;
+    .task-form {
+        padding-left: $content-left-padding;
+        margin-top: 7px;
 
-                padding: 6px 6px 6px 10px;
-                font-weight: lighter;
+        input {
+            margin-bottom: 7px;
+            font-size: 14px;
+            width: 100%;
 
-                &, &:hover {
-                    // Overrides blue focus on hover
-                    border: 1px solid $color-light-gray;
-                }
+            line-height: 24px;
+
+            padding: 6px 6px 6px 10px;
+            font-weight: lighter;
+
+            &, &:hover {
+                // Overrides blue focus on hover
+                border: 1px solid $color-light-gray;
             }
+        }
 
-            button, a {
-                font-size: 12px;
-                font-weight: lighter;
+        button, a {
+            font-size: 12px;
+            font-weight: lighter;
+        }
+
+        button {
+            background-color: $color-red;
+            color: #fff;
+            padding: 8px 12px 8px 12px;
+            border-radius: 2px;
+            border: none;
+            &:hover {
+                cursor: pointer;
+                background-color: $color-darker-red;
             }
+        }
 
-            button {
-                background-color: $color-red;
-                color: #fff;
-                padding: 8px 12px 8px 12px;
-                border-radius: 2px;
-                border: none;
-                &:hover {
-                    cursor: pointer;
-                    background-color: $color-darker-red;
-                }
-            }
+        a {
+            color: lighten($color-black-text, 30);
+            padding-left: 5px;
 
-            a {
-                color: lighten($color-black-text, 30);
-                padding-left: 5px;
-
-                &:hover {
-                    text-decoration: underline;
-                }
+            &:hover {
+                text-decoration: underline;
             }
         }
     }

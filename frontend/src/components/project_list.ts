@@ -30,10 +30,11 @@ let projectListOptions = {
 
     template: `
         <div>
-            <ul class="project-list resource-item-list">
-                <li v-for="project in projects">
+            <ul class="project-list resource-list">
+                <li v-for="project in projects" class="resource-item project-item">
                     <span class="icon-holder">
-                        <span class="project-icon">
+                        <span class="project-icon"
+                            :style="{ 'background-color': '#' + project.colorHex }">
                         </span>
                     </span>
                     <span class="text-holder">
