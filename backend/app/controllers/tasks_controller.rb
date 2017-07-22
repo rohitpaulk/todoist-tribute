@@ -16,7 +16,8 @@ class TasksController < ApplicationController
       render json: {'msg' => 'project_id param missing'}, status: 400 and return
     end
 
-    task = Task.create_with_next_sort_order!(title: title, project_id: project_id)
+    project = Project.find(project_id)
+    task = Task.create_with_next_sort_order!(project, title: title)
 
     # TODO: Support in-between sort_orders
 
@@ -25,12 +26,17 @@ class TasksController < ApplicationController
 
   def reorder
     task_ids = params[:task_ids]
+    project_id = params[:project_id]
 
     unless task_ids
       render json: {'msg' => 'task_ids param missing'}, status: 400 and return
     end
 
-    Task.reorder!(task_ids)
+    unless project_id
+      render json: {'msg' => 'project_id param missing'}, status: 400 and return
+    end
+
+    Task.reorder!(task_ids, Project.find(project_id))
 
     render json: Task.where(is_completed: false).order(sort_order: :asc).all
   end

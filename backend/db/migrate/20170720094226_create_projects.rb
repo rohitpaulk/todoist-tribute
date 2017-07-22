@@ -15,5 +15,15 @@ class CreateProjects < ActiveRecord::Migration[5.1]
 
     add_column :tasks, :project_id, :integer
     add_foreign_key :tasks, :projects, on_delete: :cascade
+
+    # Alter the sort_order uniqueness to be scoped to project
+    execute <<-SQL
+      ALTER TABLE tasks DROP CONSTRAINT unique_sort_order;
+      ALTER TABLE tasks ADD CONSTRAINT unique_sort_order
+                                       UNIQUE (project_id, sort_order)
+                                       DEFERRABLE
+                                       INITIALLY DEFERRED
+
+    SQL
   end
 end

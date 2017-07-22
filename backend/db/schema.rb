@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(version: 20170720094226) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "project_id"
-    t.index ["sort_order"], name: "unique_sort_order", unique: true
+    t.index ["project_id", "sort_order"], name: "unique_sort_order", unique: true
   end
 
   add_foreign_key "tasks", "projects", on_delete: :cascade
