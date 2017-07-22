@@ -19,9 +19,10 @@ ActiveRecord::Schema.define(version: 20170720094226) do
   create_table "projects", force: :cascade do |t|
     t.string "name"
     t.string "color_hex"
-    t.boolean "is_system", default: false
+    t.boolean "is_inbox", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["is_inbox"], name: "projects_is_inbox_idx", unique: true, where: "(is_inbox = true)"
   end
 
   create_table "tasks", force: :cascade do |t|

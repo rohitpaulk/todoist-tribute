@@ -3,7 +3,7 @@ FactoryGirl.define do
     title "Test Task"
     sort_order { (Task.maximum(:sort_order) || 0) + 1 }
     project {
-        Project.find_or_create_by(is_system: true) { |p| p.name = 'Inbox'}
+        Project.find_or_create_by(is_inbox: true) { |p| p.name = 'Inbox'}
     }
   end
 
