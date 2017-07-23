@@ -10,5 +10,6 @@ FactoryGirl.define do
   factory :project do
     name "Test Project"
     color_hex "000000"
+    sort_order { (Project.maximum(:sort_order) || 0) + 1 }
   end
 end
