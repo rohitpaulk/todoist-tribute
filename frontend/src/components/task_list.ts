@@ -3,22 +3,19 @@ import Vue, { ComponentOptions } from 'vue';
 import { Task, Project } from '../models';
 import { API } from '../API';
 import { ReorderTasksPayload } from '../store';
+import { DragEventHandlers, DragState } from '../helpers/drag_state';
 import * as _ from 'lodash';
 import * as Mousetrap from 'mousetrap';
 
 interface TaskList extends Vue {
     // data
-    dragState?: {
-        draggedTask: Task
-        orderBeforeDrag: string[] // Array of IDs
-        currentOrder: string[] // Array of IDs
-        requestInProgress: boolean
-    },
-    isAddingTask: boolean,
+    dragState?: DragState
+    dragOperationInProgress: boolean
+    isAddingTask: boolean
 
     // props
-    tasks: Task[],
-    project: Project,
+    tasks: Task[]
+    project: Project
 
     // computed
     localTasks: Task[]
@@ -32,6 +29,7 @@ let taskListOptions = {
     data: function() {
         return {
             dragState: undefined,
+            dragOperationInProgress: false,
             isAddingTask: false,
         }
     },
@@ -66,7 +64,7 @@ let taskListOptions = {
                 classObjectMap[task.id] = {
                     'task-item': true,
                     'resource-item': true,
-                    'is-dragged': dragState && (dragState.draggedTask.id === task.id)
+                    'is-dragged': dragState && (dragState.draggedItem.id === task.id)
                 };
             });
 
@@ -96,66 +94,48 @@ let taskListOptions = {
             this.isAddingTask = false;
         },
 
-        startDrag: function(event, task: Task): boolean {
-            event.dataTransfer.setData('tudu/x-task', task.id);
+        onDragStart: function(event, draggedTask: Task): boolean {
+            event.dataTransfer.setData('tudu/x-task', draggedTask.id);
             event.dataTransfer.setDragImage(event.target.parentNode, 0, 0);
 
-            this.dragState = {
-                draggedTask: task,
-                orderBeforeDrag: this.tasks.map(x => x.id),
-                currentOrder: this.tasks.map(x => x.id),
-                requestInProgress: false
-            };
+            this.dragState = DragEventHandlers.dragStart(this.tasks, draggedTask);
 
             return false;
         },
 
-        endDrag: function() {
-            if ((this.dragState === undefined) || (this.dragState.requestInProgress)) {
-                // The drop either sucessfully happened, or is in progress.
-            } else {
-                // The drag was aborted halfway
-                this.dragState = undefined;
-            }
-        },
-
-        dragEnter: function(event, currentTask: Task): boolean {
+        onDragEnter: function(event, currentTask: Task): boolean {
             let taskList = this;
             if (!_.includes(event.dataTransfer.types, 'tudu/x-task')) {
                 return true;
             }
 
-            let taskOrder = this.dragState!.currentOrder.slice();
-            let draggedTask = this.dragState!.draggedTask;
-
-            let currentTaskPosition = _.indexOf(taskOrder, currentTask.id);
-            let draggedTaskPosition = _.indexOf(taskOrder, draggedTask.id);
-
-            let cp = currentTaskPosition;
-            let dp = draggedTaskPosition;
-
-            let newOrder = taskOrder.slice();
-            newOrder[cp] = taskOrder[dp];
-            newOrder[dp] = taskOrder[cp];
-
-            this.dragState!.currentOrder = newOrder;
+            this.dragState = DragEventHandlers.dragEnter(this.dragState!, currentTask);
 
             return false;
         },
 
-        droppedTask(event) {
+        onDrop(event) {
             let taskList = this;
-            // TODO: Wait for result via promise!
+
             let payload: ReorderTasksPayload = {
                 task_ids: this.dragState!.currentOrder,
                 project: this.project
             };
 
-            taskList.dragState!.requestInProgress = true;
-
+            taskList.dragOperationInProgress = true;
             this.$store.dispatch('reorderTasks', payload).then(function() {
                 taskList.dragState = undefined;
+                taskList.dragOperationInProgress = false;
             });
+        },
+
+        onDragEnd: function() {
+            if ((this.dragState === undefined) || (this.dragOperationInProgress)) {
+                // The drop either sucessfully happened, or is in progress.
+            } else {
+                // The drag was aborted halfway
+                this.dragState = undefined;
+            }
         }
     },
 
@@ -164,14 +144,14 @@ let taskListOptions = {
             <ul class="task-list resource-list">
                 <li v-for="task in localTasks"
                     v-bind:class="taskItemClasses[task.id]"
-                    @drop="droppedTask($event)"
+                    @drop="onDrop($event)"
                     @dragover.prevent
-                    @dragenter="dragEnter($event, task)">
+                    @dragenter="onDragEnter($event, task)">
 
                     <span class="dragbars-holder"
                           draggable="true"
-                          @dragstart="startDrag($event, task)"
-                          @dragend="endDrag()">
+                          @dragstart="onDragStart($event, task)"
+                          @dragend="onDragEnd()">
                         <i class="fa fa-bars drag-bars"></i>
                     </span>
                     <span class="icon-holder">
