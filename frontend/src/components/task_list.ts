@@ -3,7 +3,7 @@ import Vue, { ComponentOptions } from 'vue';
 import { Task, Project } from '../models';
 import { API } from '../API';
 import { ReorderTasksPayload } from '../store';
-import { DragEventHandlers, DragState } from '../helpers/drag_state';
+import { DragEventHandlers, DragState, getOrderedItems } from '../helpers/drag_state';
 import * as _ from 'lodash';
 import * as Mousetrap from 'mousetrap';
 
@@ -40,18 +40,11 @@ let taskListOptions = {
     },
 
     computed: {
-        // Might have to filter by something?
         localTasks(): Task[] {
-            let taskList = this;
-            if (taskList.dragState === undefined) {
+            if (this.dragState === undefined) {
                 return this.tasks;
             } else {
-                let dragState = taskList.dragState
-
-                // Order locally, according to drag state
-                return _.sortBy(taskList.tasks, function (task: Task) {
-                    return _.indexOf(dragState.currentOrder, task.id);
-                });
+                return getOrderedItems(this.tasks, this.dragState) as Task[];
             }
         },
 

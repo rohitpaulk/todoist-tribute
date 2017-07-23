@@ -155,7 +155,6 @@ body {
     }
 
     span.icon-holder span.project-icon {
-        margin-left: 10px;
         display: block;
         width: $project-icon-diameter;
         height: $project-icon-diameter;
@@ -187,6 +186,34 @@ body {
     }
 }
 
+.content .task-list .task-item, .left-menu .project-list .project-item {
+    &.is-dragged {
+        background-color: $color-light-gray;
+        box-shadow: 0px 0px 5px 0px $color-light-gray;
+    }
+
+    &:hover {
+        .drag-bars { visibility: visible; }
+    }
+
+    // HACK! :hover seems to stick to other elements when dragging/dropping.
+    &:active {
+        .drag-bars { visibility: hidden; }
+    }
+
+    .drag-bars {
+        visibility: hidden;
+        color: $color-light-gray;
+
+        // Hack for wide-font
+        transform: scale(0.5, 1);
+
+        &:hover {
+            cursor: move;
+        }
+    }
+}
+
 .content {
     // Left padding is applied selectively to components!
     padding-right: 30px;
@@ -210,35 +237,14 @@ body {
         .task-item {
             position: relative;
 
-            // TODO: Bring this back when working on indents!
-            // &.indent-1 { margin-left: 0; }
-            // &.indent-2 { margin-left: $task-indent-padding; }
-            // &.indent-3 { margin-left: $task-indent-padding * 2; }
-            // &.indent-4 { margin-left: $task-indent-padding * 3; }
-
-            &.is-dragged {
-                background-color: $color-light-gray;
-                box-shadow: 0px 0px 5px 0px $color-light-gray;
-            }
 
             // TODO: Find a way to hide dragbars!
             .dragbars-holder {
                 display: inline-block;
-                // Hack for wide-font
                 width: $checkbox-diameter * 0.4;
                 height: $checkbox-diameter;
 
-                .drag-bars {
-                    color: $color-light-gray;
-                    line-height: $checkbox-diameter;
-
-                    // Hack for wide-font
-                    transform: scale(0.5, 1);
-
-                    &:hover {
-                        cursor: move;
-                    }
-                }
+                .drag-bars { line-height: $checkbox-diameter; }
             }
 
             border-bottom: 1px solid $color-very-light-gray;

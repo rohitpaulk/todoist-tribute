@@ -1,19 +1,27 @@
+import * as _ from 'lodash';
 import Vue, { ComponentOptions } from 'vue';
 
 import { Project } from '../models';
 import { API } from '../API';
-import * as _ from 'lodash';
+import { DragEventHandlers, DragState, getOrderedItems } from '../helpers/drag_state';
 
 interface ProjectList extends Vue {
     // props
     projects: Project[],
     selectedProject: Project,
     projectTaskCounts: {[key: string]: number}
+
+    // data
+    dragState?: DragState
+    dragOperationInProgress: boolean
 }
 
 let projectListOptions = {
     data: function() {
-        return {}
+        return {
+            dragState: undefined,
+            dragOperationInProgress: false
+        }
     },
 
     props: {
@@ -23,6 +31,14 @@ let projectListOptions = {
     },
 
     computed: {
+        localProjects(): Project[] {
+            if (this.dragState === undefined) {
+                return this.projects;
+            } else {
+                return getOrderedItems(this.projects, this.dragState) as Project[];
+            }
+        },
+
         projectItemClasses: function() {
             let classObjectMap = {};
             let selectedProject = this.selectedProject;
@@ -48,15 +64,72 @@ let projectListOptions = {
     methods: {
         setProject: function(project: Project) {
             this.$store.commit('setActiveProject', project);
+        },
+
+        onDragStart: function(event, draggedProject: Project): boolean {
+            event.dataTransfer.setData('tudu/x-task', draggedProject.id);
+            event.dataTransfer.setDragImage(event.target.parentNode, 0, 0);
+
+            this.dragState = DragEventHandlers.dragStart(this.projects, draggedProject);
+
+            return false;
+        },
+
+        onDragEnter: function(event, currentProject: Project): boolean {
+            let taskList = this;
+            if (!_.includes(event.dataTransfer.types, 'tudu/x-task')) {
+                return true;
+            }
+
+            this.dragState = DragEventHandlers.dragEnter(this.dragState!, currentProject);
+
+            return false;
+        },
+
+        onDrop(event) {
+            let taskList = this;
+
+            alert('reorder!');
+
+            // let payload: ReorderProjectsPayload = {
+            //     task_ids: this.dragState!.currentOrder,
+            //     project: this.project
+            // };
+
+            // taskList.dragOperationInProgress = true;
+            // this.$store.dispatch('reorderTasks', payload).then(function() {
+            //     taskList.dragState = undefined;
+            //     taskList.dragOperationInProgress = false;
+            // });
+        },
+
+        onDragEnd: function() {
+            if ((this.dragState === undefined) || (this.dragOperationInProgress)) {
+                // The drop either sucessfully happened, or is in progress.
+            } else {
+                // The drag was aborted halfway
+                this.dragState = undefined;
+            }
         }
     },
 
     template: `
         <div>
             <ul class="project-list resource-list">
-                <li v-for="project in projects"
+                <li v-for="project in localProjects"
                     :class="projectItemClasses[project.id]"
-                    @click="setProject(project)">
+                    @click="setProject(project)"
+                    @drop="onDrop($event)"
+                    @dragover.prevent
+                    @dragenter="onDragEnter($event, project)">
+
+                    <span class="dragbars-holder"
+                          draggable="true"
+                          @dragstart="onDragStart($event, project)"
+                          @dragend="onDragEnd()">
+                        <i class="fa fa-bars drag-bars"></i>
+                    </span>
+
                     <span class="icon-holder">
                         <span class="project-icon"
                             :style="{ 'background-color': '#' + project.colorHex }">

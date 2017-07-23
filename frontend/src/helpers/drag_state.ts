@@ -10,6 +10,12 @@ interface DragState {
     currentOrder: string[] // Array of IDs
 }
 
+function getOrderedItems(items: DraggableItem[], dragState: DragState): DraggableItem[] {
+    return _.sortBy(items, function (item: DraggableItem) {
+        return _.indexOf(dragState.currentOrder, item.id);
+    });
+}
+
 let dragEventHandlers = {
     dragStart(items: DraggableItem[], draggedItem: DraggableItem): DragState {
         let initialOrder = items.map(x => x.id);
@@ -42,4 +48,4 @@ let dragEventHandlers = {
     }
 }
 
-export { dragEventHandlers as DragEventHandlers, DragState };
+export { dragEventHandlers as DragEventHandlers, DragState, getOrderedItems };
