@@ -87,20 +87,14 @@ let projectListOptions = {
         },
 
         onDrop(event) {
-            let taskList = this;
+            let projectList = this;
+            let order = this.dragState!.currentOrder;
 
-            alert('reorder!');
-
-            // let payload: ReorderProjectsPayload = {
-            //     task_ids: this.dragState!.currentOrder,
-            //     project: this.project
-            // };
-
-            // taskList.dragOperationInProgress = true;
-            // this.$store.dispatch('reorderTasks', payload).then(function() {
-            //     taskList.dragState = undefined;
-            //     taskList.dragOperationInProgress = false;
-            // });
+            projectList.dragOperationInProgress = true;
+            this.$store.dispatch('reorderProjects', order).then(function() {
+                projectList.dragState = undefined;
+                projectList.dragOperationInProgress = false;
+            });
         },
 
         onDragEnd: function() {

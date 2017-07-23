@@ -1,6 +1,6 @@
 class ProjectsController < ApplicationController
   def index
-    render json: Project.all
+    render json: Project.order(sort_order: :asc).all
   end
 
   def reorder
@@ -12,6 +12,6 @@ class ProjectsController < ApplicationController
 
     Project.reorder!(project_ids)
 
-    render json: Project.all
+    render json: Project.order(sort_order: :asc).all
   end
 end

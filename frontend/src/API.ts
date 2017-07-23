@@ -42,6 +42,15 @@ class API {
         return API.PromiseForMultipleProjects(axiosPromise);
     }
 
+    reorderProjects(project_ids: string[]): Promise<Project[]> {
+        let url = this.url + "api/v1/projects/reorder.json";
+        let axiosPromise = axios.post(url, {
+            project_ids: project_ids.map(x => Number(x))
+        });
+
+        return API.PromiseForMultipleProjects(axiosPromise);
+    }
+
     createTask(title: string, projectId: string): Promise<Task> {
         let url = this.url + "api/v1/tasks.json";
         let axiosPromise = axios.post(url, {

@@ -124,6 +124,15 @@ let storeOptions = {
             });
         },
 
+        reorderProjects(context, project_ids: string[]): Promise<void> {
+            return new Promise(function(resolve, reject) {
+                api.reorderProjects(project_ids).then(function(projectsFromAPI) {
+                    context.commit('setProjects', projectsFromAPI);
+                    resolve();
+                });
+            });
+        },
+
         refreshProjects(context) {
             api.getProjects().then(function(projects: Project[]) {
                 context.commit('setProjects', projects);
