@@ -12,6 +12,7 @@ interface TaskList extends Vue {
     dragState?: DragState
     dragOperationInProgress: boolean
     isAddingTask: boolean
+    taskBeingEdited: Task | null
 
     // props
     tasks: Task[]
@@ -21,7 +22,7 @@ interface TaskList extends Vue {
     localTasks: Task[]
 
     // methods
-    showTaskForm: () => void
+    openAddTaskForm: () => void
     hideTaskForm: () => void
 }
 
@@ -31,6 +32,7 @@ let taskListOptions = {
             dragState: undefined,
             dragOperationInProgress: false,
             isAddingTask: false,
+            taskBeingEdited: null
         }
     },
 
@@ -70,7 +72,7 @@ let taskListOptions = {
         let taskList = this;
 
         Mousetrap.bind('a', function() {
-            taskList.showTaskForm();
+            taskList.openAddTaskForm();
         });
     },
 
@@ -79,12 +81,14 @@ let taskListOptions = {
             this.$store.dispatch('completeTask', task)
         },
 
-        showTaskForm: function() {
+        openAddTaskForm: function() {
             this.isAddingTask = true;
+            this.taskBeingEdited = null;
         },
 
         hideTaskForm: function() {
             this.isAddingTask = false;
+            this.taskBeingEdited = null;
         },
 
         onDragStart: function(event, draggedTask: Task): boolean {
@@ -129,41 +133,55 @@ let taskListOptions = {
                 // The drag was aborted halfway
                 this.dragState = undefined;
             }
+        },
+
+        setTaskBeingEdited: function(task) {
+            this.taskBeingEdited = task;
         }
     },
 
     template: `
         <div>
             <ul class="task-list resource-list">
-                <li v-for="task in localTasks"
-                    v-bind:class="taskItemClasses[task.id]"
-                    @drop="onDrop($event)"
-                    @dragover.prevent
-                    @dragenter="onDragEnter($event, task)">
+                <template v-for="task in localTasks">
+                    <task-editor
+                        v-if="taskBeingEdited && (taskBeingEdited.id === task.id)"
+                        @close="hideTaskForm()"
+                        :project="project"
+                        :task-to-edit="task">
+                    </task-editor>
+                    <li v-else
+                        v-bind:class="taskItemClasses[task.id]"
+                        @drop="onDrop($event)"
+                        @dragover.prevent
+                        @dragenter="onDragEnter($event, task)"
+                        @click="setTaskBeingEdited(task)"
+                        >
 
-                    <span class="dragbars-holder"
-                          draggable="true"
-                          @dragstart="onDragStart($event, task)"
-                          @dragend="onDragEnd()">
-                        <i class="fa fa-bars drag-bars"></i>
-                    </span>
-                    <span class="icon-holder">
-                        <span class="checkbox" @click="completeTask(task)">
+                        <span class="dragbars-holder"
+                                draggable="true"
+                                @dragstart="onDragStart($event, task)"
+                                @dragend="onDragEnd()">
+                            <i class="fa fa-bars drag-bars"></i>
                         </span>
-                    </span>
-                    <span class="text-holder">
-                        <span class="task-title">
-                            {{ task.title }}
+                        <span class="icon-holder">
+                            <span class="checkbox" @click="completeTask(task)">
+                            </span>
                         </span>
-                    </span>
-                </li>
+                        <span class="text-holder">
+                            <span class="task-title">
+                                {{ task.title }}
+                            </span>
+                        </span>
+                    </li>
+                </template>
             </ul>
             <task-editor
                 v-if="isAddingTask"
                 @close="hideTaskForm()"
-                :initialProject="project">
+                :project="project">
             </task-editor>
-            <div v-else class="add-task" @click="showTaskForm()">
+            <div v-else class="add-task" @click="openAddTaskForm()">
                 <span class="icon-holder">
                     <span class="add-icon">
                         +

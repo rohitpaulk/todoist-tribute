@@ -16,6 +16,12 @@ interface CreateTaskPayload {
     project: Project
 }
 
+interface UpdateTaskPayload {
+    id: string,
+    title: string,
+    project: Project
+}
+
 interface ReorderTasksPayload {
     task_ids: string[],
     project: Project
@@ -94,18 +100,34 @@ let storeOptions = {
 
         setProjects(state, projects: Project[]) {
             state.projects = projects;
+        },
+
+        updateTask(state, task: Task) {
+            let index = _.findIndex(state.tasks, (x: Task) => (x.id === task.id));
+            let newTasks = state.tasks.slice();
+            newTasks[index] = task;
+            state.tasks = newTasks;
         }
     },
     actions: { // TODO: Return promises?
+        refreshTasks(context) {
+            api.getTasks().then(function(tasks: Task[]) {
+                context.commit('setTasks', tasks);
+            });
+        },
+
         createTask(context, payload: CreateTaskPayload) {
             api.createTask(payload.title, payload.project.id).then(function(task: Task) {
                 context.commit('addTask', task)
             });
         },
 
-        refreshTasks(context) {
-            api.getTasks().then(function(tasks: Task[]) {
-                context.commit('setTasks', tasks);
+        updateTask(context, payload: UpdateTaskPayload) {
+            let id = payload.id;
+            delete payload.id;
+
+            api.updateTask(id, payload).then(function(task: Task) {
+                context.commit('updateTask', task);
             });
         },
 
@@ -142,4 +164,4 @@ let storeOptions = {
 } as StoreOptions<TuduStoreOptions>
 
 export { storeOptions as TuduStoreOptions }
-export { ReorderTasksPayload }
+export { CreateTaskPayload, UpdateTaskPayload, ReorderTasksPayload }

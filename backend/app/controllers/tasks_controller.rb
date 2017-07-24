@@ -44,12 +44,15 @@ class TasksController < ApplicationController
   end
 
   def update
-    is_completed = params[:is_completed]
     task_id = params[:task_id]
-
     task = Task.find(task_id)
-    task.update!(is_completed: is_completed)
+
+    task.update!(task_params)
 
     render json: task
+  end
+
+  def task_params
+    params.permit(:is_completed, :title)
   end
 end

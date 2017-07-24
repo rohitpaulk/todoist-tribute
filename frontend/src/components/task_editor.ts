@@ -1,18 +1,21 @@
+import * as _ from 'lodash';
 import Vue, { ComponentOptions } from 'vue';
 
 import { Task, Project } from '../models';
 import { API } from '../API';
-import * as _ from 'lodash';
+import { CreateTaskPayload, UpdateTaskPayload } from '../store';
 
 interface TaskEditor extends Vue {
     // data
-    newTask: {
+    task: {
+        id: null | string,
         title: string,
         project: Project
     },
 
     // prop
-    initialProject: Project,
+    project: Project,
+    taskToEdit: Task | null,
 
     // methods
     emitClose: () => void,
@@ -22,17 +25,28 @@ let taskEditorOptions = {
     name: 'task-editor',
 
     data: function() {
-        return {
-            inputFocusPending: false,
-            newTask: {
-                title: '',
-                project: this.initialProject
-            },
+        if (this.taskToEdit === null) {
+            return {
+                task: {
+                    id: null,
+                    title: '',
+                    project: this.project
+                },
+            }
+        } else {
+            return {
+                task: {
+                    id: this.taskToEdit.id,
+                    title: this.taskToEdit.title,
+                    project: this.project
+                },
+            }
         }
     },
 
     props: {
-        initialProject: { required: true }
+        project: { required: true },
+        taskToEdit: { default: null }
     },
 
     methods: {
@@ -40,16 +54,23 @@ let taskEditorOptions = {
             this.$emit('close');
         },
 
-        createTask: function() {
+        submitChanges: function() {
             let taskEditor = this;
 
-            this.$store.dispatch('createTask', {
-                title: this.newTask.title,
-                project: this.newTask.project
-            });
+            if (this.task.id) {
+                this.$store.dispatch('updateTask', {
+                    id: this.task.id,
+                    title: this.task.title,
+                    project: this.task.project
+                });
+            } else {
+                this.$store.dispatch('createTask', {
+                    title: this.task.title,
+                    project: this.task.project
+                });
+            }
 
             // TODO: Only after promise resolves!
-            taskEditor.newTask.title = '';
             this.emitClose();
         }
     },
@@ -61,8 +82,8 @@ let taskEditorOptions = {
     template: `
         <div class="task-editor">
             <div class="task-form">
-                <form @submit.prevent="createTask()" @keydown.esc="emitClose()">
-                    <input type="text" ref="input" v-model="newTask.title">
+                <form @submit.prevent="submitChanges()" @keydown.esc="emitClose()">
+                    <input type="text" ref="input" v-model="task.title">
                     <button type="submit">Add Task</button>
                     <a href="#" class="cancel-link" @click="emitClose()">Cancel</a>
                 </form>
