@@ -73,6 +73,8 @@ let taskListOptions = {
 
         Mousetrap.bind('a', function() {
             taskList.openAddTaskForm();
+
+            return false;
         });
     },
 
