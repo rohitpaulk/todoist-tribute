@@ -149,7 +149,7 @@ let taskListOptions = {
                     <task-editor
                         v-if="taskBeingEdited && (taskBeingEdited.id === task.id)"
                         @close="hideTaskForm()"
-                        :project="project"
+                        :initial-project="project"
                         :task-to-edit="task">
                     </task-editor>
                     <li v-else
@@ -181,7 +181,7 @@ let taskListOptions = {
             <task-editor
                 v-if="isAddingTask"
                 @close="hideTaskForm()"
-                :project="project">
+                :initial-project="project">
             </task-editor>
             <div v-else class="add-task" @click="openAddTaskForm()">
                 <span class="icon-holder">

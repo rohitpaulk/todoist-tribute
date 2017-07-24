@@ -337,7 +337,7 @@ body {
         padding-left: $content-left-padding;
         margin-top: 7px;
 
-        input {
+        .input-nodes-container {
             margin-bottom: 7px;
             font-size: 14px;
             width: 100%;
@@ -346,10 +346,50 @@ body {
 
             padding: 6px 6px 6px 10px;
             font-weight: lighter;
+            position: relative;
 
             &, &:hover {
                 // Overrides blue focus on hover
                 border: 1px solid $color-light-gray;
+            }
+
+            input.text-input {
+                border: none
+            }
+
+            input.text-input, div.project-pill {
+                font-family: 'Open Sans', sans-serif;
+                font-size: 14px;
+                font-weight: 300;
+            }
+
+            div.project-pill {
+                display: inline;
+                background-color: $color-red;
+                color: white;
+                border-radius: 2px;
+                padding: 0px 5px 0px 5px;
+                margin-right: 5px;
+            }
+
+            .autocomplete-container {
+                position: absolute;
+                background: white;
+                z-index: 3;
+                height: 100px;
+                bottom: -100px;
+                left: -1px; // Why???
+                width: 80%;
+                border: 1px solid $color-very-light-gray;
+                box-shadow: 0px 0px 10px 0px $color-light-gray;
+
+                .autocomplete-item {
+                    font-size: 12px;
+                    height: 35px;
+                    line-height: 35px;
+                    padding-left: 10px;
+                    border-bottom: 1px solid $color-very-light-gray;
+                }
             }
         }
 
