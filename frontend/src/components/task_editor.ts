@@ -57,6 +57,11 @@ let taskEditorOptions = {
         submitChanges: function() {
             let taskEditor = this;
 
+            // Validate task properties
+            if (_.trim(this.task.title) === '') {
+                return;
+            }
+
             if (this.task.id) {
                 this.$store.dispatch('updateTask', {
                     id: this.task.id,
