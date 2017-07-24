@@ -24,6 +24,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.16.2",
+    "file-loader": "^0.11.2",
     "handlebars": "^4.0.10",
     "lodash": "^4.17.4",
     "vue": "^2.4.1",

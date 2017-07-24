@@ -30,6 +30,10 @@ module.exports = {
       {
         test: /\.ts$/,
         use: 'ts-loader',
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf|svg)$/,
+        use: 'file-loader'
       }
     ]
   }
