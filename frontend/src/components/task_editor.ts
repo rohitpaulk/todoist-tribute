@@ -4,24 +4,9 @@ import Vue, { ComponentOptions } from 'vue';
 import { Task, Project } from '../models';
 import { API } from '../API';
 import { CreateTaskPayload, UpdateTaskPayload } from '../store';
-
-interface ProjectPillNode {
-    type: 'ProjectPillNode'
-    data: {
-        project: Project
-    }
-}
-
-interface TextInputNode {
-    type: 'TextInputNode',
-    data: {
-        text: string,
-        autocompleteActive: boolean,
-        autocompletePosition: number,
-    }
-}
-
-type EditorNode = ProjectPillNode | TextInputNode;
+import { EditorNode, ProjectPillNode, TextInputNode } from '../helpers/editor_nodes'
+import { Constructors as EditorNodeConstructors } from '../helpers/editor_nodes'
+import { Mutators as EditorNodeMutators } from '../helpers/editor_nodes'
 
 interface TaskEditor extends Vue {
     // data
@@ -39,43 +24,27 @@ interface TaskEditor extends Vue {
 
     // methods
     emitClose: () => void,
-    removeEditorNodeBefore: (position: number) => void
     cancelAutocomplete: (node: TextInputNode) => void
     submitChanges: () => void
 }
 
-let projectPillNodeFromProject = function(project: Project): ProjectPillNode {
-    return {
-        type: 'ProjectPillNode',
-        data: {
-            project: project
-        }
-    };
-}
-
-let textInputNodeFromText = function(text: string): TextInputNode {
-    return {
-        type: 'TextInputNode',
-        data: {
-            text: text,
-            autocompleteActive: false,
-            autocompletePosition: 0
-        }
-    };
-}
-
 let emptyEditorNodes = function(project: Project): EditorNode[] {
     return [
-        projectPillNodeFromProject(project),
-        textInputNodeFromText('')
+        EditorNodeConstructors.projectPillNodeFromProject(project),
+        EditorNodeConstructors.textInputNodeFromText('')
     ];
 }
 
 let editorNodesFromTask = function(task: Task, project: Project): EditorNode[] {
     return [
-        projectPillNodeFromProject(project),
-        textInputNodeFromText(task.title)
-    ]
+        EditorNodeConstructors.projectPillNodeFromProject(project),
+        EditorNodeConstructors.textInputNodeFromText(task.title)
+    ];
+}
+
+let setProjectNode = function(nodes: EditorNode[], project: Project) {
+    // If nodes has a project field already, replace it.
+    // If not, append one at the start.
 }
 
 const CHAR_CODE_POUND_SIGN = 35;
@@ -125,6 +94,18 @@ let taskEditorOptions = {
             return this.editorNodes.filter(function(node: EditorNode) {
                 return node.type === 'TextInputNode';
             }) as TextInputNode[];
+        },
+
+        projectPillNode: function(): ProjectPillNode | null {
+            let projectPillNodes =  this.editorNodes.filter(function(node: EditorNode) {
+                return node.type === 'ProjectPillNode';
+            }) as ProjectPillNode[];
+
+            if (projectPillNodes.length > 1) {
+                throw "AssertionError: More than 1 project node found!";
+            }
+
+            return projectPillNodes.length == 1 ? projectPillNodes[0] : null;
         }
     },
 
@@ -163,7 +144,7 @@ let taskEditorOptions = {
             let caretPosition = (event.target.selectionStart);
             let isDeletingPreviousElement = (caretPosition === 0);
             if (isDeletingPreviousElement) {
-                this.removeEditorNodeBefore(nodePosition);
+                this.editorNodes = EditorNodeMutators.removeNonInputNodeBefore(this.editorNodes, nodePosition);
                 return;
             }
 
@@ -187,19 +168,6 @@ let taskEditorOptions = {
             } else {
                 this.submitChanges();
             }
-        },
-
-        removeEditorNodeBefore: function(nodePosition: number) {
-            if (nodePosition === 0) {
-                return; // No nodes before
-            }
-
-            // As long as it isn't a TextInputNode, we can remove it safely.
-            if (this.editorNodes[nodePosition - 1].type !== 'TextInputNode') {
-                this.editorNodes.splice(nodePosition - 1, 1);
-            }
-
-            // TODO: If there was a text element before both, merge that with this!
         },
 
         keyPressOnTextInput: function(event, node: TextInputNode) {
