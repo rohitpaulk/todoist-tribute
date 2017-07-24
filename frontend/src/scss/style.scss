@@ -155,6 +155,11 @@ body {
         cursor: pointer;
     }
 
+    span.dragbars-holder {
+        width: 14px;
+        text-align: right;
+    }
+
     span.icon-holder span.project-icon {
         display: block;
         width: $project-icon-diameter;
@@ -183,7 +188,6 @@ body {
 
     .icon-holder {
         margin-right: 5px;
-        margin-left: 5px;
     }
 }
 
@@ -245,10 +249,13 @@ body {
             // TODO: Find a way to hide dragbars!
             .dragbars-holder {
                 display: inline-block;
-                width: $checkbox-diameter * 0.4;
+                width: $checkbox-diameter * 0.6;
                 height: $checkbox-diameter;
 
                 .drag-bars { line-height: $checkbox-diameter; }
+                &:hover {
+                    cursor: move;
+                }
             }
 
             border-bottom: 1px solid $color-very-light-gray;
