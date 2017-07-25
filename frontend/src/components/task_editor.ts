@@ -32,6 +32,8 @@ interface TaskEditor extends Vue {
     completeAutocomplete: () => void
     removeAutocompleteTextFromInput: () => void
     submitChanges: () => void
+    shiftAutocompleteSelectionDown: () => void
+    shiftAutocompleteSelectionUp: () => void
 }
 
 let emptyEditorNodes = function(project: Project): EditorNode[] {
@@ -243,6 +245,18 @@ let taskEditorOptions = {
             let node = this.textInputNodes[0]; // TODO: Revise when other types are added
             node.data.autocompleteActive = false;
             node.data.autocompletePosition = 0;
+        },
+
+        shiftAutocompleteSelectionUp() {
+            if (this.autocompleteSelectionIndex > 0) {
+                this.autocompleteSelectionIndex--;
+            }
+        },
+
+        shiftAutocompleteSelectionDown() {
+            if (this.autocompleteSelectionIndex < (this.autocompleteSuggestions.length - 1)) {
+                this.autocompleteSelectionIndex++;
+            }
         }
     },
 
@@ -267,6 +281,8 @@ let taskEditorOptions = {
                                 ref="text-input"
                                 @keydown.delete="backspaceOnTextInput($event, nodePosition)"
                                 @keydown.enter.prevent="enterOnTextInput($event, nodePosition)"
+                                @keydown.down.prevent="shiftAutocompleteSelectionDown()"
+                                @keydown.up.prevent="shiftAutocompleteSelectionUp()"
                                 @keypress="keyPressOnTextInput($event, editorNode)">
                             </input>
                             <div class="project-pill"
