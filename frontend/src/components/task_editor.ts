@@ -10,21 +10,27 @@ import { Mutators as EditorNodeMutators } from '../helpers/editor_nodes'
 
 interface TaskEditor extends Vue {
     // data
-    editorNodes: EditorNode[],
+    editorNodes: EditorNode[]
+    autocompleteSelectionIndex: number
 
     // prop
-    initialProject: Project,
-    taskToEdit: Task | null,
+    initialProject: Project
+    taskToEdit: Task | null
 
     // computed
+    autocompleteSelection: Project // Revisit when different types are added
     taskTitle: string
     taskProject: Project
     isAutocompleting: boolean
     textInputNodes: TextInputNode[]
+    allProjects: Project[]
+    autocompleteSuggestions: Project[]
 
     // methods
     emitClose: () => void,
-    cancelAutocomplete: (node: TextInputNode) => void
+    cancelAutocomplete: () => void
+    completeAutocomplete: () => void
+    removeAutocompleteTextFromInput: () => void
     submitChanges: () => void
 }
 
@@ -54,10 +60,17 @@ let taskEditorOptions = {
     name: 'task-editor',
 
     data: function() {
+        let editorNodes: EditorNode[] = [];
+
         if (this.taskToEdit !== null) {
-            return { editorNodes: editorNodesFromTask(this.taskToEdit, this.initialProject) };
+            editorNodes = editorNodesFromTask(this.taskToEdit, this.initialProject);
         } else {
-            return { editorNodes: emptyEditorNodes(this.initialProject) };
+            editorNodes = emptyEditorNodes(this.initialProject);
+        }
+
+        return {
+            editorNodes: editorNodes,
+            autocompleteSelectionIndex: 0,
         }
     },
 
@@ -67,6 +80,18 @@ let taskEditorOptions = {
     },
 
     computed: {
+        autocompleteSuggestions: function(): Project[] {
+            return this.allProjects;
+        },
+
+        autocompleteSelection: function(): Project {
+            return this.autocompleteSuggestions[this.autocompleteSelectionIndex];
+        },
+
+        allProjects: function(): Project[] {
+            return this.$store.state.projects;
+        },
+
         taskTitle: function(): String {
             return this.textInputNodes.map(function(node: TextInputNode) {
                 return node.data.text;
@@ -158,16 +183,38 @@ let taskEditorOptions = {
             }
 
             if (this.isAutocompleting && (nextCaretPosition === node.data.autocompletePosition)) {
-                this.cancelAutocomplete(node);
+                this.cancelAutocomplete();
             }
         },
 
         enterOnTextInput: function() {
             if (this.isAutocompleting) {
-                alert('Submit autocomplete!');
+                this.completeAutocomplete();
             } else {
                 this.submitChanges();
             }
+        },
+
+        completeAutocomplete(): void {
+            // TODO: Revise when other types are added.
+            let projectNode = EditorNodeConstructors.projectPillNodeFromProject(this.autocompleteSelection);
+            this.editorNodes = EditorNodeMutators.addOrReplaceProjectNode(this.editorNodes, projectNode)
+
+            this.removeAutocompleteTextFromInput();
+            this.cancelAutocomplete();
+            // Remove text from text node
+        },
+
+        removeAutocompleteTextFromInput(): void {
+            let node = this.textInputNodes[0]; // TODO: Revise when other types are added
+            let strippedText = node.data.text.slice(0, node.data.autocompletePosition - 1);
+
+            this.editorNodes = EditorNodeMutators.replaceTextInTextInputNode(this.editorNodes, strippedText);
+        },
+
+        onSelectFromAutocompleteBox(index): void {
+            this.autocompleteSelectionIndex = index;
+            this.completeAutocomplete();
         },
 
         keyPressOnTextInput: function(event, node: TextInputNode) {
@@ -188,18 +235,19 @@ let taskEditorOptions = {
 
             let keyIsSpace = (event.charCode === CHAR_CODE_SPACE);
             if (this.isAutocompleting && keyIsSpace) {
-                this.cancelAutocomplete(node);
+                this.cancelAutocomplete();
             }
         },
 
-        cancelAutocomplete(node: TextInputNode) {
+        cancelAutocomplete() {
+            let node = this.textInputNodes[0]; // TODO: Revise when other types are added
             node.data.autocompleteActive = false;
             node.data.autocompletePosition = 0;
         }
     },
 
     mounted: function() {
-        // (this.$refs['input'] as HTMLElement).focus();
+        (this.$refs['text-input'][0] as HTMLElement).focus();
     },
 
     // TODO: binding size is a hack. Better ways?
@@ -216,8 +264,9 @@ let taskEditorOptions = {
                                 v-if="editorNode.type === 'TextInputNode'"
                                 type="text"
                                 v-model="editorNode.data.text"
+                                ref="text-input"
                                 @keydown.delete="backspaceOnTextInput($event, nodePosition)"
-                                @keydown.enter="enterOnTextInput($event, nodePosition)"
+                                @keydown.enter.prevent="enterOnTextInput($event, nodePosition)"
                                 @keypress="keyPressOnTextInput($event, editorNode)">
                             </input>
                             <div class="project-pill"
@@ -226,11 +275,12 @@ let taskEditorOptions = {
                             </div>
                         </template>
 
-                        <div class="autocomplete-container" v-if="isAutocompleting">
-                            <div class="autocomplete-item">
-                                Testing autocomplete
-                            </div>
-                        </div>
+                        <autocomplete-box
+                            v-if="isAutocompleting"
+                            :suggestions="autocompleteSuggestions"
+                            :selection-index="autocompleteSelectionIndex"
+                            @select="onSelectFromAutocompleteBox(index)">
+                        </autocomplete-box>
                     </div>
 
                     <button type="submit">Add Task</button>

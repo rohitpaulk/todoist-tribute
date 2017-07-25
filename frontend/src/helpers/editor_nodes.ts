@@ -1,4 +1,6 @@
-import { Project } from '../models';
+import * as _ from 'lodash';
+
+import { Project } from '../models'; // This dependency should not be required?
 
 interface ProjectPillNode {
     type: 'ProjectPillNode'
@@ -52,6 +54,41 @@ let Mutators = {
         }
 
         // TODO: If there was a text element before both, merge that with this!
+
+        return newNodes;
+    },
+
+    addOrReplaceProjectNode(editorNodes: EditorNode[], projectNode: ProjectPillNode): EditorNode[] {
+         // TODO: Revisit when other node types are added
+        if (editorNodes.length > 2) {
+            throw "AssertionError: Expected 2 nodes at max"
+        }
+        let hasProjectNode = (editorNodes.length == 2);
+        let newNodes = editorNodes.slice();
+
+        if (hasProjectNode) {
+            newNodes[0] = projectNode;
+        } else {
+            newNodes.unshift(projectNode);
+        }
+
+        return newNodes;
+    },
+
+    replaceTextInTextInputNode(editorNodes: EditorNode[], text): EditorNode[] {
+         // TODO: Revisit when other node types are added
+        if (editorNodes.length > 2) {
+            throw "AssertionError: Expected 2 nodes at max"
+        }
+
+        let hasProjectNode = (editorNodes.length == 2);
+        let newNodes = editorNodes.slice();
+
+        if (hasProjectNode) {
+            (newNodes[1] as TextInputNode).data.text = text;
+        } else {
+            (newNodes[0] as TextInputNode).data.text = text;
+        }
 
         return newNodes;
     }
