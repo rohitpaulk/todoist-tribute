@@ -50,11 +50,6 @@ let editorNodesFromTask = function(task: Task, project: Project): EditorNode[] {
     ];
 }
 
-let setProjectNode = function(nodes: EditorNode[], project: Project) {
-    // If nodes has a project field already, replace it.
-    // If not, append one at the start.
-}
-
 const CHAR_CODE_POUND_SIGN = 35;
 const CHAR_CODE_SPACE = 32;
 
