@@ -14,8 +14,8 @@ interface TaskEditor extends Vue {
     autocompleteState: {
         nodePosition: number
         caretPosition: number
+        activeSuggestionIndex: number
     } | null
-    autocompleteSelectionIndex: number // TODO: Move this into autocompleteState
 
     // prop
     initialProject: Project
@@ -71,7 +71,6 @@ let taskEditorOptions = {
 
         return {
             editorNodes: editorNodes,
-            autocompleteSelectionIndex: 0,
             autocompleteState: null
         }
     },
@@ -91,7 +90,12 @@ let taskEditorOptions = {
         },
 
         autocompleteSelection: function(): Project {
-            return this.autocompleteSuggestions[this.autocompleteSelectionIndex];
+            if (this.autocompleteState === null) {
+                throw "autocompleteSelection called when not autocompleting!"
+            }
+
+            let index = this.autocompleteState.activeSuggestionIndex;
+            return this.autocompleteSuggestions[index]; // What if this is null?
         },
 
         allProjects: function(): Project[] {
@@ -207,7 +211,7 @@ let taskEditorOptions = {
         },
 
         onSelectFromAutocompleteBox(index): void {
-            this.autocompleteSelectionIndex = index;
+            this.autocompleteState!.activeSuggestionIndex = index;
             this.completeAutocomplete();
         },
 
@@ -222,7 +226,8 @@ let taskEditorOptions = {
             if (!this.isAutocompleting && keyIsPoundSign && isValidStartPoint) {
                 this.autocompleteState = {
                     nodePosition: nodePosition,
-                    caretPosition: caretPosition + 1 // Why the +1?
+                    caretPosition: caretPosition + 1, // Why the +1?
+                    activeSuggestionIndex: 0
                 }
 
                 // TODO: Disable cursor movements when autocomplete is active
@@ -241,14 +246,14 @@ let taskEditorOptions = {
         },
 
         shiftAutocompleteSelectionUp() {
-            if (this.autocompleteSelectionIndex > 0) {
-                this.autocompleteSelectionIndex--;
+            if (this.autocompleteState!.activeSuggestionIndex > 0) {
+                this.autocompleteState!.activeSuggestionIndex--;
             }
         },
 
         shiftAutocompleteSelectionDown() {
-            if (this.autocompleteSelectionIndex < (this.autocompleteSuggestions.length - 1)) {
-                this.autocompleteSelectionIndex++;
+            if (this.autocompleteState!.activeSuggestionIndex < (this.autocompleteSuggestions.length - 1)) {
+                this.autocompleteState!.activeSuggestionIndex++;
             }
         }
     },
