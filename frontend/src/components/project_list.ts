@@ -14,13 +14,19 @@ interface ProjectList extends Vue {
     // data
     dragState?: DragState
     dragOperationInProgress: boolean
+    isAddingProject: boolean
+
+    // methods
+    showProjectForm(): void
+    hideProjectForm(): void
 }
 
 let projectListOptions = {
     data: function() {
         return {
             dragState: undefined,
-            dragOperationInProgress: false
+            dragOperationInProgress: false,
+            isAddingProject: false
         }
     },
 
@@ -104,6 +110,14 @@ let projectListOptions = {
                 // The drag was aborted halfway
                 this.dragState = undefined;
             }
+        },
+
+        showProjectForm: function() {
+            this.isAddingProject = true;
+        },
+
+        hideProjectForm: function() {
+            this.isAddingProject = false;
         }
     },
 
@@ -139,8 +153,23 @@ let projectListOptions = {
                     </span>
                 </li>
             </ul>
+
+            <project-editor
+                v-if="isAddingProject"
+                @close="hideProjectForm()">
+            </project-editor>
+            <div v-else class="add-project" @click="showProjectForm()">
+                <span class="icon-holder">
+                    <span class="add-icon">
+                        +
+                    </span>
+                </span>
+                <span class="text-holder">
+                    <a href="#" class="add-project-link">Add Project</a>
+                </span>
+            </div>
         </div>
-    ` // TODO: Add project editor!
+    `
 } as ComponentOptions<ProjectList>
 
 export { projectListOptions as ProjectListOptions }

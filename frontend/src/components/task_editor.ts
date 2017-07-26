@@ -307,13 +307,12 @@ let taskEditorOptions = {
                 <form @submit.prevent="submitChanges()" @keydown.esc="emitClose()">
                     <div class="input-nodes-container">
                         <template v-for="(editorNode, nodePosition) in editorNodes">
-                            <input
-                                :size="Math.max(editorNode.data.text.length, 50)"
-                                class="text-input"
-                                v-if="editorNode.type === 'TextInputNode'"
+                            <input v-if="editorNode.type === 'TextInputNode'"
                                 type="text"
-                                v-model="editorNode.data.text"
+                                class="text-input"
                                 ref="text-input"
+                                v-model="editorNode.data.text"
+                                :size="Math.max(editorNode.data.text.length, 50)"
                                 @keydown.delete="backspaceOnTextInput($event, nodePosition)"
                                 @keydown.enter.prevent="enterOnTextInput($event, nodePosition)"
                                 @keydown.down.prevent="shiftAutocompleteSelectionDown()"
