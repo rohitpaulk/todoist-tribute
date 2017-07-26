@@ -1,6 +1,6 @@
 import './scss/style.scss';
 
-import Vue from 'vue';
+import * as Vue from 'vue';
 import Vuex from 'vuex'
 
 import { TaskListOptions } from "./components/task_list";

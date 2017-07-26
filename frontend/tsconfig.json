@@ -1,15 +1,11 @@
 {
   "compilerOptions": {
-    // "outDir": "./dist/",
     "sourceMap": true,
     "lib": ["es2015", "es5", "es2015.iterable", "dom"],
     "allowSyntheticDefaultImports": true,
-    // "noImplicitAny": true,
-    "module": "es2015",
+    "module": "commonjs",
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "strictNullChecks": true
-    // "target": "es5"
-    // "allowJs": true
   }
 }
