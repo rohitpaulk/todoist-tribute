@@ -1,3 +1,4 @@
+import * as Fuse from 'fuse.js';
 import * as _ from 'lodash';
 import Vue, { ComponentOptions } from 'vue';
 
@@ -25,6 +26,7 @@ interface TaskEditor extends Vue {
     taskTitle: string
     taskProject: Project
     textInputNode: TextInputNode
+    projectPillNode: ProjectPillNode | null
     allProjects: Project[]
     isAutocompleting: boolean
     autocompleteSelection: Project // Revisit when different types are added
@@ -87,7 +89,13 @@ let taskEditorOptions = {
         },
 
         autocompleteSuggestions: function(): Project[] {
-            return this.allProjects;
+            if (this.autocompleteQuery === '') {
+                return this.allProjects
+            } else {
+                let fuse = new Fuse(this.allProjects, {keys: ["name"]});
+
+                return fuse.search(this.autocompleteQuery);
+            }
         },
 
         autocompleteSelection: function(): Project {
@@ -123,7 +131,11 @@ let taskEditorOptions = {
         },
 
         taskProject: function() {
-            return this.initialProject;
+            if (this.projectPillNode !== null) {
+                return this.projectPillNode.data.project;
+            } else {
+                return this.initialProject;
+            }
         },
 
         textInputNode: function(): TextInputNode {
@@ -144,7 +156,7 @@ let taskEditorOptions = {
             }
 
             if (this.editorNodes.length === 2) {
-                return this.editorNodes[1] as ProjectPillNode;
+                return this.editorNodes[0] as ProjectPillNode;
             } else {
                 return null;
             }
@@ -199,7 +211,7 @@ let taskEditorOptions = {
                 throw "AssertionError: Expected atleast one character to be present"
             }
 
-            if (this.isAutocompleting && (nextCaretPosition === this.autocompleteState!.caretPosition)) {
+            if (this.isAutocompleting && (nextCaretPosition <= this.autocompleteState!.caretPosition)) {
                 this.cancelAutocomplete();
             }
         },
@@ -253,6 +265,11 @@ let taskEditorOptions = {
                 // TODO: Disable cursor movements when autocomplete is active
 
                 return;
+            }
+
+            if (this.isAutocompleting) {
+                // Reset the active suggestion, because the user pressed a key.
+                this.autocompleteState!.activeSuggestionIndex = 0;
             }
 
             let keyIsSpace = (event.charCode === CHAR_CODE_SPACE);
@@ -312,7 +329,7 @@ let taskEditorOptions = {
                         <autocomplete-box
                             v-if="isAutocompleting"
                             :suggestions="autocompleteSuggestions"
-                            :selection-index="autocompleteSelectionIndex"
+                            :selection-index="autocompleteState.activeSuggestionIndex"
                             @select="onSelectFromAutocompleteBox(index)">
                         </autocomplete-box>
                     </div>
