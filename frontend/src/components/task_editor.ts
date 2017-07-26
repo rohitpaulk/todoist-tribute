@@ -12,7 +12,7 @@ interface TaskEditor extends Vue {
     // data
     editorNodes: EditorNode[]
     autocompleteState: {
-        nodePosition: number
+        nodePosition: number // Not really needed now, will come in handy later
         caretPosition: number
         activeSuggestionIndex: number
     } | null
@@ -22,13 +22,14 @@ interface TaskEditor extends Vue {
     taskToEdit: Task | null
 
     // computed
-    autocompleteSelection: Project // Revisit when different types are added
     taskTitle: string
     taskProject: Project
-    isAutocompleting: boolean
-    textInputNodes: TextInputNode[]
+    textInputNode: TextInputNode
     allProjects: Project[]
+    isAutocompleting: boolean
+    autocompleteSelection: Project // Revisit when different types are added
     autocompleteSuggestions: Project[]
+    autocompleteQuery: string
 
     // methods
     emitClose: () => void,
@@ -98,36 +99,55 @@ let taskEditorOptions = {
             return this.autocompleteSuggestions[index]; // What if this is null?
         },
 
+        autocompleteQuery: function(): string {
+            if (this.autocompleteState === null) {
+                throw "autocompleteQuery called when not autocompleting!"
+            }
+
+            let node = this.textInputNode;
+            let caretPosition = this.autocompleteState.caretPosition;
+
+            // TODO: Make this better with tracking live current cursor position!
+            //       If someone triggers an autocomplete in the middle of a text
+            //       box, this will fail.
+
+            return this.textInputNode.data.text.slice(caretPosition);
+        },
+
         allProjects: function(): Project[] {
             return this.$store.state.projects;
         },
 
         taskTitle: function(): String {
-            return this.textInputNodes.map(function(node: TextInputNode) {
-                return node.data.text;
-            }).join(' ');
+            return this.textInputNode.data.text;
         },
 
         taskProject: function() {
             return this.initialProject;
         },
 
-        textInputNodes: function(): TextInputNode[] {
-            return this.editorNodes.filter(function(node: EditorNode) {
-                return node.type === 'TextInputNode';
-            }) as TextInputNode[];
+        textInputNode: function(): TextInputNode {
+            if (this.editorNodes.length > 2) {
+                throw "AssertionError: More than two editor nodes present!";
+            }
+
+            if (this.editorNodes.length === 1) {
+                return this.editorNodes[0] as TextInputNode;
+            } else {
+                return this.editorNodes[1] as TextInputNode;
+            }
         },
 
         projectPillNode: function(): ProjectPillNode | null {
-            let projectPillNodes =  this.editorNodes.filter(function(node: EditorNode) {
-                return node.type === 'ProjectPillNode';
-            }) as ProjectPillNode[];
-
-            if (projectPillNodes.length > 1) {
-                throw "AssertionError: More than 1 project node found!";
+            if (this.editorNodes.length > 2) {
+                throw "AssertionError: More than two editor nodes present!";
             }
 
-            return projectPillNodes.length == 1 ? projectPillNodes[0] : null;
+            if (this.editorNodes.length === 2) {
+                return this.editorNodes[1] as ProjectPillNode;
+            } else {
+                return null;
+            }
         }
     },
 
@@ -203,7 +223,7 @@ let taskEditorOptions = {
         },
 
         removeAutocompleteTextFromInput(): void {
-            let node = this.textInputNodes[0]; // TODO: Revise when other types are added
+            let node = this.textInputNode; // TODO: Revise when other types are added
             let caretPosition = this.autocompleteState!.caretPosition;
             let strippedText = node.data.text.slice(0, caretPosition - 1);
 
