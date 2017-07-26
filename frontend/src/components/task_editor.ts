@@ -11,7 +11,11 @@ import { Mutators as EditorNodeMutators } from '../helpers/editor_nodes'
 interface TaskEditor extends Vue {
     // data
     editorNodes: EditorNode[]
-    autocompleteSelectionIndex: number
+    autocompleteState: {
+        nodePosition: number
+        caretPosition: number
+    } | null
+    autocompleteSelectionIndex: number // TODO: Move this into autocompleteState
 
     // prop
     initialProject: Project
@@ -68,6 +72,7 @@ let taskEditorOptions = {
         return {
             editorNodes: editorNodes,
             autocompleteSelectionIndex: 0,
+            autocompleteState: null
         }
     },
 
@@ -77,6 +82,10 @@ let taskEditorOptions = {
     },
 
     computed: {
+        isAutocompleting: function(): boolean {
+            return (this.autocompleteState !== null)
+        },
+
         autocompleteSuggestions: function(): Project[] {
             return this.allProjects;
         },
@@ -97,19 +106,6 @@ let taskEditorOptions = {
 
         taskProject: function() {
             return this.initialProject;
-        },
-
-        isAutocompleting: function(): boolean {
-            let nactive = this.textInputNodes.filter(function(node: TextInputNode) {
-                return node.data.autocompleteActive;
-            }).length;
-
-            // Use a single outside property instead?
-            if (nactive > 1) {
-                throw "AssertionError: More than one autocompleting element found"
-            }
-
-            return nactive !== 0;
         },
 
         textInputNodes: function(): TextInputNode[] {
@@ -179,7 +175,7 @@ let taskEditorOptions = {
                 throw "AssertionError: Expected atleast one character to be present"
             }
 
-            if (this.isAutocompleting && (nextCaretPosition === node.data.autocompletePosition)) {
+            if (this.isAutocompleting && (nextCaretPosition === this.autocompleteState!.caretPosition)) {
                 this.cancelAutocomplete();
             }
         },
@@ -204,7 +200,8 @@ let taskEditorOptions = {
 
         removeAutocompleteTextFromInput(): void {
             let node = this.textInputNodes[0]; // TODO: Revise when other types are added
-            let strippedText = node.data.text.slice(0, node.data.autocompletePosition - 1);
+            let caretPosition = this.autocompleteState!.caretPosition;
+            let strippedText = node.data.text.slice(0, caretPosition - 1);
 
             this.editorNodes = EditorNodeMutators.replaceTextInTextInputNode(this.editorNodes, strippedText);
         },
@@ -214,7 +211,7 @@ let taskEditorOptions = {
             this.completeAutocomplete();
         },
 
-        keyPressOnTextInput: function(event, node: TextInputNode) {
+        keyPressOnTextInput: function(event, nodePosition: number) {
             let caretPosition = (event.target.selectionStart);
             let characterBeforeCursor = event.target.value[caretPosition-1];
 
@@ -223,8 +220,11 @@ let taskEditorOptions = {
             let isValidStartPoint = previousCharacterIsSpace || (caretPosition === 0);
 
             if (!this.isAutocompleting && keyIsPoundSign && isValidStartPoint) {
-                node.data.autocompleteActive = true;
-                node.data.autocompletePosition = caretPosition + 1;
+                this.autocompleteState = {
+                    nodePosition: nodePosition,
+                    caretPosition: caretPosition + 1 // Why the +1?
+                }
+
                 // TODO: Disable cursor movements when autocomplete is active
 
                 return;
@@ -237,9 +237,7 @@ let taskEditorOptions = {
         },
 
         cancelAutocomplete() {
-            let node = this.textInputNodes[0]; // TODO: Revise when other types are added
-            node.data.autocompleteActive = false;
-            node.data.autocompletePosition = 0;
+            this.autocompleteState = null;
         },
 
         shiftAutocompleteSelectionUp() {
@@ -278,7 +276,7 @@ let taskEditorOptions = {
                                 @keydown.enter.prevent="enterOnTextInput($event, nodePosition)"
                                 @keydown.down.prevent="shiftAutocompleteSelectionDown()"
                                 @keydown.up.prevent="shiftAutocompleteSelectionUp()"
-                                @keypress="keyPressOnTextInput($event, editorNode)">
+                                @keypress="keyPressOnTextInput($event, nodePosition)">
                             </input>
                             <div class="project-pill"
                                 v-if="editorNode.type === 'ProjectPillNode'">

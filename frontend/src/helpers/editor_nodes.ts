@@ -12,9 +12,7 @@ interface ProjectPillNode {
 interface TextInputNode {
     type: 'TextInputNode',
     data: {
-        text: string,
-        autocompleteActive: boolean,
-        autocompletePosition: number,
+        text: string
     }
 }
 
@@ -34,9 +32,7 @@ let Constructors = {
         return {
             type: 'TextInputNode',
             data: {
-                text: text,
-                autocompleteActive: false,
-                autocompletePosition: 0
+                text: text
             }
         };
     },
