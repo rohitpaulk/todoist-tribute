@@ -1,6 +1,6 @@
 import { Task, Project } from './models';
 import * as $ from 'jquery';
-import axios from 'axios';
+import axios, { AxiosPromise } from 'axios';
 
 interface APITask {
     title: string,
@@ -98,7 +98,24 @@ class API {
         return API.PromiseForSingleProject(axiosPromise);
     }
 
-    static PromiseForMultipleTasks(axiosPromise): Promise<Task[]> {
+    deleteProject(id: string): Promise<void> {
+        let url = this.url + "api/v1/projects/" + id + ".json";
+        let axiosPromise = axios.delete(url);
+
+        return API.PromiseForVoid(axiosPromise);
+    }
+
+    static PromiseForVoid(axiosPromise: AxiosPromise): Promise<void> {
+        return new Promise(function(resolve, reject) {
+            let resolver = function(axiosResponse) {
+                resolve();
+            };
+
+            axiosPromise.then(resolver, API.error);
+        })
+    }
+
+    static PromiseForMultipleTasks(axiosPromise: AxiosPromise): Promise<Task[]> {
         return new Promise(function(resolve, reject) {
             let resolver = function(axiosResponse) {
                 resolve(axiosResponse.data.map(API.TaskFromAPI));
@@ -108,7 +125,7 @@ class API {
         })
     }
 
-    static PromiseForSingleTask(axiosPromise): Promise<Task> {
+    static PromiseForSingleTask(axiosPromise: AxiosPromise): Promise<Task> {
         return new Promise(function(resolve, reject) {
             let resolver = function(axiosResponse) {
                 resolve(API.TaskFromAPI(axiosResponse.data));
@@ -118,7 +135,7 @@ class API {
         })
     }
 
-    static PromiseForMultipleProjects(axiosPromise): Promise<Project[]> {
+    static PromiseForMultipleProjects(axiosPromise: AxiosPromise): Promise<Project[]> {
         return new Promise(function(resolve, reject) {
             let resolver = function(axiosResponse) {
                 resolve(axiosResponse.data.map(API.ProjectFromAPI));
@@ -128,7 +145,7 @@ class API {
         })
     }
 
-    static PromiseForSingleProject(axiosPromise): Promise<Project> {
+    static PromiseForSingleProject(axiosPromise: AxiosPromise): Promise<Project> {
         return new Promise(function(resolve, reject) {
             let resolver = function(axiosResponse) {
                 resolve(API.ProjectFromAPI(axiosResponse.data));

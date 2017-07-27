@@ -129,7 +129,9 @@ let projectListOptions = {
 
         deleteProject(project: Project) {
             this.resetDropdown();
-            alert('Deleting project');
+            this.$store.dispatch('deleteProject', project.id);
+
+            // TODO: Switch out TaskList with Inbox?
         },
 
         editProject(project: Project) {

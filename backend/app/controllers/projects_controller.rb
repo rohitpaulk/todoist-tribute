@@ -42,6 +42,12 @@ class ProjectsController < ApplicationController
     render json: project
   end
 
+  def delete
+    Project.find(params[:project_id]).delete
+
+    render json: {}
+  end
+
   def project_params
     params.permit(:name, :color_hex)
   end

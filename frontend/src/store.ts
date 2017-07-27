@@ -126,6 +126,10 @@ let storeOptions = {
             newProjects[index] = project;
             state.projects = newProjects;
         },
+
+        removeProject(state, id: string) {
+            state.projects = _.filter(state.projects, (x) => x.id !== id);
+        },
     },
     actions: { // TODO: Return promises?
         refreshTasks(context) {
@@ -189,7 +193,13 @@ let storeOptions = {
                     resolve();
                 });
             });
-        }
+        },
+
+        deleteProject(context, id: string) {
+            api.deleteProject(id).then(function() {
+                context.commit('removeProject', id);
+            });
+        },
     }
 } as StoreOptions<TuduStoreOptions>
 

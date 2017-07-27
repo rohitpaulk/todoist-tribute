@@ -10,4 +10,5 @@ Rails.application.routes.draw do
   post 'api/v1/projects/reorder', to: 'projects#reorder'
   post 'api/v1/projects', to: 'projects#create'
   put 'api/v1/projects/:project_id', to: 'projects#update'
+  delete 'api/v1/projects/:project_id', to: 'projects#delete'
 end
