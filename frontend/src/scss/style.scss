@@ -193,6 +193,11 @@ body {
 
     .dropdown-toggle {
         visibility: hidden;
+
+        &:hover, &.is-active {
+            visibility: visible;
+            color: darken($color-light-gray, 20);
+        }
     }
 
     $dropdown-container-width: 30px;
@@ -204,9 +209,6 @@ body {
         text-align: center;
         right: 0px;
         color: $color-light-gray;
-        &:hover {
-            color: darken($color-light-gray, 20);
-        }
     }
 
     .dropdown-container .dropdown {
@@ -215,14 +217,26 @@ body {
         left: 0px;
         top: 20px;
         width: 200px;
-        height: 100px;
         background-color: white;
         border: 1px solid $color-very-light-gray;
         box-shadow: 0px 1px 6px 0px $color-light-gray;
         border-radius: 4px;
-        // TEMP
+        text-align: left;
+    }
+
+    .dropdown-container .dropdown-options {
+        padding: 4px;
+    }
+
+    .dropdown-container .dropdown-options .dropdown-option {
         color: $color-black-text;
-        padding: 20px;
+        padding: 10px 10px 10px 10px;
+        font-size: 13px;
+        &:hover {
+            background-color: #555;
+            color: #eee;
+        }
+
     }
 }
 

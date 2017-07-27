@@ -7,18 +7,20 @@ import { DragEventHandlers, DragState, getOrderedItems } from '../helpers/drag_s
 
 interface ProjectList extends Vue {
     // props
-    projects: Project[],
-    selectedProject: Project,
+    projects: Project[]
+    selectedProject: Project
     projectTaskCounts: {[key: string]: number}
 
     // data
     dragState?: DragState
     dragOperationInProgress: boolean
     isAddingProject: boolean
+    dropdownActiveOn: Project | null
 
     // methods
     showProjectForm(): void
     hideProjectForm(): void
+    resetDropdown(): void
 }
 
 let projectListOptions = {
@@ -26,7 +28,8 @@ let projectListOptions = {
         return {
             dragState: undefined,
             dragOperationInProgress: false,
-            isAddingProject: false
+            isAddingProject: false,
+            dropdownActiveOn: null
         }
     },
 
@@ -118,6 +121,28 @@ let projectListOptions = {
 
         hideProjectForm: function() {
             this.isAddingProject = false;
+        },
+
+        deleteProject(project: Project) {
+            this.resetDropdown();
+            alert('Deleting project');
+        },
+
+        editProject(project: Project) {
+            this.resetDropdown();
+            alert('Editing project');
+        },
+
+        toggleDropdown: function(project: Project) {
+            if (this.dropdownActiveOn) {
+                this.resetDropdown();
+            } else {
+                this.dropdownActiveOn = project;
+            }
+        },
+
+        resetDropdown: function(): void {
+            this.dropdownActiveOn = null;
         }
     },
 
@@ -152,15 +177,17 @@ let projectListOptions = {
                         </span>
                     </span>
 
-                    <span class="dropdown-container">
-                        <span class="dropdown-toggle">
-                            <i class="fa fa-ellipsis-h">
-                            </i>
+                    <span class="dropdown-container" @click.stop="toggleDropdown(project)">
+                        <span :class="{'dropdown-toggle': true, 'is-active': dropdownActiveOn && (dropdownActiveOn.id == project.id)}">
+                            <i class="fa fa-ellipsis-h"></i>
                         </span>
-                        <div class="dropdown" v-if="index === 1">
+                        <div class="dropdown" v-if="dropdownActiveOn && (dropdownActiveOn.id == project.id)">
                             <ul class="dropdown-options">
-                                <li class="dropdown-options">
-                                    Link Project
+                                <li class="dropdown-option" @click.stop="editProject(project)">
+                                    Edit Project
+                                </li>
+                                <li class="dropdown-option" @click.stop="deleteProject(project)">
+                                    Delete Project
                                 </li>
                             </ul>
                         </div>
