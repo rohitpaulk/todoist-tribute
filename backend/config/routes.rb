@@ -8,4 +8,5 @@ Rails.application.routes.draw do
 
   get 'api/v1/projects', to: 'projects#index'
   post 'api/v1/projects/reorder', to: 'projects#reorder'
+  post 'api/v1/projects', to: 'projects#create'
 end

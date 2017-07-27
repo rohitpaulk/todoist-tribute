@@ -23,8 +23,13 @@ interface UpdateTaskPayload {
 }
 
 interface ReorderTasksPayload {
-    task_ids: string[],
+    task_ids: string[], // TODO: Change this to camelCase
     project: Project
+}
+
+interface CreateProjectPayload {
+    name: string,
+    colorHex: string
 }
 
 let api = new API('http://localhost:3000/');
@@ -82,8 +87,8 @@ let storeOptions = {
     },
 
     mutations: {
-        setActiveProject(state, project: Project) {
-            state.activeProject = project;
+        setTasks(state, tasks: Task[]) {
+            state.tasks = tasks;
         },
 
         addTask(state, task: Task) {
@@ -94,20 +99,24 @@ let storeOptions = {
             state.tasks = _.filter(state.tasks, (x) => x.id !== task.id);
         },
 
-        setTasks(state, tasks: Task[]) {
-            state.tasks = tasks;
+        updateTask(state, task: Task) {
+            let index = _.findIndex(state.tasks, (x: Task) => (x.id === task.id));
+            let newTasks = state.tasks.slice();
+            newTasks[index] = task;
+            state.tasks = newTasks;
         },
 
         setProjects(state, projects: Project[]) {
             state.projects = projects;
         },
 
-        updateTask(state, task: Task) {
-            let index = _.findIndex(state.tasks, (x: Task) => (x.id === task.id));
-            let newTasks = state.tasks.slice();
-            newTasks[index] = task;
-            state.tasks = newTasks;
-        }
+        setActiveProject(state, project: Project) {
+            state.activeProject = project;
+        },
+
+        addProject(state, project: Project) {
+            state.projects.push(project)
+        },
     },
     actions: { // TODO: Return promises?
         refreshTasks(context) {
@@ -146,6 +155,18 @@ let storeOptions = {
             });
         },
 
+        refreshProjects(context) {
+            api.getProjects().then(function(projects: Project[]) {
+                context.commit('setProjects', projects);
+            });
+        },
+
+        createProject(context, payload: CreateProjectPayload) {
+            api.createProject(payload.name, payload.colorHex).then(function(project: Project) {
+                context.commit('addProject', project);
+            });
+        },
+
         reorderProjects(context, project_ids: string[]): Promise<void> {
             return new Promise(function(resolve, reject) {
                 api.reorderProjects(project_ids).then(function(projectsFromAPI) {
@@ -153,15 +174,9 @@ let storeOptions = {
                     resolve();
                 });
             });
-        },
-
-        refreshProjects(context) {
-            api.getProjects().then(function(projects: Project[]) {
-                context.commit('setProjects', projects);
-            });
-        },
+        }
     }
 } as StoreOptions<TuduStoreOptions>
 
 export { storeOptions as TuduStoreOptions }
-export { CreateTaskPayload, UpdateTaskPayload, ReorderTasksPayload }
+export { CreateTaskPayload, UpdateTaskPayload, ReorderTasksPayload, CreateProjectPayload }

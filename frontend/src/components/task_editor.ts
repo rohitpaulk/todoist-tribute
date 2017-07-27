@@ -169,8 +169,6 @@ let taskEditorOptions = {
         },
 
         submitChanges: function() {
-            let taskEditor = this;
-
             // Validate task properties
             if (_.trim(this.taskTitle) === '') {
                 alert('empty!');

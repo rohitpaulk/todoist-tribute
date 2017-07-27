@@ -1,6 +1,8 @@
 import Vue, { ComponentOptions } from 'vue';
+import * as _ from 'lodash';
 
 import { Project } from '../models';
+import { CreateProjectPayload } from '../store';
 
 
 interface ProjectEditor extends Vue {
@@ -42,7 +44,21 @@ let ProjectEditorOptions = {
         },
 
         submitChanges: function() {
-            alert('Submit changes!');
+            if (_.trim(this.project.name) === '') {
+                return; // Nothing to be done
+            }
+
+            if (this.projectToEdit) {
+                alert('Updating project not implemented yet!');
+            } else {
+                this.$store.dispatch('createProject', {
+                    name: this.project.name,
+                    colorHex: this.project.colorHex
+                } as CreateProjectPayload);
+            }
+
+            // TODO: Wait for promise to resolve?
+            this.emitClose();
         }
     },
 

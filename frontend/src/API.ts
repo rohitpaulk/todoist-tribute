@@ -35,22 +35,6 @@ class API {
         return API.PromiseForMultipleTasks(axiosPromise);
     }
 
-    getProjects(): Promise<Project[]> {
-        let url = this.url + "api/v1/projects.json";
-        let axiosPromise = axios.get(url);
-
-        return API.PromiseForMultipleProjects(axiosPromise);
-    }
-
-    reorderProjects(project_ids: string[]): Promise<Project[]> {
-        let url = this.url + "api/v1/projects/reorder.json";
-        let axiosPromise = axios.post(url, {
-            project_ids: project_ids.map(x => Number(x))
-        });
-
-        return API.PromiseForMultipleProjects(axiosPromise);
-    }
-
     createTask(title: string, projectId: string): Promise<Task> {
         let url = this.url + "api/v1/tasks.json";
         let axiosPromise = axios.post(url, {
@@ -76,6 +60,39 @@ class API {
         });
 
         return API.PromiseForMultipleTasks(axiosPromise);
+    }
+
+    getProjects(): Promise<Project[]> {
+        let url = this.url + "api/v1/projects.json";
+        let axiosPromise = axios.get(url);
+
+        return API.PromiseForMultipleProjects(axiosPromise);
+    }
+
+    reorderProjects(projectIds: string[]): Promise<Project[]> {
+        let url = this.url + "api/v1/projects/reorder.json";
+        let axiosPromise = axios.post(url, {
+            project_ids: projectIds.map(x => Number(x))
+        });
+
+        return API.PromiseForMultipleProjects(axiosPromise);
+    }
+
+    createProject(name: string, colorHex: string): Promise<Project> {
+        let url = this.url + "api/v1/projects.json";
+        let axiosPromise = axios.post(url, {
+            name: name,
+            color_hex: colorHex
+        });
+
+        return API.PromiseForSingleProject(axiosPromise);
+    }
+
+    updateProject(id: string, properties: {[ key: string]: any}): Promise<Project> {
+        let url = this.url + "api/v1/projects/" + id + ".json";
+        let axiosPromise = axios.put(url, properties);
+
+        return API.PromiseForSingleProject(axiosPromise);
     }
 
     static PromiseForMultipleTasks(axiosPromise): Promise<Task[]> {
