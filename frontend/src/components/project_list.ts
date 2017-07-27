@@ -124,7 +124,7 @@ let projectListOptions = {
     template: `
         <div>
             <ul class="project-list resource-list">
-                <li v-for="project in localProjects"
+                <li v-for="(project, index) in localProjects"
                     :class="projectItemClasses[project.id]"
                     @click="setProject(project)"
                     @drop="onDrop($event)"
@@ -151,6 +151,21 @@ let projectListOptions = {
                             {{ projectTaskCounts[project.id] }}
                         </span>
                     </span>
+
+                    <span class="dropdown-container">
+                        <span class="dropdown-toggle">
+                            <i class="fa fa-ellipsis-h">
+                            </i>
+                        </span>
+                        <div class="dropdown" v-if="index === 1">
+                            <ul class="dropdown-options">
+                                <li class="dropdown-options">
+                                    Link Project
+                                </li>
+                            </ul>
+                        </div>
+                    </span>
+
                 </li>
             </ul>
 

@@ -60,15 +60,16 @@ body {
     vertical-align: top;
 
     height: 100vh;
-    overflow: scroll;
 }
 
 .left-menu {
     width: 30%;
+    overflow-x: visible; // Dropdown!
 }
 
 .content {
     width: 70%;
+    overflow-y: scroll;
 }
 
 // Styling
@@ -105,7 +106,7 @@ body {
 
 .left-menu {
     padding-left: $sidebar-left-padding;
-    padding-right: 10px;
+    padding-right: 20px;
 
     .view-link {
         display: block;
@@ -150,6 +151,7 @@ body {
 
 .project-list .project-item {
     font-size: 14px;
+    position: relative;
 
     &.is-selected, &:hover {
         background-color: white;
@@ -171,7 +173,7 @@ body {
         border-radius: $project-icon-diameter / 2;
     }
 
-    span.text-holder {
+    span.text-holder, span.dropdown-container {
         margin-top: 10px;
         margin-bottom: 10px;
     }
@@ -181,6 +183,46 @@ body {
         font-size: 10px;
         color: lighten($color-black-text, 50);
         margin-left: 3px;
+    }
+
+    &:hover {
+        .dropdown-toggle {
+            visibility: visible;
+        }
+    }
+
+    .dropdown-toggle {
+        visibility: hidden;
+    }
+
+    $dropdown-container-width: 30px;
+    $dropdown-width: 200px;
+
+    .dropdown-container {
+        position: absolute;
+        width: 30px;
+        text-align: center;
+        right: 0px;
+        color: $color-light-gray;
+        &:hover {
+            color: darken($color-light-gray, 20);
+        }
+    }
+
+    .dropdown-container .dropdown {
+        z-index: 2;
+        position: absolute;
+        left: 0px;
+        top: 20px;
+        width: 200px;
+        height: 100px;
+        background-color: white;
+        border: 1px solid $color-very-light-gray;
+        box-shadow: 0px 1px 6px 0px $color-light-gray;
+        border-radius: 4px;
+        // TEMP
+        color: $color-black-text;
+        padding: 20px;
     }
 }
 

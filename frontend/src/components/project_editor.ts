@@ -72,7 +72,7 @@ let ProjectEditorOptions = {
                 <form @submit.prevent="submitChanges()"
                       @keydown.esc="emitClose()">
                     <div class="input-nodes-container">
-                        <!-- Color input -->
+                        <!-- TODO: Add color input -->
                         <input type="text"
                                v-model="project.name"
                                ref="text-input"
