@@ -88,9 +88,12 @@ class API {
         return API.PromiseForSingleProject(axiosPromise);
     }
 
-    updateProject(id: string, properties: {[ key: string]: any}): Promise<Project> {
+    updateProject(id: string, name: string, colorHex: string): Promise<Project> {
         let url = this.url + "api/v1/projects/" + id + ".json";
-        let axiosPromise = axios.put(url, properties);
+        let axiosPromise = axios.put(url, {
+            name: name,
+            color_hex: colorHex
+        });
 
         return API.PromiseForSingleProject(axiosPromise);
     }

@@ -2,7 +2,7 @@ import Vue, { ComponentOptions } from 'vue';
 import * as _ from 'lodash';
 
 import { Project } from '../models';
-import { CreateProjectPayload } from '../store';
+import { CreateProjectPayload, UpdateProjectPayload } from '../store';
 
 
 interface ProjectEditor extends Vue {
@@ -49,7 +49,11 @@ let ProjectEditorOptions = {
             }
 
             if (this.projectToEdit) {
-                alert('Updating project not implemented yet!');
+                this.$store.dispatch('updateProject', {
+                    id: this.projectToEdit.id,
+                    name: this.project.name,
+                    colorHex: this.project.colorHex
+                } as UpdateProjectPayload);
             } else {
                 this.$store.dispatch('createProject', {
                     name: this.project.name,

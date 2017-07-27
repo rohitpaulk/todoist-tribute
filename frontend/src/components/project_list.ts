@@ -16,6 +16,7 @@ interface ProjectList extends Vue {
     dragOperationInProgress: boolean
     isAddingProject: boolean
     dropdownActiveOn: Project | null
+    projectBeingEdited: Project | null
 
     // methods
     showProjectForm(): void
@@ -29,7 +30,8 @@ let projectListOptions = {
             dragState: undefined,
             dragOperationInProgress: false,
             isAddingProject: false,
-            dropdownActiveOn: null
+            dropdownActiveOn: null,
+            projectBeingEdited: null
         }
     },
 
@@ -117,10 +119,12 @@ let projectListOptions = {
 
         showProjectForm: function() {
             this.isAddingProject = true;
+            this.projectBeingEdited = null;
         },
 
         hideProjectForm: function() {
             this.isAddingProject = false;
+            this.projectBeingEdited = null;
         },
 
         deleteProject(project: Project) {
@@ -130,7 +134,8 @@ let projectListOptions = {
 
         editProject(project: Project) {
             this.resetDropdown();
-            alert('Editing project');
+
+            this.projectBeingEdited = project;
         },
 
         toggleDropdown: function(project: Project) {
@@ -149,51 +154,57 @@ let projectListOptions = {
     template: `
         <div>
             <ul class="project-list resource-list">
-                <li v-for="(project, index) in localProjects"
-                    :class="projectItemClasses[project.id]"
-                    @click="setProject(project)"
-                    @drop="onDrop($event)"
-                    @dragover.prevent
-                    @dragenter="onDragEnter($event, project)">
+                <template v-for="(project, index) in localProjects">
+                    <project-editor v-if="projectBeingEdited && (projectBeingEdited.id === project.id)"
+                                    @close="hideProjectForm()"
+                                    :project-to-edit="project">
+                    </project-editor>
+                    <li v-else
+                        :class="projectItemClasses[project.id]"
+                        @click="setProject(project)"
+                        @drop="onDrop($event)"
+                        @dragover.prevent
+                        @dragenter="onDragEnter($event, project)">
 
-                    <span class="dragbars-holder"
-                          draggable="true"
-                          @dragstart="onDragStart($event, project)"
-                          @dragend="onDragEnd()">
-                        <i class="fa fa-bars drag-bars"></i>
-                    </span>
+                        <span class="dragbars-holder"
+                            draggable="true"
+                            @dragstart="onDragStart($event, project)"
+                            @dragend="onDragEnd()">
+                            <i class="fa fa-bars drag-bars"></i>
+                        </span>
 
-                    <span class="icon-holder">
-                        <span class="project-icon"
-                            :style="{ 'background-color': '#' + project.colorHex }">
+                        <span class="icon-holder">
+                            <span class="project-icon"
+                                :style="{ 'background-color': '#' + project.colorHex }">
+                            </span>
                         </span>
-                    </span>
-                    <span class="text-holder">
-                        <span class="project-title">
-                            {{ project.name }}
+                        <span class="text-holder">
+                            <span class="project-title">
+                                {{ project.name }}
+                            </span>
+                            <span class="counter" v-if="projectTaskCounts[project.id] !== 0">
+                                {{ projectTaskCounts[project.id] }}
+                            </span>
                         </span>
-                        <span class="counter" v-if="projectTaskCounts[project.id] !== 0">
-                            {{ projectTaskCounts[project.id] }}
-                        </span>
-                    </span>
 
-                    <span class="dropdown-container" @click.stop="toggleDropdown(project)">
-                        <span :class="{'dropdown-toggle': true, 'is-active': dropdownActiveOn && (dropdownActiveOn.id == project.id)}">
-                            <i class="fa fa-ellipsis-h"></i>
+                        <span class="dropdown-container" @click.stop="toggleDropdown(project)">
+                            <span :class="{'dropdown-toggle': true, 'is-active': dropdownActiveOn && (dropdownActiveOn.id == project.id)}">
+                                <i class="fa fa-ellipsis-h"></i>
+                            </span>
+                            <div class="dropdown" v-if="dropdownActiveOn && (dropdownActiveOn.id == project.id)">
+                                <ul class="dropdown-options">
+                                    <li class="dropdown-option" @click.stop="editProject(project)">
+                                        Edit Project
+                                    </li>
+                                    <li class="dropdown-option" @click.stop="deleteProject(project)">
+                                        Delete Project
+                                    </li>
+                                </ul>
+                            </div>
                         </span>
-                        <div class="dropdown" v-if="dropdownActiveOn && (dropdownActiveOn.id == project.id)">
-                            <ul class="dropdown-options">
-                                <li class="dropdown-option" @click.stop="editProject(project)">
-                                    Edit Project
-                                </li>
-                                <li class="dropdown-option" @click.stop="deleteProject(project)">
-                                    Delete Project
-                                </li>
-                            </ul>
-                        </div>
-                    </span>
 
-                </li>
+                    </li>
+                </template>
             </ul>
 
             <project-editor

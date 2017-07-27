@@ -6,20 +6,18 @@ import { API } from './API'
 
 
 interface TuduStoreOptions {
-    tasks: Task[],
-    projects: Project[],
-    activeProject: Project,
+    tasks: Task[]
+    projects: Project[]
+    activeProject: Project
 }
 
 interface CreateTaskPayload {
-    title: string,
+    title: string
     project: Project
 }
 
-interface UpdateTaskPayload {
-    id: string,
-    title: string,
-    project: Project
+interface UpdateTaskPayload extends CreateTaskPayload {
+    id: string
 }
 
 interface ReorderTasksPayload {
@@ -28,8 +26,12 @@ interface ReorderTasksPayload {
 }
 
 interface CreateProjectPayload {
-    name: string,
+    name: string
     colorHex: string
+}
+
+interface UpdateProjectPayload extends CreateProjectPayload {
+    id: string
 }
 
 let api = new API('http://localhost:3000/');
@@ -117,6 +119,13 @@ let storeOptions = {
         addProject(state, project: Project) {
             state.projects.push(project)
         },
+
+        updateProject(state, project: Project) {
+            let index = _.findIndex(state.projects, (x: Project) => (x.id === project.id));
+            let newProjects = state.projects.slice();
+            newProjects[index] = project;
+            state.projects = newProjects;
+        },
     },
     actions: { // TODO: Return promises?
         refreshTasks(context) {
@@ -167,6 +176,12 @@ let storeOptions = {
             });
         },
 
+        updateProject(context, payload: UpdateProjectPayload) {
+            api.updateProject(payload.id, payload.name, payload.colorHex).then(function(project: Project) {
+                context.commit('updateProject', project);
+            });
+        },
+
         reorderProjects(context, project_ids: string[]): Promise<void> {
             return new Promise(function(resolve, reject) {
                 api.reorderProjects(project_ids).then(function(projectsFromAPI) {
@@ -179,4 +194,5 @@ let storeOptions = {
 } as StoreOptions<TuduStoreOptions>
 
 export { storeOptions as TuduStoreOptions }
-export { CreateTaskPayload, UpdateTaskPayload, ReorderTasksPayload, CreateProjectPayload }
+export { CreateTaskPayload, UpdateTaskPayload, ReorderTasksPayload }
+export { CreateProjectPayload, UpdateProjectPayload }

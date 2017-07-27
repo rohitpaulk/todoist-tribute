@@ -34,4 +34,15 @@ class ProjectsController < ApplicationController
 
     render json: project
   end
+
+  def update
+    project = Project.find(params[:project_id])
+    project.update!(project_params)
+
+    render json: project
+  end
+
+  def project_params
+    params.permit(:name, :color_hex)
+  end
 end
