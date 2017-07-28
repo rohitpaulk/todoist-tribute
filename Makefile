@@ -1,5 +1,8 @@
-serve_backend:
+serve:
 	cd backend && rails s
 
-serve_frontend:
-	cd frontend && npm start
+watch_frontend:
+	cd frontend && npm run watch
+
+compile_frontend:
+	cd frontend && npm run build

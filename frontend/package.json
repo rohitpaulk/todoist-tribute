@@ -20,7 +20,7 @@
   "scripts": {
     "test": "mocha --compilers ts:ts-node/register src/tests/*.ts",
     "build": "webpack",
-    "start": "webpack-dev-server --open"
+    "watch": "webpack --watch"
   },
   "author": "",
   "license": "ISC",
