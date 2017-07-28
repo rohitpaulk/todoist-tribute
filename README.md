@@ -16,8 +16,20 @@ The backend is written in [Ruby](https://www.ruby-lang.org/en/) + [Rails](https:
 
 ### Current Status
 
-- [x] Tasks
+- [ ] Tasks
+  - [x] Creating tasks
+  - [x] Editing tasks
+  - [x] Completing tasks
+  - [x] Re-ordering tasks
+  - [ ] Nested/indented tasks
 - [x] Projects
+  - [x] Switching between project views
+  - [x] Creating projects
+  - [x] Editing projects
+  - [x] Re-ordering projects
+  - [x] Deleting projects
 - [ ] Labels
+- [ ] Priorities
+- [ ] Due dates
 - [ ] Filters
 - [ ] Karma
