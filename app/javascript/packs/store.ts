@@ -9,6 +9,7 @@ interface TuduStoreOptions {
     tasks: Task[]
     projects: Project[]
     activeProject: Project
+    apiUrl: string
 }
 
 interface CreateTaskPayload {
@@ -34,8 +35,6 @@ interface UpdateProjectPayload extends CreateProjectPayload {
     id: string
 }
 
-let api = new API('http://localhost:3000/');
-
 let storeOptions = {
     strict: true, // Disable on production?
 
@@ -43,7 +42,8 @@ let storeOptions = {
         tasks: [],
         projects: [],
         // TODO: Look into avoiding hardcoding this
-        activeProject: {id: '1', name: 'Inbox', colorHex: "000000" }
+        activeProject: {id: '1', name: 'Inbox', colorHex: "000000" },
+        apiUrl: '' // Filled by the application
     },
 
     getters: {
@@ -85,6 +85,10 @@ let storeOptions = {
             })
 
             return result;
+        },
+
+        api: function(state): API {
+            return new API(state.apiUrl);
         }
     },
 
@@ -132,72 +136,72 @@ let storeOptions = {
         },
     },
     actions: { // TODO: Return promises?
-        refreshTasks(context) {
-            api.getTasks().then(function(tasks: Task[]) {
-                context.commit('setTasks', tasks);
+        refreshTasks({commit, getters}) {
+            getters.api.getTasks().then(function(tasks: Task[]) {
+                commit('setTasks', tasks);
             });
         },
 
-        createTask(context, payload: CreateTaskPayload) {
-            api.createTask(payload.title, payload.project.id).then(function(task: Task) {
-                context.commit('addTask', task)
+        createTask({commit, getters}, payload: CreateTaskPayload) {
+            getters.api.createTask(payload.title, payload.project.id).then(function(task: Task) {
+                commit('addTask', task)
             });
         },
 
-        updateTask(context, payload: UpdateTaskPayload) {
+        updateTask({commit, getters}, payload: UpdateTaskPayload) {
             let id = payload.id;
             delete payload.id;
 
-            api.updateTask(id, payload).then(function(task: Task) {
-                context.commit('updateTask', task);
+            getters.api.updateTask(id, payload).then(function(task: Task) {
+                commit('updateTask', task);
             });
         },
 
-        completeTask(context, task: Task) {
-            api.updateTask(task.id, {is_completed: true}).then(function() {
-                context.commit('removeTask', task);
+        completeTask({commit, getters}, task: Task) {
+            getters.api.updateTask(task.id, {is_completed: true}).then(function() {
+                commit('removeTask', task);
             });
         },
 
-        reorderTasks(context, payload: ReorderTasksPayload): Promise<void> {
+        reorderTasks({commit, getters}, payload: ReorderTasksPayload): Promise<void> {
             return new Promise(function(resolve, reject) {
-                api.reorderTasks(payload.project, payload.task_ids).then(function(tasksFromAPI) {
-                    context.commit('setTasks', tasksFromAPI);
+                getters.api.reorderTasks(payload.project, payload.task_ids).then(function(tasksFromAPI) {
+                    commit('setTasks', tasksFromAPI);
                     resolve();
                 });
             });
         },
 
-        refreshProjects(context) {
-            api.getProjects().then(function(projects: Project[]) {
-                context.commit('setProjects', projects);
+        refreshProjects({commit, getters}) {
+            getters.api.getProjects().then(function(projects: Project[]) {
+                commit('setProjects', projects);
             });
         },
 
-        createProject(context, payload: CreateProjectPayload) {
-            api.createProject(payload.name, payload.colorHex).then(function(project: Project) {
-                context.commit('addProject', project);
+        createProject({commit, getters}, payload: CreateProjectPayload) {
+            getters.api.createProject(payload.name, payload.colorHex).then(function(project: Project) {
+                commit('addProject', project);
             });
         },
 
-        updateProject(context, payload: UpdateProjectPayload) {
-            api.updateProject(payload.id, payload.name, payload.colorHex).then(function(project: Project) {
-                context.commit('updateProject', project);
+        updateProject({commit, getters}, payload: UpdateProjectPayload) {
+            getters.api.updateProject(payload.id, payload.name, payload.colorHex).then(function(project: Project) {
+                commit('updateProject', project);
             });
         },
 
-        reorderProjects(context, project_ids: string[]): Promise<void> {
+        reorderProjects({commit, getters}, project_ids: string[]): Promise<void> {
             return new Promise(function(resolve, reject) {
-                api.reorderProjects(project_ids).then(function(projectsFromAPI) {
-                    context.commit('setProjects', projectsFromAPI);
+                getters.api.reorderProjects(project_ids).then(function(projectsFromAPI) {
+                    commit('setProjects', projectsFromAPI);
                     resolve();
                 });
             });
         },
 
-        deleteProject(context, id: string) {
-            api.deleteProject(id).then(function() {
-                context.commit('removeProject', id);
+        deleteProject({commit, getters}, id: string) {
+            getters.api.deleteProject(id).then(function() {
+                commit('removeProject', id);
             });
         },
     }

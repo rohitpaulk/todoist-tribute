@@ -19,6 +19,11 @@ Vue.component('project-editor', ProjectEditorOptions);
 Vue.component('view-list', ViewListOptions);
 
 Vue.use(Vuex);
+
+let apiUrl = document.head.querySelector("[property=apiUrl]")!["content"];
+// Hack around ts bug! An imported object can be undefined?
+// View: https://github.com/Microsoft/TypeScript/issues/13369
+(TuduStoreOptions as {state: any}).state.apiUrl = apiUrl;
 let store = new Vuex.Store(TuduStoreOptions);
 
 new Vue({
