@@ -12,5 +12,5 @@ Rails.application.routes.draw do
   put 'api/v1/projects/:project_id', to: 'projects#update'
   delete 'api/v1/projects/:project_id', to: 'projects#delete'
 
-  get '', to: 'pages#home'
+  root to: 'pages#home'
 end
