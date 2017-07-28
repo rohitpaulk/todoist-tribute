@@ -22,3 +22,4 @@
 
 .byebug_history
 .DS_Store
+/public/packs
