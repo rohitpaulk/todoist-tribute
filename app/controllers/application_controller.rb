@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   skip_before_action :verify_authenticity_token # API, no CSRF required.
 
   before_action :allow_cors
-  before_action :fake_delay
+  # before_action :fake_delay
 
   def fake_delay
     sleep 0.2
