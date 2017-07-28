@@ -4,6 +4,8 @@ class Task < ApplicationRecord
   validates :title, presence: true
   belongs_to :project
 
+  before_update :reset_sort_order_if_project_changed
+
   def self.reorder!(task_ids, project)
     # Pulled from Orderable
     self.reorder_within_scope!(task_ids, {project_id: project.id})
@@ -13,5 +15,12 @@ class Task < ApplicationRecord
     properties[:project_id] = project.id
     # Pulled from Orderable
     self.create_ordered_within_scope!({project: project}, properties)
+  end
+
+  def reset_sort_order_if_project_changed
+    # TODO: Make this atomic!
+    if project_id_was != project_id
+      self.sort_order = (Project.find(project_id).tasks.maximum(:sort_order) || 0) + 1
+    end
   end
 end

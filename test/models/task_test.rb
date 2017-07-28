@@ -68,4 +68,14 @@ class TaskTest < ActiveSupport::TestCase
     assert_equal 1, Task.find(first_task.id).sort_order
     assert_equal 2, Task.find(second_task.id).sort_order
   end
+
+  test "Updating #project_id picks next sort_order automatically" do
+    first_project = FactoryGirl.create(:project)
+    first_task = FactoryGirl.create(:task, sort_order: 1, project: first_project)
+    second_project = FactoryGirl.create(:project)
+    second_task = FactoryGirl.create(:task, sort_order: 1, project: second_project)
+    first_task.update(project_id: second_project.id)
+
+    assert_equal(2, first_task.sort_order)
+  end
 end
