@@ -1,24 +1,23 @@
-# README
+> Imitation is the sincerest form of flattery.
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is a clone of the [Todoist](https://todoist.com/) web-app.
 
-Things you may want to cover:
+Here's how it looks:
 
-* Ruby version
+![](/app/assets/images/2.gif)
 
-* System dependencies
+Visit [a live instance](http://thetuduapp.herokuapp.com/) to check it out!
 
-* Configuration
+### Under the hood
 
-* Database creation
+The backend is written in [Ruby](https://www.ruby-lang.org/en/) + [Rails](https://github.com/rails/rails), and the frontend in [Typescript](https://www.typescriptlang.org/) + [Vue.js](https://vuejs.org/).
 
-* Database initialization
 
-* How to run the test suite
 
-* Services (job queues, cache servers, search engines, etc.)
+### Current Status
 
-* Deployment instructions
-
-* ...
+- [x] Tasks
+- [x] Projects
+- [ ] Labels
+- [ ] Filters
+- [ ] Karma
