@@ -1,5 +1,4 @@
 import { Task, Project } from './models';
-import * as $ from 'jquery';
 import axios, { AxiosPromise } from 'axios';
 
 interface APITask {
