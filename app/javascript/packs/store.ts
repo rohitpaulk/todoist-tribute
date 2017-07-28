@@ -152,7 +152,12 @@ let storeOptions = {
             let id = payload.id;
             delete payload.id;
 
-            getters.api.updateTask(id, payload).then(function(task: Task) {
+            let apiPayload = {
+                title: payload.title,
+                project_id: payload.project.id
+            };
+
+            getters.api.updateTask(id, apiPayload).then(function(task: Task) {
                 commit('updateTask', task);
             });
         },
