@@ -51,7 +51,7 @@ module.exports = {
       'node_modules'
     ],
     alias: {
-      'vue': 'vue/dist/vue.js' // Include the template compiler
+      'vue': 'vue/dist/vue.common.js' // Include the template compiler
     }
   },
 
