@@ -167,7 +167,7 @@ let taskListOptions = {
                             <i class="fa fa-bars drag-bars"></i>
                         </span>
                         <span class="icon-holder">
-                            <span class="checkbox" @click="completeTask(task)">
+                            <span class="checkbox" @click.stop="completeTask(task)">
                             </span>
                         </span>
                         <span class="text-holder">
