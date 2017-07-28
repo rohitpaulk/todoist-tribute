@@ -1,0 +1,1 @@
+../../../../frontend/dist/bundle.js
