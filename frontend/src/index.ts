@@ -1,5 +1,3 @@
-import './scss/style.scss';
-
 import * as Vue from 'vue';
 import Vuex from 'vuex'
 

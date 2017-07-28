@@ -2,9 +2,6 @@ var path = require('path');
 
 module.exports = {
   entry: './src/index.ts',
-  devServer: {
-    contentBase: ['./dist', './src']
-  },
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')
@@ -20,20 +17,8 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.scss$/,
-        use: [
-          'style-loader',
-          'css-loader',
-          'sass-loader'
-        ]
-      },
-      {
         test: /\.ts$/,
         use: 'ts-loader',
-      },
-      {
-        test: /\.(woff|woff2|eot|ttf|otf|svg)$/,
-        use: 'file-loader'
       }
     ]
   }
