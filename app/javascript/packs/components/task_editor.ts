@@ -333,3 +333,4 @@ let taskEditorOptions = {
 } as ComponentOptions<TaskEditor>
 
 export { taskEditorOptions as TaskEditorOptions }
+export { TaskEditor }
