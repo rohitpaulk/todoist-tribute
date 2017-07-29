@@ -1,5 +1,9 @@
 module.exports = {
   loader: 'ts-loader',
-  include: [/\.ts$/],
-  exclude: [/\.spec\.ts$/]
+  test: function(path) {
+    let isTest = (path.substr(path.length - 8) == '.spec.ts');
+    let isTypescript = (path.substr(path.length - 3) == '.ts');
+
+    return isTypescript && !isTest;
+  },
 }
