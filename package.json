@@ -2,6 +2,8 @@
   "name": "tudu",
   "private": true,
   "dependencies": {
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^8.0.17",
     "autoprefixer": "^7.1.2",
     "axios": "^0.16.2",
     "compression-webpack-plugin": "^1.0.0",
@@ -24,6 +26,10 @@
   },
   "devDependencies": {
     "mocha": "^3.4.2",
+    "ts-node": "^3.3.0",
     "webpack-dev-server": "^2.6.1"
+  },
+  "scripts": {
+    "test": "mocha --compilers ts:ts-node/register app/javascript/packs/tests/**/*.ts"
   }
 }
