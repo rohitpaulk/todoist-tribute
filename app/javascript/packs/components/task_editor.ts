@@ -44,17 +44,11 @@ interface TaskEditor extends Vue {
 }
 
 let emptyEditorNodes = function(project: Project): EditorNode[] {
-    return [
-        EditorNodeConstructors.projectPillNodeFromProject(project),
-        EditorNodeConstructors.textInputNodeFromText('')
-    ];
+    return [EditorNodeConstructors.textInputNodeFromText('')];
 }
 
 let editorNodesFromTask = function(task: Task, project: Project): EditorNode[] {
-    return [
-        EditorNodeConstructors.projectPillNodeFromProject(project),
-        EditorNodeConstructors.textInputNodeFromText(task.title)
-    ];
+    return [EditorNodeConstructors.textInputNodeFromText(task.title)];
 }
 
 const CHAR_CODE_POUND_SIGN = 35;
@@ -229,7 +223,6 @@ let taskEditorOptions = {
 
             this.removeAutocompleteTextFromInput();
             this.cancelAutocomplete();
-            // Remove text from text node
         },
 
         removeAutocompleteTextFromInput(): void {
