@@ -7,7 +7,7 @@ $task-indent-padding: 25px;
 
 $checkbox-diameter: 20px;
 $project-icon-diameter: 10px;
-$autocomplete-row-height: 35px;
+$autocomplete-row-height: 38px;
 $autocomplete-box-height: (5 * $autocomplete-row-height) + 5px;
 
 $color-red: #db4c3f;
@@ -492,7 +492,7 @@ body {
                 bottom: -$autocomplete-box-height;
                 left: -1px; // Why???
                 width: 80%;
-                border: 1px solid $color-very-light-gray;
+                border: 1px solid $color-light-gray;
                 box-shadow: 0px 0px 10px 0px $color-light-gray;
 
                 overflow-y: scroll;
@@ -501,12 +501,12 @@ body {
                 .autocomplete-item {
                     font-size: 12px;
                     height: $autocomplete-row-height;
-                    line-height: 35px;
+                    line-height: $autocomplete-row-height;
                     padding-left: 10px;
-                    border-bottom: 1px solid $color-very-light-gray;
+                    border-bottom: 1px solid $color-light-gray;
 
                     &.is-selected {
-                        background-color: $color-very-very-light-gray;
+                        background-color: $color-very-light-gray;
                     }
                 }
             }
