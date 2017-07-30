@@ -24,7 +24,7 @@
                             </view-list>
                         </div>
                         <tab-switcher :tabs="['Projects', 'Labels', 'Filters']">
-                            <div class="project-list-container" slot="Projects">
+                            <div class="resource-list-container" slot="Projects">
                                 <project-list
                                     :projects="$store.getters.projectsWithoutInbox"
                                     :selected-project="$store.state.activeProject"

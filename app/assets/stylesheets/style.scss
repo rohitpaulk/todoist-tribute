@@ -155,11 +155,11 @@ body {
     }
 }
 
-.project-list-container {
+.resource-list-container {
     margin-top: 20px;
 }
 
-.project-list .project-item {
+.resource-list .resource-item {
     font-size: 14px;
     position: relative;
 
@@ -243,7 +243,7 @@ body {
     }
 }
 
-.content .task-list .task-item, .left-menu .project-list .project-item {
+.content .task-list .task-item, .left-menu .resource-list .resource-item {
     & > span {
         display: inline-block;
         vertical-align: middle;

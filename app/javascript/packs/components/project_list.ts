@@ -155,7 +155,7 @@ let projectListOptions = {
 
     template: `
         <div>
-            <ul class="project-list">
+            <ul class="resource-list">
                 <template v-for="(project, index) in localProjects">
                     <project-editor v-if="projectBeingEdited && (projectBeingEdited.id === project.id)"
                                     @close="hideProjectForm()"
