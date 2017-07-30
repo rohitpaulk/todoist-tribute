@@ -40,7 +40,14 @@ let AutocompleteBoxOptions = {
         <div class="autocomplete-container">
             <template v-for="(project, index) in suggestions">
                 <div :class="projectClasses[index]" @click="emitSelect(index)">
-                    {{ project.name }}
+                    <span class="icon-holder">
+                        <span class="project-icon"
+                            :style="{ 'background-color': '#' + project.colorHex }">
+                        </span>
+                    </span>
+                    <span class="text-holder">
+                        {{ project.name }}
+                    </span>
                 </div>
             </template>
         </div>

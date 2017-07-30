@@ -141,6 +141,20 @@ body {
     }
 }
 
+.project-item, .autocomplete-item {
+    span.project-icon {
+        display: block;
+        width: $project-icon-diameter;
+        height: $project-icon-diameter;
+        border-radius: $project-icon-diameter / 2;
+    }
+
+    span.icon-holder {
+        display: inline-block;
+        margin-right: 8px;
+    }
+}
+
 .project-list-container {
     margin-top: 20px;
 }
@@ -160,13 +174,6 @@ body {
     span.dragbars-holder {
         width: 14px;
         text-align: right;
-    }
-
-    span.icon-holder span.project-icon {
-        display: block;
-        width: $project-icon-diameter;
-        height: $project-icon-diameter;
-        border-radius: $project-icon-diameter / 2;
     }
 
     span.text-holder, span.dropdown-container {
@@ -242,9 +249,6 @@ body {
         vertical-align: middle;
     }
 
-    .icon-holder {
-        margin-right: 5px;
-    }
 }
 
 .content .task-list .task-item, .left-menu .project-list .project-item {
@@ -391,6 +395,10 @@ body {
         font-size: 14px;
 
         .task-item {
+            .icon-holder {
+                margin-right: 5px;
+            }
+
             position: relative;
 
             &:hover {
