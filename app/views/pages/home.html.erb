@@ -23,6 +23,15 @@
                                 :selected-project="$store.state.activeProject">
                             </view-list>
                         </div>
+                        <div class="tabs-container">
+                            <div class="tab">
+                                Projects
+                            </div><div class="tab is-selected">
+                                Labels
+                            </div><div class="tab">
+                                Filters
+                            </div>
+                        </div>
                         <div class="project-list-container">
                             <project-list
                                 :projects="$store.getters.projectsWithoutInbox"
