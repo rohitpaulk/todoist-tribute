@@ -144,7 +144,7 @@ let taskListOptions = {
 
     template: `
         <div>
-            <ul class="task-list resource-list">
+            <div class="task-list resource-list">
                 <template v-for="task in localTasks">
                     <task-editor
                         v-if="taskBeingEdited && (taskBeingEdited.id === task.id)"
@@ -152,7 +152,7 @@ let taskListOptions = {
                         :initial-project="project"
                         :task-to-edit="task">
                     </task-editor>
-                    <li v-else
+                    <div v-else
                         v-bind:class="taskItemClasses[task.id]"
                         @drop="onDrop($event)"
                         @dragover.prevent
@@ -175,9 +175,9 @@ let taskListOptions = {
                                 {{ task.title }}
                             </span>
                         </span>
-                    </li>
+                    </div>
                 </template>
-            </ul>
+            </div>
             <task-editor
                 v-if="isAddingTask"
                 @close="hideTaskForm()"
