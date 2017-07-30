@@ -35,11 +35,12 @@
                             <h2 v-text="$store.state.activeProject.name">
                             </h2>
                         </div>
+
                         <div>
-                            <task-list
+                            <task-list-switcher
                                 :tasks="$store.getters.tasksForActiveProject"
                                 :project="$store.state.activeProject">
-                            </task-list>
+                            </task-list-switcher>
                         </div>
                     </div>
                 </div>

@@ -5,7 +5,7 @@ type Partial<T> = {
 }
 
 function fakeTask(props: Partial<Task>): Task {
-    let fakeTask =  {
+    let task =  {
         id: '1',
         title: 'Testing',
         sortOrder: 1,
@@ -14,10 +14,24 @@ function fakeTask(props: Partial<Task>): Task {
     };
 
     for (let propKey in props) {
-        fakeTask[propKey] = props[propKey];
+        task[propKey] = props[propKey];
     }
 
-    return fakeTask;
+    return task;
 }
 
-export { fakeTask };
+function fakeProject(props: Partial<Project>): Project {
+    let project: Project =  {
+        id: '1',
+        name: 'Dummy Project',
+        colorHex: '000000'
+    };
+
+    for (let propKey in props) {
+        project[propKey] = props[propKey];
+    }
+
+    return project;
+}
+
+export { fakeTask, fakeProject };

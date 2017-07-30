@@ -6,6 +6,7 @@ interface Task {
     projectId: string
 }
 
+// TODO: Add sortOrder?
 interface Project {
     id: string,
     name: string,

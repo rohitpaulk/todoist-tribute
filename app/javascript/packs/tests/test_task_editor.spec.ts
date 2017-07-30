@@ -7,6 +7,7 @@ import { TextInputNode } from '../helpers/editor_nodes';
 import { fakeTask } from './factory.spec';
 
 describe('Task Editor', function() {
+    // TODO: Find a way to make this a generic function.
     function getComponentInstance(propsData: {[key: string]: any}): TaskEditor {
         let Component = Vue.extend(TaskEditorOptions);
         propsData.initialProject = null;
@@ -14,6 +15,7 @@ describe('Task Editor', function() {
     }
 
     it('should initialize with a single empty editorNode', function() {
+
         let taskEditor = getComponentInstance({});
         let editorNodes = taskEditor.editorNodes;
         assert.equal(editorNodes.length, 1);
