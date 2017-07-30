@@ -103,40 +103,40 @@ body {
 .left-menu {
     padding-left: $sidebar-left-padding;
     padding-right: 20px;
+}
 
-    .view-link {
-        display: block;
-        padding: 10px 10px 10px 10px;
+.left-menu .view-link {
+    display: block;
+    padding: 10px 10px 10px 10px;
 
-        font-size: 14px;
-        font-weight: normal;
+    font-size: 14px;
+    font-weight: normal;
 
-        span {
-            display: inline-block;
-            vertical-align: middle;
-        }
+    span {
+        display: inline-block;
+        vertical-align: middle;
+    }
 
-        i {
-            color: lighten($color-black-text, 10);
-            font-size: 20px;
-            margin-right: 6px;
-        }
+    i {
+        color: lighten($color-black-text, 10);
+        font-size: 20px;
+        margin-right: 6px;
+    }
 
-        span.counter {
-            font-weight: 300;
-            font-size: 10px;
-            color: lighten($color-black-text, 50);
-            margin-left: 3px;
-        }
+    span.counter {
+        font-weight: 300;
+        font-size: 10px;
+        color: lighten($color-black-text, 50);
+        margin-left: 3px;
+    }
 
-        &:hover, &.is-selected {
-            background-color: #fff;
-        }
+    &:hover, &.is-selected {
+        background-color: #fff;
+    }
 
-        &.is-selected {
-            .title .text {
-                font-weight: 600;
-            }
+    &.is-selected {
+        .title .text {
+            font-weight: 600;
         }
     }
 }
@@ -243,15 +243,12 @@ body {
     }
 }
 
-.resource-list .resource-item {
+.content .task-list .task-item, .left-menu .project-list .project-item {
     & > span {
         display: inline-block;
         vertical-align: middle;
     }
 
-}
-
-.content .task-list .task-item, .left-menu .project-list .project-item {
     &.is-dragged {
         background-color: $color-light-gray;
         box-shadow: 0px 0px 5px 0px $color-light-gray;

@@ -144,7 +144,7 @@ let taskListOptions = {
 
     template: `
         <div>
-            <div class="task-list resource-list">
+            <div class="task-list">
                 <template v-for="task in localTasks">
                     <task-editor
                         v-if="taskBeingEdited && (taskBeingEdited.id === task.id)"
