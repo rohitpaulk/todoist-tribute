@@ -28,7 +28,12 @@ The backend is written in [Ruby](https://www.ruby-lang.org/en/) + [Rails](https:
   - [x] Editing projects
   - [x] Re-ordering projects
   - [x] Deleting projects
+  - [ ] Color picker
 - [ ] Labels
+  - [ ] Creating labels
+  - [ ] Editing labels
+  - [ ] Viewing tasks for a label
+  - [ ] Rendering labels
 - [ ] Priorities
 - [ ] Due dates
 - [ ] Filters
