@@ -1,0 +1,41 @@
+.project-form .input-nodes-container .color-chooser-toggle {
+    display: inline-block;
+    margin-right: 8px;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    .color-icon {
+        display: inline-block;
+        text-align: center;
+        width: $project-icon-diameter;
+        height: $project-icon-diameter;
+        border-radius: $project-icon-diameter / 2;
+    }
+}
+
+.project-form .input-nodes-container .color-chooser {
+    display: block;
+    position: absolute;
+    top: 40px;
+    left: -1px;
+    width: 200px;
+    height: 100px;
+    background-color: white;
+    border: 1px solid $color-very-light-gray;
+    box-shadow: 0px 1px 3px 0px $color-light-gray;
+    border-radius: 4px;
+    z-index: 3;
+}
+
+.project-form .input-nodes-container .color-list {
+    padding: 10px;
+}
+
+.project-form .input-nodes-container .color-list-item {
+    display: inline-block;
+    margin: 4px 7px;
+    width: 18px;
+    height: 20px;
+}

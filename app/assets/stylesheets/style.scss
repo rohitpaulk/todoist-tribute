@@ -321,30 +321,6 @@ $color-light-gray: #ddd;
     }
 }
 
-.project-form .input-nodes-container .color-chooser-toggle {
-    display: inline-block;
-    margin-right: 8px;
-
-    &:hover {
-        cursor: pointer;
-    }
-
-    .color-icon {
-        display: inline-block;
-        text-align: center;
-        width: $project-icon-diameter;
-        height: $project-icon-diameter;
-        border-radius: $project-icon-diameter / 2;
-    }
-}
-
-.project-form .input-nodes-container .color-chooser {
-    display: block;
-    position: absolute;
-    width: 200px;
-    height: 100px;
-    background-color: white;
-}
 
 .content {
     // Left padding is applied selectively to components!
