@@ -11,8 +11,12 @@
  * It is generally better to create a new file per style scope.
  *
  *= require font-awesome
- *= require_tree .
  *= require_self
  */
 
- @import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800');
+
+@import 'reset.scss';
+@import 'style.scss';
+@import 'layout.scss';
+@import 'components/tab_switcher.scss';

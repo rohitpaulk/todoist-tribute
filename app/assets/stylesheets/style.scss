@@ -18,56 +18,6 @@ $color-very-light-gray: #eee;
 $color-light-gray: #ddd;
 
 
-// Prep
-
-html {
-  box-sizing: border-box;
-}
-
-*, *:before, *:after {
-  box-sizing: inherit;
-}
-
-body {
-    font-family: 'Open Sans', sans-serif;
-}
-
-// Layout
-
-.page-background {
-    height: 100vh;
-}
-
-.top-bar {
-    position: fixed;
-    height: $top-bar-height;
-    width: 100%;
-    z-index: 3; // To hide scrollbar underneath.
-}
-
-.all-holder, .top-bar-inner {
-    width: $content-width;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.left-menu, .content {
-    display: inline-block;
-    vertical-align: top;
-
-    height: 100vh;
-}
-
-.left-menu {
-    width: 30%;
-    overflow-x: visible; // Dropdown!
-}
-
-.content {
-    width: 70%;
-    overflow-y: scroll;
-}
-
 // Styling
 
 .page-background {
@@ -371,6 +321,31 @@ body {
     }
 }
 
+.project-form .input-nodes-container .color-chooser-toggle {
+    display: inline-block;
+    margin-right: 8px;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    .color-icon {
+        display: inline-block;
+        text-align: center;
+        width: $project-icon-diameter;
+        height: $project-icon-diameter;
+        border-radius: $project-icon-diameter / 2;
+    }
+}
+
+.project-form .input-nodes-container .color-chooser {
+    display: block;
+    position: absolute;
+    width: 200px;
+    height: 100px;
+    background-color: white;
+}
+
 .content {
     // Left padding is applied selectively to components!
     padding-right: 30px;
@@ -498,31 +473,6 @@ body {
                     background-color: $color-very-light-gray;
                 }
             }
-        }
-    }
-}
-
-.left-menu .tabs-container {
-    margin-top: 30px;
-    .tab {
-        display: inline-block;
-        font-size: 13px;
-        width: 33%;
-        text-align: center;
-        color: #9a9a9a;
-        border-bottom: 1px solid #e0e0e0;
-        padding-bottom: 8px;
-
-        &:hover {
-            cursor: pointer;
-            color: #555;
-        }
-
-        &.is-selected {
-            color: #5c5c5c;
-            font-weight: normal;
-            border-bottom: solid 1px #737373;
-
         }
     }
 }

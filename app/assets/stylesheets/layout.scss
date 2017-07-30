@@ -1,0 +1,49 @@
+// Layout
+
+.page-background {
+    height: 100vh;
+}
+
+.top-bar {
+    position: fixed;
+    height: $top-bar-height;
+    width: 100%;
+    z-index: 3; // To hide scrollbar underneath.
+}
+
+.all-holder, .top-bar-inner {
+    width: $content-width;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.left-menu, .content {
+    display: inline-block;
+    vertical-align: top;
+
+    height: 100vh;
+}
+
+.left-menu {
+    width: 30%;
+    overflow-x: visible; // Dropdown!
+}
+
+.content {
+    width: 70%;
+    overflow-y: scroll;
+}
+
+// Prep
+
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+}

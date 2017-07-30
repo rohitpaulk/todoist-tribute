@@ -1,0 +1,24 @@
+.left-menu .tabs-container {
+    margin-top: 30px;
+    .tab {
+        display: inline-block;
+        font-size: 13px;
+        width: 33%;
+        text-align: center;
+        color: #9a9a9a;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 8px;
+
+        &:hover {
+            cursor: pointer;
+            color: #555;
+        }
+
+        &.is-selected {
+            color: #5c5c5c;
+            font-weight: normal;
+            border-bottom: solid 1px #737373;
+
+        }
+    }
+}
