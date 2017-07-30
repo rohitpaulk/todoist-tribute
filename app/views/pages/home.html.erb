@@ -23,22 +23,27 @@
                                 :selected-project="$store.state.activeProject">
                             </view-list>
                         </div>
-                        <div class="tabs-container">
-                            <div class="tab">
-                                Projects
-                            </div><div class="tab is-selected">
-                                Labels
-                            </div><div class="tab">
-                                Filters
+                        <tab-switcher :tabs="['Projects', 'Labels', 'Filters']">
+                            <div class="project-list-container" slot="Projects">
+                                <project-list
+                                    :projects="$store.getters.projectsWithoutInbox"
+                                    :selected-project="$store.state.activeProject"
+                                    :project-task-counts="$store.getters.projectTaskCounts">
+                                </project-list>
                             </div>
-                        </div>
-                        <div class="project-list-container">
-                            <project-list
-                                :projects="$store.getters.projectsWithoutInbox"
-                                :selected-project="$store.state.activeProject"
-                                :project-task-counts="$store.getters.projectTaskCounts">
-                            </project-list>
-                        </div>
+
+                            <div class="labels-list-container" slot="Labels">
+                                <div style="padding: 20px">
+                                    Not implemented yet
+                                </div>
+                            </div>
+                            <div class="filters-list-container" slot="Filters">
+                                <div style="padding: 20px">
+                                    Not implemented yet
+                                </div>
+                            </div>
+                        </tab-switcher>
+
                     </div><div class="content">
                         <div class="section-header">
                             <h2 v-text="$store.state.activeProject.name">

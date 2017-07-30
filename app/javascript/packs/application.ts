@@ -4,10 +4,11 @@ import Vuex from 'vuex'
 import { TaskListOptions } from "./components/task_list";
 import { TaskListSwitcherOptions } from "./components/task_list_switcher";
 import { TaskEditorOptions } from "./components/task_editor";
+import { AutocompleteBoxOptions } from "./components/autocomplete_box";
+import { ViewListOptions } from "./components/view_list";
+import { TabSwitcherOptions } from "./components/tab_switcher";
 import { ProjectListOptions } from "./components/project_list";
 import { ProjectEditorOptions } from "./components/project_editor";
-import { ViewListOptions } from "./components/view_list";
-import { AutocompleteBoxOptions } from "./components/autocomplete_box";
 import { TuduStoreOptions } from "./store";
 
 Vue.component('task-list', TaskListOptions);
@@ -15,10 +16,10 @@ Vue.component('task-list-switcher', TaskListSwitcherOptions);
 Vue.component('task-editor', TaskEditorOptions);
 Vue.component('autocomplete-box', AutocompleteBoxOptions);
 
+Vue.component('view-list', ViewListOptions);
+Vue.component('tab-switcher', TabSwitcherOptions);
 Vue.component('project-list', ProjectListOptions);
 Vue.component('project-editor', ProjectEditorOptions);
-
-Vue.component('view-list', ViewListOptions);
 
 Vue.use(Vuex);
 
