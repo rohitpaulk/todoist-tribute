@@ -9,6 +9,7 @@ import { ViewListOptions } from "./components/view_list";
 import { TabSwitcherOptions } from "./components/tab_switcher";
 import { ProjectListOptions } from "./components/project_list";
 import { ProjectEditorOptions } from "./components/project_editor";
+import { ColorChooserOptions } from "./components/color_chooser";
 import { TuduStoreOptions } from "./store";
 
 Vue.component('task-list', TaskListOptions);
@@ -20,6 +21,7 @@ Vue.component('view-list', ViewListOptions);
 Vue.component('tab-switcher', TabSwitcherOptions);
 Vue.component('project-list', ProjectListOptions);
 Vue.component('project-editor', ProjectEditorOptions);
+Vue.component('color-chooser', ColorChooserOptions);
 
 Vue.use(Vuex);
 

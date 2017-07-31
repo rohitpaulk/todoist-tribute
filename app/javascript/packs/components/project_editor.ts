@@ -11,6 +11,7 @@ interface ProjectEditor extends Vue {
         name: string
         colorHex: string
     }
+    isColorChooserOpen: boolean
 
     // props
     projectToEdit: Project | null
@@ -30,8 +31,19 @@ let ProjectEditorOptions = {
             project: {
                 name: (this.projectToEdit === null) ? '' : this.projectToEdit.name,
                 colorHex: (this.projectToEdit === null) ? '000000' : this.projectToEdit.colorHex,
-            }
+            },
+            isColorChooserOpen: false
         };
+    },
+
+    computed: {
+        buttonText(): string {
+            if (this.projectToEdit === null) {
+                return 'Add Project';
+            } else {
+                return 'Save';
+            }
+        }
     },
 
     props: {
@@ -63,6 +75,15 @@ let ProjectEditorOptions = {
 
             // TODO: Wait for promise to resolve?
             this.emitClose();
+        },
+
+        toggleColorChooser: function() {
+            this.isColorChooserOpen = !this.isColorChooserOpen;
+        },
+
+        colorSelected: function(colorHex: string) {
+            this.isColorChooserOpen = false;
+            this.project.colorHex = colorHex;
         }
     },
 
@@ -76,25 +97,16 @@ let ProjectEditorOptions = {
                 <form @submit.prevent="submitChanges()"
                       @keydown.esc="emitClose()">
                     <div class="input-nodes-container">
-                        <div class="color-chooser-toggle">
+                        <div class="color-chooser-toggle"
+                             @click.prevent="toggleColorChooser()">
                             <div class="color-icon color-icon-project"
-                                style="background-color: #555;">
+                                 :style="{'background-color': '#' + project.colorHex}">
                             </div>
                         </div>
-                        <div class="color-chooser">
-                            <ul class="color-list">
-                                <li class="color-list-item"
-                                    style="background-color: #555;">
-                                </li>
-                                <li class="color-list-item"
-                                    style="background-color: #630;">
-                                </li>
-                                <li class="color-list-item"
-                                    style="background-color: #396;">
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- TODO: Add color input -->
+                        <color-chooser v-if="isColorChooserOpen"
+                            @select="colorSelected">
+                        </color-chooser>
+
                         <input type="text"
                                v-model="project.name"
                                ref="text-input"
@@ -102,7 +114,7 @@ let ProjectEditorOptions = {
                     </div>
 
                     <button type="submit">
-                        Add Project
+                        {{ buttonText }}
                     </button>
 
                     <a href="#" class="cancel-link" @click="emitClose()">Cancel</a>

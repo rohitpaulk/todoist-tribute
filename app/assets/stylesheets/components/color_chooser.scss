@@ -34,6 +34,12 @@
 }
 
 .project-form .input-nodes-container .color-list-item {
+    &:hover {
+        cursor: pointer;
+        box-shadow: 0px 0px 10px 0px $color-light-gray;
+    }
+
+    border-radius: 2px;
     display: inline-block;
     margin: 4px 7px;
     width: 18px;
