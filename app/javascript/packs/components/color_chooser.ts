@@ -8,7 +8,14 @@ interface ColorChooser extends Vue {
 
 let ColorChooserOptions = {
     props: {
-        colors: { default: ['555', '630', '396'] }
+        colors: {
+            default: [
+                '95EF63', 'FF8581', 'FFC471', 'F9EC75', 'A8C8E4', 'D2B8A3',
+                'E2A8E4', 'CCCCCC', 'FB886E', 'FFCC00', '74E8D3', '3BD5FB',
+                'DC4FAD', 'AC193D', 'D24726', '82BA00', '03B3B2', '008299',
+                '5DB2FF', '0072C6', '000000', '777777'
+            ]
+        }
     },
 
     methods: {
