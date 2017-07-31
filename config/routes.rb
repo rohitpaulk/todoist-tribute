@@ -1,16 +1,15 @@
 Rails.application.routes.draw do
   match '*any_path', to: 'cors#preflight', via: :options
 
-  get 'api/v1/tasks', to: 'tasks#index'
-  post 'api/v1/tasks', to: 'tasks#create'
-  post 'api/v1/tasks/reorder', to: 'tasks#reorder'
-  put 'api/v1/tasks/:task_id', to: 'tasks#update'
+  scope 'api/v1' do
+    concern :reorderable do
+      post 'reorder', on: :collection
+    end
 
-  get 'api/v1/projects', to: 'projects#index'
-  post 'api/v1/projects/reorder', to: 'projects#reorder'
-  post 'api/v1/projects', to: 'projects#create'
-  put 'api/v1/projects/:project_id', to: 'projects#update'
-  delete 'api/v1/projects/:project_id', to: 'projects#delete'
+    resources :tasks, only: [:index, :create, :update], concerns: :reorderable
+    resources :projects, only: [:index, :create, :update, :destroy], concerns: :reorderable
+    resources :labels, only: [:index, :create, :update, :destroy], concerns: :reorderable
+  end
 
   root to: 'pages#home'
 end
