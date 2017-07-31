@@ -1,3 +1,4 @@
+# TODO: Avoid code duplication wrt labels controller
 class ProjectsController < ApplicationController
   def index
     render json: Project.order(sort_order: :asc).all
