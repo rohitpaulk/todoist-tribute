@@ -10,11 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170720094226) do
+ActiveRecord::Schema.define(version: 20170731202250) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "intarray"
+
+  create_table "labels", force: :cascade do |t|
+    t.string "name"
+    t.string "color_hex"
+    t.boolean "is_inbox", default: false
+    t.integer "sort_order"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "labels_tasks", id: false, force: :cascade do |t|
+    t.integer "label_id"
+    t.integer "task_id"
+    t.index ["label_id", "task_id"], name: "index_labels_tasks_on_label_id_and_task_id", unique: true
+    t.index ["task_id"], name: "index_labels_tasks_on_task_id"
+  end
 
   create_table "projects", force: :cascade do |t|
     t.string "name"
@@ -38,5 +54,7 @@ ActiveRecord::Schema.define(version: 20170720094226) do
     t.index ["project_id", "sort_order"], name: "tasks_unique_sort_order", unique: true
   end
 
+  add_foreign_key "labels_tasks", "labels", on_delete: :cascade
+  add_foreign_key "labels_tasks", "tasks", on_delete: :cascade
   add_foreign_key "tasks", "projects", on_delete: :cascade
 end
