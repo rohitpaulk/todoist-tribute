@@ -44,8 +44,7 @@ class TasksController < ApplicationController
   end
 
   def update
-    task_id = params[:task_id]
-    task = Task.find(task_id)
+    task = Task.find(params[:id])
 
     task.update!(task_params)
 
