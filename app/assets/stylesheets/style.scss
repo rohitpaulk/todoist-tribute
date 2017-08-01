@@ -201,7 +201,7 @@ $color-light-gray: #ddd;
     }
 }
 
-.content .task-list .task-item, .left-menu .resource-list .resource-item {
+.content .task-list .drag-item, .left-menu .resource-list .resource-item {
     & > span {
         display: inline-block;
         vertical-align: middle;
@@ -354,59 +354,72 @@ $color-light-gray: #ddd;
 .content .task-list {
     padding-left: 10px;
     font-size: 14px;
+}
 
-    .task-item {
-        .icon-holder {
-            margin-right: 5px;
+.content .task-list .drag-item {
+    position: relative;
+    padding-left: $checkbox-diameter;
+
+    // TODO: Find a way to hide dragbars!
+    .dragbars-holder {
+        position: absolute;
+        left: 0px;
+        display: block;
+        width: $checkbox-diameter * 0.75;
+        height: $checkbox-diameter;
+        line-height: 47px;
+
+        .drag-bars { line-height: $checkbox-diameter; }
+        &:hover {
+            cursor: move;
         }
+    }
+}
 
-        position: relative;
+.content .task-list .task-item {
+    & > span {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .icon-holder {
+        margin-right: 5px;
+    }
+
+    position: relative;
+
+    &:hover {
+        cursor: text;
+    }
+
+    border-bottom: 1px solid $color-very-light-gray;
+
+    span.icon-holder span.checkbox {
+        display: block;
+        border: 1px solid $color-light-gray;
+        width: $checkbox-diameter;
+        height: $checkbox-diameter;
+        border-radius: $checkbox-diameter / 2;
+        background-color: white;
+        transition: background-color 150ms;
 
         &:hover {
-            cursor: text;
+            cursor: pointer;
+            background-color: lighten($color-very-light-gray, 0.5);
         }
 
-        // TODO: Find a way to hide dragbars!
-        .dragbars-holder {
-            display: inline-block;
-            width: $checkbox-diameter * 0.75;
-            height: $checkbox-diameter;
-
-            .drag-bars { line-height: $checkbox-diameter; }
-            &:hover {
-                cursor: move;
-            }
+        &:active {
+            background-image: image-url('checkmark.png');
+            background-size: $checkbox-diameter * 0.5;
+            background-repeat: no-repeat;
+            background-position: center;
         }
+    }
 
-        border-bottom: 1px solid $color-very-light-gray;
-
-        span.icon-holder span.checkbox {
-            display: block;
-            border: 1px solid $color-light-gray;
-            width: $checkbox-diameter;
-            height: $checkbox-diameter;
-            border-radius: $checkbox-diameter / 2;
-            background-color: white;
-            transition: background-color 150ms;
-
-            &:hover {
-                cursor: pointer;
-                background-color: lighten($color-very-light-gray, 0.5);
-            }
-
-            &:active {
-                background-image: image-url('checkmark.png');
-                background-size: $checkbox-diameter * 0.5;
-                background-repeat: no-repeat;
-                background-position: center;
-            }
-        }
-
-        span.text-holder {
-            line-height: 20px;
-            margin-top: 13px;
-            margin-bottom: 13px;
-        }
+    span.text-holder {
+        line-height: 20px;
+        margin-top: 13px;
+        margin-bottom: 13px;
     }
 }
 

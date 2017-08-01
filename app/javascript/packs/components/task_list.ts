@@ -50,15 +50,14 @@ let taskListOptions = {
             }
         },
 
-        taskItemClasses(): {[key: string]: any} {
+        dragItemClasses(): {[key: string]: any} {
             let classObjectMap = {};
             // TODO: Is there a more functional way to do this?
             //       i.e. return [task_id, {}] and then turn into a Map?
             let dragState = this.dragState;
             _.forEach(this.tasks, function(task: Task) {
                 classObjectMap[task.id] = {
-                    'task-item': true,
-                    'resource-item': true,
+                    'drag-item': true,
                     'is-dragged': dragState && (dragState.draggedItemId === task.id)
                 };
             });
@@ -152,7 +151,7 @@ let taskListOptions = {
                         :task-to-edit="task">
                     </task-editor>
                     <div v-else
-                         class="drag-item"
+                         :class="dragItemClasses[task.id]"
                          @drop="onDrop($event)"
                          @dragover.prevent
                          @dragenter="onDragEnter($event, task)">
