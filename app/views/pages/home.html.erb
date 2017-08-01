@@ -30,7 +30,11 @@
                                     scope-type="project"
                                     :resources="$store.getters.projectsWithoutInbox"
                                     :selected-resource="$store.getters.activeProject"
-                                    :resource-task-counts="$store.getters.projectTaskCounts">
+                                    :resource-task-counts="$store.getters.projectTaskCounts"
+                                    :resource-actions="{
+                                        reorder: 'reorderProjects',
+                                        delete: 'deleteProject'
+                                    }">
                                 </resource-list>
                             </div>
 

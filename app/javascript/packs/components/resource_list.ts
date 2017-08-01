@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import Vue, { ComponentOptions } from 'vue';
 
-import { Project } from '../models';
 import { API } from '../API';
 import { DragEventHandlers, DragState, getOrderedItems } from '../helpers/drag_state';
 import { Scope, ScopeType } from '../store';
@@ -24,6 +23,10 @@ interface ComponentProps {
     resources: Resource[]
     selectedResource: Resource
     resourceTaskCounts: {[key: string]: number}
+    resourceActions: {
+        reorder: string
+        delete: string
+    }
 }
 
 interface ComponentData {
@@ -59,7 +62,8 @@ let resourceListOptions = {
         selectedResource: { required: true }, // Should this be required?
         resourceTaskCounts: { required: true },
         editorComponent: { required: true },
-        scopeType: { required: true }
+        scopeType: { required: true },
+        resourceActions: { required: true }
     },
 
     computed: {
@@ -102,34 +106,34 @@ let resourceListOptions = {
             });
         },
 
-        onDragStart: function(event, draggedProject: Project): boolean {
-            event.dataTransfer.setData('tudu/x-task', draggedProject.id);
+        onDragStart: function(event, draggedResource: Resource): boolean {
+            event.dataTransfer.setData('tudu/x-task', draggedResource.id);
             event.dataTransfer.setDragImage(event.target.parentNode, 0, 0);
 
-            this.dragState = DragEventHandlers.dragStart(this.resources, draggedProject);
+            this.dragState = DragEventHandlers.dragStart(this.resources, draggedResource);
 
             return false;
         },
 
-        onDragEnter: function(event, currentProject: Project): boolean {
+        onDragEnter: function(event, currentResource: Resource): boolean {
             let taskList = this;
             if (!_.includes(event.dataTransfer.types, 'tudu/x-task')) {
                 return true;
             }
 
-            this.dragState = DragEventHandlers.dragEnter(this.dragState!, currentProject);
+            this.dragState = DragEventHandlers.dragEnter(this.dragState!, currentResource);
 
             return false;
         },
 
         onDrop(event) {
-            let projectList = this;
+            let resourceList = this;
             let order = this.dragState!.currentOrder;
 
-            projectList.dragOperationInProgress = true;
-            this.$store.dispatch('reorderProjects', order).then(function() {
-                projectList.dragState = undefined;
-                projectList.dragOperationInProgress = false;
+            resourceList.dragOperationInProgress = true;
+            this.$store.dispatch(this.resourceActions.reorder, order).then(function() {
+                resourceList.dragState = undefined;
+                resourceList.dragOperationInProgress = false;
             });
         },
 
@@ -158,18 +162,18 @@ let resourceListOptions = {
             this.resourceBeingEdited = null;
         },
 
-        deleteProject(project: Project) {
+        deleteProject(resource: Resource) {
             this.resetDropdown();
-            this.$store.dispatch('deleteProject', project.id);
+            this.$store.dispatch(this.resourceActions.delete, resource.id);
 
             // TODO: Switch out TaskList with Inbox?
         },
 
-        toggleDropdown: function(project: Project) {
+        toggleDropdown: function(resource: Resource) {
             if (this.dropdownActiveOnId !== null) {
                 this.resetDropdown();
             } else {
-                this.dropdownActiveOnId = project.id;
+                this.dropdownActiveOnId = resource.id;
             }
         },
 
