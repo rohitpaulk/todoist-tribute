@@ -42,7 +42,7 @@ let storeOptions = {
         tasks: [],
         projects: [],
         // TODO: Look into avoiding hardcoding this
-        activeProject: {id: '1', name: 'Inbox', colorHex: "000000" },
+        activeProject: {id: '1', name: 'Inbox', colorHex: "000000", sortOrder: 1 },
         apiUrl: '' // Filled by the application
     },
 
