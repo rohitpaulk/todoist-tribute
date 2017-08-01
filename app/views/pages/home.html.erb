@@ -25,43 +25,19 @@
                         </div>
                         <tab-switcher :tabs="['Projects', 'Labels', 'Filters']">
                             <div class="resource-list-container project-list-container" slot="Projects">
-                                <resource-list
-                                    editor-component="project-editor"
-                                    scope-type="project"
-                                    :resources="$store.getters.projectsWithoutInbox"
-                                    :selected-resource="$store.getters.activeProject"
-                                    :resource-task-counts="$store.getters.projectTaskCounts"
-                                    :resource-actions="{
-                                        reorder: 'reorderProjects',
-                                        delete: 'deleteProject'
-                                    }">
-
-                                    <template scope="props" slot="icon">
-                                        <span
-                                            class="project-icon"
-                                            :style="{ 'background-color': '#' + props.resource.colorHex }">
-                                        </span>
-                                    </template>
-                                </resource-list>
+                                <project-list
+                                    :projects="$store.getters.projectsWithoutInbox"
+                                    :selected-project="$store.getters.activeProject"
+                                    :project-task-counts="$store.getters.projectTaskCounts">
+                                </project-list>
                             </div>
 
                             <div class="resource-list-container label-list-container" slot="Labels">
-                                <resource-list
-                                    editor-component="label-editor"
-                                    scope-type="label"
-                                    :resources="$store.state.labels"
-                                    :selected-resource="$store.getters.activeLabel"
-                                    :resource-task-counts="$store.getters.labelTaskCounts"
-                                    :resource-actions="{
-                                        reorder: 'reorderLabels',
-                                        delete: 'deleteLabel'
-                                    }">
-                                    <template scope="props" slot="icon">
-                                        <i class="fa fa-tag label-icon"
-                                           :style="{'color': '#' + props.resource.colorHex}">
-                                        </i>
-                                    </template>
-                                </resource-list>
+                                <label-list
+                                    :labels="$store.state.labels"
+                                    :selected-label="$store.getters.activeLabel"
+                                    :label-task-counts="$store.getters.labelTaskCounts">
+                                </label-list>
                             </div>
                             <div class="filters-list-container" slot="Filters">
                                 <div style="padding: 20px">

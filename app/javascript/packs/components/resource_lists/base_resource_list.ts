@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
 import Vue, { ComponentOptions } from 'vue';
 
-import { API } from '../API';
-import { DragEventHandlers, DragState, getOrderedItems } from '../helpers/drag_state';
-import { Scope, ScopeType } from '../store';
+import { API } from '../../API';
+import { DragEventHandlers, DragState, getOrderedItems } from '../../helpers/drag_state';
+import { Scope, ScopeType } from '../../store';
 
 interface Resource {
     id: string
@@ -37,7 +37,7 @@ interface ComponentData {
     dragOperationInProgress: boolean
 }
 
-interface ResourceList extends Vue, ComponentProps, ComponentData {
+interface BaseResourceList extends Vue, ComponentProps, ComponentData {
     // computed
     selectedResourceId: string
 
@@ -258,6 +258,6 @@ let resourceListOptions = {
             </div>
         </div>
     `
-} as ComponentOptions<ResourceList>
+} as ComponentOptions<BaseResourceList>
 
 export { resourceListOptions as ResourceListOptions }

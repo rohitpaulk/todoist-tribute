@@ -9,7 +9,10 @@ import { TaskEditorOptions } from "./components/task_editor";
 import { AutocompleteBoxOptions } from "./components/autocomplete_box";
 import { ViewListOptions } from "./components/view_list";
 import { TabSwitcherOptions } from "./components/tab_switcher";
-import { ResourceListOptions } from "./components/resource_list";
+import { ResourceListOptions } from "./components/resource_lists/base_resource_list";
+import { ProjectListOptions } from "./components/resource_lists/project_list";
+import { LabelListOptions } from "./components/resource_lists/label_list";
+
 import { ProjectEditorOptions } from "./components/project_editor";
 import { LabelEditorOptions } from "./components/label_editor";
 import { ColorChooserOptions } from "./components/color_chooser/input";
@@ -25,7 +28,9 @@ Vue.component('autocomplete-box', AutocompleteBoxOptions);
 
 Vue.component('view-list', ViewListOptions);
 Vue.component('tab-switcher', TabSwitcherOptions);
-Vue.component('resource-list', ResourceListOptions);
+Vue.component('base-resource-list', ResourceListOptions);
+Vue.component('project-list', ProjectListOptions);
+Vue.component('label-list', LabelListOptions);
 Vue.component('project-editor', ProjectEditorOptions);
 Vue.component('label-editor', LabelEditorOptions);
 Vue.component('color-chooser', ColorChooserOptions);
