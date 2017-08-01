@@ -9,7 +9,7 @@ interface ViewList extends Vue {
     // props
     inboxProject: Project,
     inboxProjectTaskCount: number,
-    selectedProject: Project
+    selectedProjectId: string
 }
 
 let viewListOptions = {
@@ -20,14 +20,14 @@ let viewListOptions = {
     props: {
         inboxProject: { required: true },
         inboxProjectTaskCount: { required: true },
-        selectedProject: { required: true } // Should this be required?
+        selectedProjectId: { required: true } // Should this be required?
     },
 
     computed: {
         inboxItemClass: function() {
             return {
                 'view-link': true,
-                'is-selected': this.inboxProject.id === this.selectedProject.id
+                'is-selected': this.inboxProject.id === this.selectedProjectId
             };
         }
     },

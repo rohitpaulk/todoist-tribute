@@ -55,11 +55,15 @@ type UpdateLabelPayload = UpdateProjectPayload;
 
 function filterTasksByScope(tasks: Task[], scope: Scope): Task[] {
     if (scope.type === 'project') {
+        let project = scope.resource;
         return tasks.filter(function(task: Task) {
-            return task.projectId === scope.resource.id;
+            return task.projectId === project.id;
         });
     } else {
-        throw "Labels not implemented yet!";
+        let label = scope.resource;
+        return tasks.filter(function(task: Task) {
+            return _.includes(task.labelIds, label.id);
+        });
     }
 }
 
@@ -83,11 +87,23 @@ let storeOptions = {
             return filterTasksByScope(state.tasks, state.activeScope);
         },
 
+        activeScopeName: function(state): string {
+            return state.activeScope.resource.name;
+        },
+
         // Move active* to individual components?
 
         activeProject: function(state): Project | null {
             if (state.activeScope.type === 'project') {
                 return state.activeScope.resource;
+            } else {
+                return null;
+            }
+        },
+
+        activeProjectId: function(state): string | null {
+            if (state.activeScope.type === 'project') {
+                return state.activeScope.resource.id;
             } else {
                 return null;
             }

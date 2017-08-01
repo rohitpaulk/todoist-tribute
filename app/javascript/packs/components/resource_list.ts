@@ -207,9 +207,7 @@ let resourceListOptions = {
                         </span>
 
                         <span class="icon-holder">
-                            <span class="project-icon"
-                                :style="{ 'background-color': '#' + resource.colorHex }">
-                            </span>
+                            <slot name="icon" :resource="resource"></slot>
                         </span>
                         <span class="text-holder">
                             <span class="project-title">

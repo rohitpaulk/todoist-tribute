@@ -20,7 +20,7 @@
                             <view-list
                                 :inbox-project="$store.getters.inboxProject"
                                 :inbox-project-task-count="$store.getters.inboxProjectTaskCount"
-                                :selected-project="$store.getters.activeProject">
+                                :selected-project-id="$store.getters.activeProjectId">
                             </view-list>
                         </div>
                         <tab-switcher :tabs="['Projects', 'Labels', 'Filters']">
@@ -35,10 +35,17 @@
                                         reorder: 'reorderProjects',
                                         delete: 'deleteProject'
                                     }">
+
+                                    <template scope="props" slot="icon">
+                                        <span
+                                            class="project-icon"
+                                            :style="{ 'background-color': '#' + props.resource.colorHex }">
+                                        </span>
+                                    </template>
                                 </resource-list>
                             </div>
 
-                            <div class="resource-list-container labels-list-container" slot="Labels">
+                            <div class="resource-list-container label-list-container" slot="Labels">
                                 <resource-list
                                     editor-component="project-editor"
                                     scope-type="label"
@@ -47,8 +54,13 @@
                                     :resource-task-counts="$store.getters.labelTaskCounts"
                                     :resource-actions="{
                                         reorder: 'reorderLabels',
-                                        delete: 'deleteLabels'
+                                        delete: 'deleteLabel'
                                     }">
+                                    <template scope="props" slot="icon">
+                                        <i class="fa fa-tag label-icon"
+                                           :style="{'color': '#' + props.resource.colorHex}">
+                                        </i>
+                                    </template>
                                 </resource-list>
                             </div>
                             <div class="filters-list-container" slot="Filters">
@@ -61,7 +73,7 @@
                     </div><div class="content">
                         <div class="section-header">
                             <!-- TODO: make this work for labels too? -->
-                            <h2 v-text="$store.getters.activeProject.name">
+                            <h2 v-text="$store.getters.activeScopeName">
                             </h2>
                         </div>
 

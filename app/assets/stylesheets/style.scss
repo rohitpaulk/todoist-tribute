@@ -7,6 +7,8 @@ $task-indent-padding: 25px;
 
 $checkbox-diameter: 20px;
 $project-icon-diameter: 10px;
+$label-icon-height: 10px;
+$label-icon-width: 14px;
 $autocomplete-row-height: 38px;
 $autocomplete-box-height: (5 * $autocomplete-row-height) + 5px;
 
@@ -101,6 +103,12 @@ $color-light-gray: #ddd;
 
     span.icon-holder {
         display: inline-block;
+        margin-right: 8px;
+    }
+}
+
+.label-list-container .resource-item {
+    span.icon-holder {
         margin-right: 8px;
     }
 }
