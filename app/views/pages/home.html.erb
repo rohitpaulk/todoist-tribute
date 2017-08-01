@@ -48,13 +48,11 @@
 
                     </div><div class="content">
                         <div class="section-header">
-                            <!-- TODO: make this work for labels too? -->
                             <h2 v-text="$store.getters.activeScopeName">
                             </h2>
                         </div>
 
                         <div>
-                            <!-- TODO: Change this to work with multiple scope types! -->
                             <task-list-switcher
                                 :tasks="$store.getters.tasksForActiveScope"
                                 :scope="$store.state.activeScope">
