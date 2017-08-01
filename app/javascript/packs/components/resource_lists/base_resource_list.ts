@@ -3,16 +3,12 @@ import Vue, { ComponentOptions } from 'vue';
 
 import { API } from '../../API';
 import { DragEventHandlers, DragState, getOrderedItems } from '../../helpers/drag_state';
-import { Scope, ScopeType } from '../../store';
 
 interface Resource {
     id: string
 }
 
 interface ComponentProps {
-    // The type of scope that the resources in this list can activate.
-    scopeType: ScopeType
-
     // The component to be used as an editor for creating/updating resources.
     //
     // Must implement the following properties:
@@ -65,7 +61,6 @@ let resourceListOptions = {
         selectedResource: { },
         resourceTaskCounts: { required: true },
         editorComponent: { required: true },
-        scopeType: { required: true },
         resourceActions: { required: true }
     },
 
@@ -100,11 +95,8 @@ let resourceListOptions = {
     },
 
     methods: {
-        setActiveScope: function(resource: Resource) {
-            this.$store.commit('setActiveScope', {
-                type: this.scopeType,
-                resource: resource
-            });
+        emitClick: function(resource: Resource) {
+            this.$emit('click', resource);
         },
 
         onDragStart: function(event, draggedResource: Resource): boolean {
@@ -194,7 +186,7 @@ let resourceListOptions = {
                     </component>
                     <li v-else
                         :class="resourceItemClasses[resource.id]"
-                        @click="setActiveScope(resource)"
+                        @click="emitClick(resource)"
                         @drop="onDrop($event)"
                         @dragover.prevent
                         @dragenter="onDragEnter($event, resource)">

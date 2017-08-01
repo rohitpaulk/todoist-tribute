@@ -17,10 +17,19 @@ let ProjectListOptions = {
         projectTaskCounts: {required: true}
     },
 
+    methods: {
+        setActiveScope(project: Project) {
+            this.$store.commit('setActiveScope', {
+                type: "project",
+                resource: project
+            });
+        }
+    },
+
     template: `
         <base-resource-list
             editor-component="project-editor"
-            scope-type="project"
+            @click="setActiveScope"
             :resources="projects"
             :selected-resource="selectedProject"
             :resource-task-counts="projectTaskCounts"

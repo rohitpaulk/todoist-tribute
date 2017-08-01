@@ -17,10 +17,19 @@ let LabelListOptions = {
         labelTaskCounts: {required: true}
     },
 
+    methods: {
+        setActiveScope(label: Label) {
+            this.$store.commit('setActiveScope', {
+                type: "label",
+                resource: label
+            });
+        }
+    },
+
     template: `
         <base-resource-list
             editor-component="label-editor"
-            scope-type="label"
+            @click="setActiveScope"
             :resources="labels"
             :selected-resource="selectedLabel"
             :resource-task-counts="labelTaskCounts"
