@@ -54,20 +54,11 @@ let taskListOptions = {
                         @close="closeEditor()"
                         :task-to-edit="task">
                     </task-editor>
-                    <div v-else
-                         class="task-item resource-item"
-                         @click="openEditor(task)">
-
-                        <span class="icon-holder">
-                            <span class="checkbox" @click.stop="completeTask(task)">
-                            </span>
-                        </span>
-                        <span class="text-holder">
-                            <span class="task-title">
-                                {{ task.title }}
-                            </span>
-                        </span>
-                    </div>
+                    <task-item v-else
+                        :task="task"
+                        @intentToEdit="openEditor"
+                        @intentToComplete="completeTask">
+                    </task-item>
                 </template>
             </div>
         </div>

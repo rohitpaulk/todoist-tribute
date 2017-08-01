@@ -143,7 +143,7 @@ let taskListOptions = {
 
     template: `
         <div>
-            <div class="task-list">
+            <div class="task-list draggable-task-list">
                 <template v-for="task in localTasks">
                     <task-editor
                         v-if="taskBeingEdited && (taskBeingEdited.id === task.id)"
@@ -152,12 +152,10 @@ let taskListOptions = {
                         :task-to-edit="task">
                     </task-editor>
                     <div v-else
-                        v-bind:class="taskItemClasses[task.id]"
-                        @drop="onDrop($event)"
-                        @dragover.prevent
-                        @dragenter="onDragEnter($event, task)"
-                        @click="setTaskBeingEdited(task)"
-                        >
+                         class="drag-item"
+                         @drop="onDrop($event)"
+                         @dragover.prevent
+                         @dragenter="onDragEnter($event, task)">
 
                         <span class="dragbars-holder"
                                 draggable="true"
@@ -165,15 +163,11 @@ let taskListOptions = {
                                 @dragend="onDragEnd()">
                             <i class="fa fa-bars drag-bars"></i>
                         </span>
-                        <span class="icon-holder">
-                            <span class="checkbox" @click.stop="completeTask(task)">
-                            </span>
-                        </span>
-                        <span class="text-holder">
-                            <span class="task-title">
-                                {{ task.title }}
-                            </span>
-                        </span>
+
+                        <task-item :task="task"
+                            @intentToEdit="setTaskBeingEdited"
+                            @intentToComplete="completeTask">
+                        </task-item>
                     </div>
                 </template>
             </div>
