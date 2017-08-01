@@ -91,7 +91,7 @@ $color-light-gray: #ddd;
     }
 }
 
-.project-item, .autocomplete-item {
+.project-list-container .resource-item, .autocomplete-item {
     span.project-icon {
         display: block;
         width: $project-icon-diameter;

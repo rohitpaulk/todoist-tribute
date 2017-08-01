@@ -83,7 +83,6 @@ let resourceListOptions = {
             //       i.e. return [task_id, {}] and then turn into a Map?
             _.forEach(this.resources, function(resource: Resource) {
                 classObjectMap[resource.id] = {
-                    'project-item': true, // TODO: Extract?
                     'resource-item': true,
                     'is-selected': resource.id === selectedResource.id
                 };
