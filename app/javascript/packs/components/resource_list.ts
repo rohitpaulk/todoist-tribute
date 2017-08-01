@@ -165,12 +165,6 @@ let resourceListOptions = {
             // TODO: Switch out TaskList with Inbox?
         },
 
-        editProject(project: Project) {
-            this.resetDropdown();
-
-            this.resourceBeingEdited = project;
-        },
-
         toggleDropdown: function(project: Project) {
             if (this.dropdownActiveOn) {
                 this.resetDropdown();
