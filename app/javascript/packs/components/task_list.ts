@@ -16,7 +16,7 @@ interface TaskList extends Vue {
 
     // props
     tasks: Task[]
-    project: Project
+    defaultProject: Project
 
     // computed
     localTasks: Task[]
@@ -38,7 +38,7 @@ let taskListOptions = {
 
     props: {
         tasks: { required: true },
-        project: { required: true }
+        defaultProject: { required: true }
     },
 
     computed: {
@@ -117,7 +117,7 @@ let taskListOptions = {
 
             let payload: ReorderTasksPayload = {
                 task_ids: this.dragState!.currentOrder,
-                project: this.project
+                project: this.defaultProject
             };
 
             taskList.dragOperationInProgress = true;

@@ -41,7 +41,7 @@ let TaskListSwitcherOptions = {
             <keep-alive>
                 <component :is="'task-list'"
                     :tasks="tasks"
-                    :project="project"
+                    :default-project="project"
                     :key="project.id"
                     v-for="projectId in Array.from(projectIds)"
                     v-if="project.id === projectId">
