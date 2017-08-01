@@ -24,4 +24,8 @@ class Task < ApplicationRecord
       self.sort_order = (Project.find(project_id).tasks.maximum(:sort_order) || 0) + 1
     end
   end
+
+  def as_json(opts)
+    super(:methods => [:label_ids])
+  end
 end
