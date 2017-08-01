@@ -28,7 +28,8 @@
                                 <resource-list
                                     :resources="$store.getters.projectsWithoutInbox"
                                     :selected-resource="$store.getters.activeProject"
-                                    :resource-task-counts="$store.getters.projectTaskCounts">
+                                    :resource-task-counts="$store.getters.projectTaskCounts"
+                                    :editor-component="'project-editor'">
                                 </resource-list>
                             </div>
 
@@ -55,7 +56,7 @@
                             <!-- TODO: Change this to work with multiple scope types! -->
                             <task-list-switcher
                                 :tasks="$store.getters.tasksForActiveScope"
-                                :project="$store.state.activeProject">
+                                :project="$store.getters.activeProject">
                             </task-list-switcher>
                         </div>
                     </div>

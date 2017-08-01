@@ -14,6 +14,7 @@ interface ResourceList extends Vue {
     resources: Resource[]
     selectedResource: Resource
     resourceTaskCounts: {[key: string]: number}
+    editorComponent: string
 
     // data
     isAddingResource: boolean
@@ -44,7 +45,8 @@ let resourceListOptions = {
     props: {
         resources: { required: true },
         selectedResource: { required: true }, // Should this be required?
-        resourceTaskCounts: { required: true }
+        resourceTaskCounts: { required: true },
+        editorComponent: { required: true }
     },
 
     computed: {
@@ -169,10 +171,11 @@ let resourceListOptions = {
         <div>
             <ul class="resource-list">
                 <template v-for="(project, index) in localResources">
-                    <project-editor v-if="resourceBeingEdited && (resourceBeingEdited.id === project.id)"
-                                    @close="closeEditorForUpdate()"
-                                    :project-to-edit="project">
-                    </project-editor>
+                    <component v-if="resourceBeingEdited && (resourceBeingEdited.id === project.id)"
+                               :is="editorComponent"
+                               @close="closeEditorForUpdate()"
+                               :project-to-edit="project">
+                    </component>
                     <li v-else
                         :class="projectItemClasses[project.id]"
                         @click="setProject(project)"
@@ -207,10 +210,14 @@ let resourceListOptions = {
                             </span>
                             <div class="dropdown" v-if="dropdownActiveOn && (dropdownActiveOn.id == project.id)">
                                 <ul class="dropdown-options">
-                                    <li class="dropdown-option" @click.stop="openEditorForUpdate(project)">
+                                    <li class="dropdown-option"
+                                        @click.stop="toggleDropdown(project);
+                                                     openEditorForUpdate(project)">
                                         Edit Project
                                     </li>
-                                    <li class="dropdown-option" @click.stop="deleteProject(project)">
+                                    <li class="dropdown-option"
+                                        @click.stop="toggleDropdown(project);
+                                                     deleteProject(project)">
                                         Delete Project
                                     </li>
                                 </ul>
@@ -221,10 +228,10 @@ let resourceListOptions = {
                 </template>
             </ul>
 
-            <project-editor
-                v-if="isAddingResource"
-                @close="closeEditorForCreate()">
-            </project-editor>
+            <component v-if="isAddingResource"
+                       :is="editorComponent"
+                       @close="closeEditorForCreate()">
+            </component>
             <div v-else class="add-project" @click="openEditorForCreate()">
                 <span class="icon-holder">
                     <span class="add-icon">
