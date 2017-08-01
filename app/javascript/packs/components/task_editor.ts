@@ -182,12 +182,12 @@ let taskEditorOptions = {
                 this.$store.dispatch('updateTask', {
                     id: this.taskToEdit.id,
                     title: this.taskTitle,
-                    project: this.taskProjectId
+                    projectId: this.taskProjectId
                 });
             } else {
                 this.$store.dispatch('createTask', {
                     title: this.taskTitle,
-                    project: this.taskProjectId
+                    projectId: this.taskProjectId
                 });
             }
 

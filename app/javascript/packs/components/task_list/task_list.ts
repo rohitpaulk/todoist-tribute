@@ -173,7 +173,7 @@ let taskListOptions = {
             <task-editor
                 v-if="isAddingTask"
                 @close="hideTaskForm()"
-                :initial-project="project">
+                :initial-project="defaultProject">
             </task-editor>
             <div v-else class="add-task" @click="openAddTaskForm()">
                 <span class="icon-holder">
