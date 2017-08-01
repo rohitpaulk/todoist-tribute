@@ -11,6 +11,8 @@ $label-icon-height: 10px;
 $label-icon-width: 14px;
 $autocomplete-row-height: 38px;
 $autocomplete-box-height: (5 * $autocomplete-row-height) + 5px;
+$tasks-dragbar-holder-width: 20px;
+$task-item-height: 47px; // Try not to hardcode... Double lined tasks possible?
 
 $color-red: #db4c3f;
 $color-darker-red: #c53727;
@@ -356,20 +358,23 @@ $color-light-gray: #ddd;
     font-size: 14px;
 }
 
+.content .simple-task-list {
+    padding-left: $tasks-dragbar-holder-width + 10px;
+}
+
 .content .task-list .drag-item {
     position: relative;
-    padding-left: $checkbox-diameter;
+    padding-left: $tasks-dragbar-holder-width;
 
     // TODO: Find a way to hide dragbars!
     .dragbars-holder {
         position: absolute;
         left: 0px;
         display: block;
-        width: $checkbox-diameter * 0.75;
-        height: $checkbox-diameter;
-        line-height: 47px;
+        width: $tasks-dragbar-holder-width;
+        line-height: $task-item-height;
 
-        .drag-bars { line-height: $checkbox-diameter; }
+        .drag-bars { line-height: $task-item-height; }
         &:hover {
             cursor: move;
         }

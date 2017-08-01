@@ -47,14 +47,15 @@ let taskListOptions = {
 
     template: `
         <div>
-            <div class="task-list">
+            <div class="task-list simple-task-list">
                 <template v-for="task in tasks">
                     <task-editor
                         v-if="taskBeingEdited && (taskBeingEdited.id === task.id)"
                         @close="closeEditor()"
                         :task-to-edit="task">
                     </task-editor>
-                    <task-item v-else
+                    <task-item
+                        v-else
                         :task="task"
                         @intentToEdit="openEditor"
                         @intentToComplete="completeTask">
