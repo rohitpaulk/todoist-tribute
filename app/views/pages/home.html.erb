@@ -25,11 +25,11 @@
                         </div>
                         <tab-switcher :tabs="['Projects', 'Labels', 'Filters']">
                             <div class="resource-list-container" slot="Projects">
-                                <project-list
+                                <resource-list
                                     :projects="$store.getters.projectsWithoutInbox"
                                     :selected-project="$store.state.activeProject"
                                     :project-task-counts="$store.getters.projectTaskCounts">
-                                </project-list>
+                                </resource-list>
                             </div>
 
                             <div class="labels-list-container" slot="Labels">

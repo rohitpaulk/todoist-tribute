@@ -5,7 +5,7 @@ import { Project } from '../models';
 import { API } from '../API';
 import { DragEventHandlers, DragState, getOrderedItems } from '../helpers/drag_state';
 
-interface ProjectList extends Vue {
+interface ResourceList extends Vue {
     // props
     projects: Project[]
     selectedProject: Project
@@ -24,7 +24,7 @@ interface ProjectList extends Vue {
     resetDropdown(): void
 }
 
-let projectListOptions = {
+let resourceListOptions = {
     data: function() {
         return {
             dragState: undefined,
@@ -225,6 +225,6 @@ let projectListOptions = {
             </div>
         </div>
     `
-} as ComponentOptions<ProjectList>
+} as ComponentOptions<ResourceList>
 
-export { projectListOptions as ProjectListOptions }
+export { resourceListOptions as ResourceListOptions }
