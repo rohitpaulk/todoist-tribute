@@ -38,6 +38,9 @@ interface ComponentData {
 }
 
 interface ResourceList extends Vue, ComponentProps, ComponentData {
+    // computed
+    selectedResourceId: string
+
     // methods
     openEditorForCreate(): void
     closeEditorForCreate(): void
@@ -59,7 +62,7 @@ let resourceListOptions = {
 
     props: {
         resources: { required: true },
-        selectedResource: { required: true }, // Should this be required?
+        selectedResource: { },
         resourceTaskCounts: { required: true },
         editorComponent: { required: true },
         scopeType: { required: true },
@@ -77,18 +80,22 @@ let resourceListOptions = {
 
         resourceItemClasses: function() {
             let classObjectMap = {};
-            let selectedResource = this.selectedResource;
+            let selectedResourceId = this.selectedResourceId;
 
             // TODO: Is there a more functional way to do this?
             //       i.e. return [task_id, {}] and then turn into a Map?
             _.forEach(this.resources, function(resource: Resource) {
                 classObjectMap[resource.id] = {
                     'resource-item': true,
-                    'is-selected': resource.id === selectedResource.id
+                    'is-selected': resource.id === selectedResourceId
                 };
             });
 
             return classObjectMap;
+        },
+
+        selectedResourceId(): string {
+            return this.selectedResource && this.selectedResource.id;
         }
     },
 

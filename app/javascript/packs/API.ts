@@ -2,11 +2,12 @@ import { Task, Project, Label } from './models';
 import axios, { AxiosPromise } from 'axios';
 
 interface APITask {
-    id: number, // TODO: Change this to string on backend?
-    title: string,
-    sort_order: number,
-    indent_level: number,
+    id: number // TODO: Change this to string on backend?
+    title: string
+    sort_order: number
+    indent_level: number
     project_id: number // TODO: Change this to string on backend?
+    label_ids: number[]
 }
 
 interface APIProject {
@@ -216,7 +217,8 @@ class API {
             id: String(data.id), // TODO: Make API return string
             sortOrder: data.sort_order,
             indentLevel: data.indent_level,
-            projectId: String(data.project_id)
+            projectId: String(data.project_id),
+            labelIds: data.label_ids.map((x) => String(x))
         };
     }
 

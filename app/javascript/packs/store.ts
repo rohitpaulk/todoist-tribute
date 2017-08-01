@@ -83,8 +83,18 @@ let storeOptions = {
             return filterTasksByScope(state.tasks, state.activeScope);
         },
 
+        // Move active* to individual components?
+
         activeProject: function(state): Project | null {
             if (state.activeScope.type === 'project') {
+                return state.activeScope.resource;
+            } else {
+                return null;
+            }
+        },
+
+        activeLabel: function(state): Label | null {
+            if (state.activeScope.type === 'label') {
                 return state.activeScope.resource;
             } else {
                 return null;
@@ -121,6 +131,19 @@ let storeOptions = {
                     return task.projectId === project.id;
                 }).length;
             })
+
+            return result;
+        },
+
+        labelTaskCounts: function(state): {[key: string]: number} {
+            // TODO: A more functional way?
+            let result = {};
+
+            _.forEach(state.labels, function(label: Label) {
+                result[label.id] = _.filter(state.tasks, function(task: Task) {
+                    return _.includes(task.labelIds, label.id)
+                }).length;
+            });
 
             return result;
         },

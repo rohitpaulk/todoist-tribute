@@ -3,7 +3,8 @@ interface Task {
     id: string,
     sortOrder: number,
     indentLevel: number,
-    projectId: string
+    projectId: string,
+    labelIds: string[]
 }
 
 // TODO: Add sortOrder?

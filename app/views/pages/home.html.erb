@@ -38,10 +38,18 @@
                                 </resource-list>
                             </div>
 
-                            <div class="labels-list-container" slot="Labels">
-                                <div style="padding: 20px">
-                                    Not implemented yet
-                                </div>
+                            <div class="resource-list-container labels-list-container" slot="Labels">
+                                <resource-list
+                                    editor-component="project-editor"
+                                    scope-type="label"
+                                    :resources="$store.state.labels"
+                                    :selected-resource="$store.getters.activeLabel"
+                                    :resource-task-counts="$store.getters.labelTaskCounts"
+                                    :resource-actions="{
+                                        reorder: 'reorderLabels',
+                                        delete: 'deleteLabels'
+                                    }">
+                                </resource-list>
                             </div>
                             <div class="filters-list-container" slot="Filters">
                                 <div style="padding: 20px">
