@@ -59,7 +59,7 @@ let taskListOptions = {
                 classObjectMap[task.id] = {
                     'task-item': true,
                     'resource-item': true,
-                    'is-dragged': dragState && (dragState.draggedItem.id === task.id)
+                    'is-dragged': dragState && (dragState.draggedItemId === task.id)
                 };
             });
 

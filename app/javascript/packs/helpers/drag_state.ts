@@ -5,7 +5,7 @@ interface DraggableItem {
 }
 
 interface DragState {
-    draggedItem: DraggableItem
+    draggedItemId: string
     orderBeforeDrag: string[] // Array of IDs
     currentOrder: string[] // Array of IDs
 }
@@ -21,7 +21,7 @@ let dragEventHandlers = {
         let initialOrder = items.map(x => x.id);
 
         return {
-            draggedItem: draggedItem,
+            draggedItemId: draggedItem.id,
             orderBeforeDrag: initialOrder,
             currentOrder: initialOrder,
         };
@@ -31,7 +31,7 @@ let dragEventHandlers = {
         let oldOrder = oldDragState.currentOrder;
 
         let currentItemPosition = _.indexOf(oldOrder, item.id);
-        let draggedItemPosition = _.indexOf(oldOrder, oldDragState.draggedItem.id);
+        let draggedItemPosition = _.indexOf(oldOrder, oldDragState.draggedItemId);
 
         let cp = currentItemPosition;
         let dp = draggedItemPosition;
@@ -41,7 +41,7 @@ let dragEventHandlers = {
         [newOrder[cp], newOrder[dp]] = [oldOrder[dp], oldOrder[cp]];
 
         return {
-            draggedItem: oldDragState.draggedItem,
+            draggedItemId: oldDragState.draggedItemId,
             orderBeforeDrag: oldDragState.orderBeforeDrag,
             currentOrder: newOrder,
         };
