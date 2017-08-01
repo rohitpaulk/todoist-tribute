@@ -2,10 +2,10 @@ import * as _ from 'lodash';
 import * as Mousetrap from 'mousetrap';
 import Vue, { ComponentOptions } from 'vue';
 
-import { Task, Project } from '../models';
-import { API } from '../API';
-import { ReorderTasksPayload } from '../store';
-import { DragEventHandlers, DragState, getOrderedItems } from '../helpers/drag_state';
+import { Task, Project } from '../../models';
+import { API } from '../../API';
+import { ReorderTasksPayload } from '../../store';
+import { DragEventHandlers, DragState, getOrderedItems } from '../../helpers/drag_state';
 
 interface TaskList extends Vue {
     // data

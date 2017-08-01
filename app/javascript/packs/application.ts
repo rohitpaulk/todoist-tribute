@@ -1,10 +1,10 @@
 import * as Vue from 'vue';
 import Vuex from 'vuex'
 
-import { TaskListOptions } from "./components/task_list";
+import { TaskListOptions } from "./components/task_list/task_list";
 import { TaskItemOptions } from "./components/task_list/task_item";
-import { SimpleTaskListOptions } from "./components/simple_task_list";
-import { TaskListSwitcherOptions } from "./components/task_list_switcher";
+import { SimpleTaskListOptions } from "./components/task_list/simple_task_list";
+import { TaskListSwitcherOptions } from "./components/task_list/task_list_switcher";
 import { TaskEditorOptions } from "./components/task_editor";
 import { AutocompleteBoxOptions } from "./components/autocomplete_box";
 import { ViewListOptions } from "./components/view_list";

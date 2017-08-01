@@ -2,8 +2,8 @@ import * as _ from 'lodash';
 import Vue, { ComponentOptions } from 'vue';
 
 import { TaskList, TaskListOptions } from './task_list';
-import { Scope, ScopeType } from '../store';
-import { Project, Task } from '../models';
+import { Scope, ScopeType } from '../../store';
+import { Project, Task } from '../../models';
 
 interface ComponentData {
     // A set of all the IDs of the scopes that have been rendered. This is used
