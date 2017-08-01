@@ -38,13 +38,24 @@ class ProjectsController < ApplicationController
 
   def update
     project = Project.find(params[:id])
+
+    if project.is_inbox
+      render json: {'msg' => 'Cannot update default inbox project'}, status: 400 and return
+    end
+
     project.update!(project_params)
 
     render json: project
   end
 
   def destroy
-    Project.find(params[:id]).delete
+    project = Project.find(params[:id])
+
+    if project.is_inbox
+      render json: {'msg' => 'Cannot delete default inbox project'}, status: 400 and return
+    end
+
+    project.delete
 
     render json: {}
   end
