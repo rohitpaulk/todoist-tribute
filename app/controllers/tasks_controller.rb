@@ -1,6 +1,6 @@
 class TasksController < ApplicationController
   def index
-    render json: Task.where(is_completed: false).order(sort_order: :asc).all
+    render json: Task.includes(:labels).where(is_completed: false).order(sort_order: :asc).all
   end
 
   def create
