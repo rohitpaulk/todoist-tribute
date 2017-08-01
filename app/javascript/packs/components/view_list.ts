@@ -33,8 +33,11 @@ let viewListOptions = {
     },
 
     methods: {
-        setInboxAsActiveProject: function() {
-            this.$store.commit('setActiveProject', this.inboxProject);
+        setInboxAsActiveProject() {
+            this.$store.commit('setActiveScope', {
+                type: "project",
+                resource: this.inboxProject
+            });
         }
     },
 

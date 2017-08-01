@@ -26,10 +26,11 @@
                         <tab-switcher :tabs="['Projects', 'Labels', 'Filters']">
                             <div class="resource-list-container" slot="Projects">
                                 <resource-list
+                                    editor-component="project-editor"
+                                    scope-type="project"
                                     :resources="$store.getters.projectsWithoutInbox"
                                     :selected-resource="$store.getters.activeProject"
-                                    :resource-task-counts="$store.getters.projectTaskCounts"
-                                    :editor-component="'project-editor'">
+                                    :resource-task-counts="$store.getters.projectTaskCounts">
                                 </resource-list>
                             </div>
 

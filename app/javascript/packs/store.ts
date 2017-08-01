@@ -4,8 +4,10 @@ import * as _ from 'lodash';
 import { Label, Project, Task } from './models';
 import { API } from './API'
 
+type ScopeType = "project" | "label"
+
 interface Scope {
-    type: "project" | "label"
+    type: ScopeType
     resource: Project | Label
 }
 
@@ -145,8 +147,8 @@ let storeOptions = {
             state.projects = projects;
         },
 
-        setActiveProject(state, project: Project) {
-            state.activeScope = {type: "project", resource: project};
+        setActiveScope(state, scope: Scope) {
+            state.activeScope = scope;
         },
 
         addProject(state, project: Project) {
@@ -244,3 +246,4 @@ let storeOptions = {
 export { storeOptions as TuduStoreOptions }
 export { CreateTaskPayload, UpdateTaskPayload, ReorderTasksPayload }
 export { CreateProjectPayload, UpdateProjectPayload }
+export { Scope, ScopeType }

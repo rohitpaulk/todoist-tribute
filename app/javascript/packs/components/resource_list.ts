@@ -4,6 +4,7 @@ import Vue, { ComponentOptions } from 'vue';
 import { Project } from '../models';
 import { API } from '../API';
 import { DragEventHandlers, DragState, getOrderedItems } from '../helpers/drag_state';
+import { Scope, ScopeType } from '../store';
 
 interface Resource {
     id: string
@@ -21,6 +22,9 @@ interface ResourceList extends Vue {
     //   - Send a 'close' event when closing.
     //   - Accept a resource-to-edit property.
     editorComponent: string
+
+    // The type of scope that the resources in this list can activate.
+    scopeType: ScopeType
 
     // data
     isAddingResource: boolean
@@ -52,7 +56,8 @@ let resourceListOptions = {
         resources: { required: true },
         selectedResource: { required: true }, // Should this be required?
         resourceTaskCounts: { required: true },
-        editorComponent: { required: true }
+        editorComponent: { required: true },
+        scopeType: { required: true }
     },
 
     computed: {
@@ -60,21 +65,21 @@ let resourceListOptions = {
             if (this.dragState === undefined) {
                 return this.resources;
             } else {
-                return getOrderedItems(this.resources, this.dragState) as Project[];
+                return getOrderedItems(this.resources, this.dragState) as Resource[];
             }
         },
 
-        projectItemClasses: function() {
+        resourceItemClasses: function() {
             let classObjectMap = {};
             let selectedResource = this.selectedResource;
 
             // TODO: Is there a more functional way to do this?
             //       i.e. return [task_id, {}] and then turn into a Map?
-            _.forEach(this.resources, function(project: Project) {
-                classObjectMap[project.id] = {
-                    'project-item': true,
+            _.forEach(this.resources, function(resource: Resource) {
+                classObjectMap[resource.id] = {
+                    'project-item': true, // TODO: Extract?
                     'resource-item': true,
-                    'is-selected': project.id === selectedResource.id
+                    'is-selected': resource.id === selectedResource.id
                 };
             });
 
@@ -83,12 +88,16 @@ let resourceListOptions = {
     },
 
     created: function() {
+        // TODO: Move to parent?
         this.$store.dispatch('refreshProjects');
     },
 
     methods: {
-        setProject: function(project: Project) {
-            this.$store.commit('setActiveProject', project);
+        setActiveScope: function(resource: Resource) {
+            this.$store.commit('setActiveScope', {
+                type: this.scopeType,
+                resource: resource
+            });
         },
 
         onDragStart: function(event, draggedProject: Project): boolean {
@@ -183,8 +192,8 @@ let resourceListOptions = {
                                :resource-to-edit="resource">
                     </component>
                     <li v-else
-                        :class="projectItemClasses[resource.id]"
-                        @click="setProject(resource)"
+                        :class="resourceItemClasses[resource.id]"
+                        @click="setActiveScope(resource)"
                         @drop="onDrop($event)"
                         @dragover.prevent
                         @dragenter="onDragEnter($event, resource)">
