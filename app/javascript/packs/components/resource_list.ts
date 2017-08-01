@@ -29,7 +29,7 @@ interface ComponentProps {
 interface ComponentData {
     isAddingResource: boolean
     resourceBeingEdited: Resource | null
-    dropdownActiveOn: Project | null
+    dropdownActiveOnId: string | null
     dragState?: DragState
     dragOperationInProgress: boolean
 }
@@ -48,7 +48,7 @@ let resourceListOptions = {
         return {
             isAddingResource: false,
             resourceBeingEdited: null,
-            dropdownActiveOn: null,
+            dropdownActiveOnId: null,
             dragState: undefined,
             dragOperationInProgress: false
         }
@@ -166,15 +166,15 @@ let resourceListOptions = {
         },
 
         toggleDropdown: function(project: Project) {
-            if (this.dropdownActiveOn) {
+            if (this.dropdownActiveOnId !== null) {
                 this.resetDropdown();
             } else {
-                this.dropdownActiveOn = project;
+                this.dropdownActiveOnId = project.id;
             }
         },
 
         resetDropdown: function(): void {
-            this.dropdownActiveOn = null;
+            this.dropdownActiveOnId = null;
         }
     },
 
@@ -216,10 +216,10 @@ let resourceListOptions = {
                         </span>
 
                         <span class="dropdown-container" @click.stop="toggleDropdown(resource)">
-                            <span :class="{'dropdown-toggle': true, 'is-active': dropdownActiveOn && (dropdownActiveOn.id == resource.id)}">
+                            <span :class="{'dropdown-toggle': true, 'is-active': dropdownActiveOnId == resource.id}">
                                 <i class="fa fa-ellipsis-h"></i>
                             </span>
-                            <div class="dropdown" v-if="dropdownActiveOn && (dropdownActiveOn.id == resource.id)">
+                            <div class="dropdown" v-if="dropdownActiveOnId == resource.id">
                                 <ul class="dropdown-options">
                                     <li class="dropdown-option"
                                         @click.stop="toggleDropdown(resource);
