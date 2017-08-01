@@ -1,12 +1,12 @@
 import Vue, { ComponentOptions } from 'vue';
 
 
-interface ColorChooser extends Vue {
+interface ColorChooserDropdown extends Vue {
     colors: string[]
     emitSelect(colorHex: string): void
 }
 
-let ColorChooserOptions = {
+let ColorChooserDropdownOptions = {
     props: {
         colors: {
             default(): string[] {
@@ -27,7 +27,7 @@ let ColorChooserOptions = {
     },
 
     template: `
-        <div class="color-chooser">
+        <div class="color-chooser-dropdown">
             <ul class="color-list">
                 <li v-for="colorHex in colors"
                     class="color-list-item"
@@ -39,6 +39,6 @@ let ColorChooserOptions = {
     `,
 
 
-} as ComponentOptions<ColorChooser>;
+} as ComponentOptions<ColorChooserDropdown>;
 
-export { ColorChooserOptions }
+export { ColorChooserDropdownOptions }

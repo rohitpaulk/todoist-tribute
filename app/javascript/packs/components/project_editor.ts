@@ -11,7 +11,6 @@ interface ProjectEditor extends Vue {
         name: string
         colorHex: string
     }
-    isColorChooserOpen: boolean
 
     // props
     resourceToEdit: Project | null
@@ -31,8 +30,7 @@ let ProjectEditorOptions = {
             project: {
                 name: (this.resourceToEdit === null) ? '' : this.resourceToEdit.name,
                 colorHex: (this.resourceToEdit === null) ? '000000' : this.resourceToEdit.colorHex,
-            },
-            isColorChooserOpen: false
+            }
         };
     },
 
@@ -75,15 +73,6 @@ let ProjectEditorOptions = {
 
             // TODO: Wait for promise to resolve?
             this.emitClose();
-        },
-
-        toggleColorChooser: function() {
-            this.isColorChooserOpen = !this.isColorChooserOpen;
-        },
-
-        colorSelected: function(colorHex: string) {
-            this.isColorChooserOpen = false;
-            this.project.colorHex = colorHex;
         }
     },
 
@@ -97,14 +86,7 @@ let ProjectEditorOptions = {
                 <form @submit.prevent="submitChanges()"
                       @keydown.esc="emitClose()">
                     <div class="input-nodes-container">
-                        <div class="color-chooser-toggle"
-                             @click.prevent="toggleColorChooser()">
-                            <div class="color-icon color-icon-project"
-                                 :style="{'background-color': '#' + project.colorHex}">
-                            </div>
-                        </div>
-                        <color-chooser v-if="isColorChooserOpen"
-                            @select="colorSelected">
+                        <color-chooser v-model="project.colorHex">
                         </color-chooser>
 
                         <input type="text"
