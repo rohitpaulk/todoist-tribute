@@ -8,9 +8,17 @@ interface Task {
 
 // TODO: Add sortOrder?
 interface Project {
-    id: string,
-    name: string,
+    id: string
+    name: string
     colorHex: string
+    sortOrder: number
+}
+
+interface Label {
+    id: string
+    name: string
+    colorHex: string
+    sortOrder: number
 }
 
 export { Task, Project };

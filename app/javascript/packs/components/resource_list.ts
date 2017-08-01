@@ -5,18 +5,22 @@ import { Project } from '../models';
 import { API } from '../API';
 import { DragEventHandlers, DragState, getOrderedItems } from '../helpers/drag_state';
 
+interface Resource {
+    id: string
+}
+
 interface ResourceList extends Vue {
     // props
-    projects: Project[]
-    selectedProject: Project
-    projectTaskCounts: {[key: string]: number}
+    resources: Resource[]
+    selectedResource: Resource
+    resourceTaskCounts: {[key: string]: number}
 
     // data
-    dragState?: DragState
-    dragOperationInProgress: boolean
     isAddingProject: boolean
     dropdownActiveOn: Project | null
     projectBeingEdited: Project | null
+    dragState?: DragState
+    dragOperationInProgress: boolean
 
     // methods
     showProjectForm(): void
@@ -36,31 +40,31 @@ let resourceListOptions = {
     },
 
     props: {
-        projects: { required: true },
-        selectedProject: { required: true }, // Should this be required?
-        projectTaskCounts: { required: true }
+        resources: { required: true },
+        selectedResource: { required: true }, // Should this be required?
+        resourceTaskCounts: { required: true }
     },
 
     computed: {
-        localProjects(): Project[] {
+        localResources(): Resource[] {
             if (this.dragState === undefined) {
-                return this.projects;
+                return this.resources;
             } else {
-                return getOrderedItems(this.projects, this.dragState) as Project[];
+                return getOrderedItems(this.resources, this.dragState) as Project[];
             }
         },
 
         projectItemClasses: function() {
             let classObjectMap = {};
-            let selectedProject = this.selectedProject;
+            let selectedResource = this.selectedResource;
 
             // TODO: Is there a more functional way to do this?
             //       i.e. return [task_id, {}] and then turn into a Map?
-            _.forEach(this.projects, function(project: Project) {
+            _.forEach(this.resources, function(project: Project) {
                 classObjectMap[project.id] = {
                     'project-item': true,
                     'resource-item': true,
-                    'is-selected': project.id === selectedProject.id
+                    'is-selected': project.id === selectedResource.id
                 };
             });
 
@@ -81,7 +85,7 @@ let resourceListOptions = {
             event.dataTransfer.setData('tudu/x-task', draggedProject.id);
             event.dataTransfer.setDragImage(event.target.parentNode, 0, 0);
 
-            this.dragState = DragEventHandlers.dragStart(this.projects, draggedProject);
+            this.dragState = DragEventHandlers.dragStart(this.resources, draggedProject);
 
             return false;
         },
@@ -156,7 +160,7 @@ let resourceListOptions = {
     template: `
         <div>
             <ul class="resource-list">
-                <template v-for="(project, index) in localProjects">
+                <template v-for="(project, index) in localResources">
                     <project-editor v-if="projectBeingEdited && (projectBeingEdited.id === project.id)"
                                     @close="hideProjectForm()"
                                     :project-to-edit="project">
@@ -184,8 +188,8 @@ let resourceListOptions = {
                             <span class="project-title">
                                 {{ project.name }}
                             </span>
-                            <span class="counter" v-if="projectTaskCounts[project.id] !== 0">
-                                {{ projectTaskCounts[project.id] }}
+                            <span class="counter" v-if="resourceTaskCounts[project.id] !== 0">
+                                {{ resourceTaskCounts[project.id] }}
                             </span>
                         </span>
 
