@@ -10,7 +10,8 @@ function fakeTask(props: Partial<Task>): Task {
         title: 'Testing',
         sortOrder: 1,
         indentLevel: 1,
-        projectId: '1'
+        projectId: '1',
+        labelIds: []
     };
 
     for (let propKey in props) {
@@ -24,7 +25,8 @@ function fakeProject(props: Partial<Project>): Project {
     let project: Project =  {
         id: '1',
         name: 'Dummy Project',
-        colorHex: '000000'
+        colorHex: '000000',
+        sortOrder: 1
     };
 
     for (let propKey in props) {
