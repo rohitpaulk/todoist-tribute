@@ -81,7 +81,7 @@
                             <!-- TODO: Change this to work with multiple scope types! -->
                             <task-list-switcher
                                 :tasks="$store.getters.tasksForActiveScope"
-                                :project="$store.getters.activeProject">
+                                :scope="$store.state.activeScope">
                             </task-list-switcher>
                         </div>
                     </div>

@@ -2,6 +2,7 @@ import * as Vue from 'vue';
 import Vuex from 'vuex'
 
 import { TaskListOptions } from "./components/task_list";
+import { SimpleTaskListOptions } from "./components/simple_task_list";
 import { TaskListSwitcherOptions } from "./components/task_list_switcher";
 import { TaskEditorOptions } from "./components/task_editor";
 import { AutocompleteBoxOptions } from "./components/autocomplete_box";
@@ -13,6 +14,7 @@ import { ColorChooserOptions } from "./components/color_chooser";
 import { TuduStoreOptions } from "./store";
 
 Vue.component('task-list', TaskListOptions);
+Vue.component('simple-task-list', SimpleTaskListOptions);
 Vue.component('task-list-switcher', TaskListSwitcherOptions);
 Vue.component('task-editor', TaskEditorOptions);
 Vue.component('autocomplete-box', AutocompleteBoxOptions);
