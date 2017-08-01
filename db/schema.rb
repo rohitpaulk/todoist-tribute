@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20170731202250) do
     t.integer "sort_order"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["sort_order"], name: "labels_unique_sort_order", unique: true
   end
 
   create_table "labels_tasks", id: false, force: :cascade do |t|
