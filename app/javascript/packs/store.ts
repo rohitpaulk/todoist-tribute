@@ -14,6 +14,7 @@ interface Scope {
 interface TuduStoreOptions {
     tasks: Task[]
     projects: Project[]
+    labels: Label[]
 
     // 'Scope' is what the user has currently filtered tasks by. This could be
     // a project, label, filter etc.
@@ -47,6 +48,11 @@ interface UpdateProjectPayload extends CreateProjectPayload {
     id: string
 }
 
+// Both have the same interface for now, change when needed.
+type CreateLabelPayload = CreateProjectPayload;
+type UpdateLabelPayload = UpdateProjectPayload;
+
+
 function filterTasksByScope(tasks: Task[], scope: Scope): Task[] {
     if (scope.type === 'project') {
         return tasks.filter(function(task: Task) {
@@ -63,6 +69,7 @@ let storeOptions = {
     state: {
         tasks: [],
         projects: [],
+        labels: [],
         // TODO: Look into avoiding hardcoding this
         activeScope: {
             type:'project',
@@ -124,6 +131,10 @@ let storeOptions = {
     },
 
     mutations: {
+        setActiveScope(state, scope: Scope) {
+            state.activeScope = scope;
+        },
+
         setTasks(state, tasks: Task[]) {
             state.tasks = tasks;
         },
@@ -147,10 +158,6 @@ let storeOptions = {
             state.projects = projects;
         },
 
-        setActiveScope(state, scope: Scope) {
-            state.activeScope = scope;
-        },
-
         addProject(state, project: Project) {
             state.projects.push(project)
         },
@@ -164,6 +171,25 @@ let storeOptions = {
 
         removeProject(state, id: string) {
             state.projects = _.filter(state.projects, (x) => x.id !== id);
+        },
+
+        setLabels(state, labels: Label[]) {
+            state.labels = labels;
+        },
+
+        addLabel(state, label: Label) {
+            state.labels.push(label)
+        },
+
+        updateLabel(state, label: Label) {
+            let index = _.findIndex(state.labels, (x: Label) => (x.id === label.id));
+            let newLabels = state.labels.slice();
+            newLabels[index] = label;
+            state.labels = newLabels;
+        },
+
+        removeLabel(state, id: string) {
+            state.labels = _.filter(state.labels, (x) => x.id !== id);
         },
     },
     actions: { // TODO: Return promises?
@@ -238,6 +264,39 @@ let storeOptions = {
         deleteProject({commit, getters}, id: string) {
             getters.api.deleteProject(id).then(function() {
                 commit('removeProject', id);
+            });
+        },
+
+        refreshLabels({commit, getters}) {
+            getters.api.getLabels().then(function(labels: Label[]) {
+                commit('setLabels', labels);
+            });
+        },
+
+        createLabel({commit, getters}, payload: CreateLabelPayload) {
+            getters.api.createLabel(payload.name, payload.colorHex).then(function(label: Label) {
+                commit('addLabel', label);
+            });
+        },
+
+        updateLabel({commit, getters}, payload: UpdateLabelPayload) {
+            getters.api.updateLabel(payload.id, payload.name, payload.colorHex).then(function(label: Label) {
+                commit('updateLabel', label);
+            });
+        },
+
+        reorderLabels({commit, getters}, label_ids: string[]): Promise<void> {
+            return new Promise(function(resolve, reject) {
+                getters.api.reorderLabels(label_ids).then(function(labelsFromAPI) {
+                    commit('setLabels', labelsFromAPI);
+                    resolve();
+                });
+            });
+        },
+
+        deleteLabel({commit, getters}, id: string) {
+            getters.api.deleteLabel(id).then(function() {
+                commit('removeLabel', id);
             });
         },
     }
