@@ -93,11 +93,6 @@ let resourceListOptions = {
         }
     },
 
-    created: function() {
-        // TODO: Move to parent?
-        this.$store.dispatch('refreshProjects');
-    },
-
     methods: {
         setActiveScope: function(resource: Resource) {
             this.$store.commit('setActiveScope', {

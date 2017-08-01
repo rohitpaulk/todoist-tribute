@@ -33,5 +33,9 @@ let store = new Vuex.Store(TuduStoreOptions);
 
 new Vue({
     el: '#vue-root',
-    store
+    store,
+    created: function() {
+        this.$store.dispatch('refreshProjects');
+        // TODO: Refresh labels too
+    }
 });
