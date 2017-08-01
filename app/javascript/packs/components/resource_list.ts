@@ -14,6 +14,12 @@ interface ResourceList extends Vue {
     resources: Resource[]
     selectedResource: Resource
     resourceTaskCounts: {[key: string]: number}
+
+    // The component to be used as an editor for creating/updating resources.
+    //
+    // Must implement the following properties:
+    //   - Send a 'close' event when closing.
+    //   - Accept a resource-to-edit property.
     editorComponent: string
 
     // data
@@ -170,54 +176,54 @@ let resourceListOptions = {
     template: `
         <div>
             <ul class="resource-list">
-                <template v-for="(project, index) in localResources">
-                    <component v-if="resourceBeingEdited && (resourceBeingEdited.id === project.id)"
+                <template v-for="(resource, index) in localResources">
+                    <component v-if="resourceBeingEdited && (resourceBeingEdited.id === resource.id)"
                                :is="editorComponent"
                                @close="closeEditorForUpdate()"
-                               :project-to-edit="project">
+                               :resource-to-edit="resource">
                     </component>
                     <li v-else
-                        :class="projectItemClasses[project.id]"
-                        @click="setProject(project)"
+                        :class="projectItemClasses[resource.id]"
+                        @click="setProject(resource)"
                         @drop="onDrop($event)"
                         @dragover.prevent
-                        @dragenter="onDragEnter($event, project)">
+                        @dragenter="onDragEnter($event, resource)">
 
                         <span class="dragbars-holder"
                             draggable="true"
-                            @dragstart="onDragStart($event, project)"
+                            @dragstart="onDragStart($event, resource)"
                             @dragend="onDragEnd()">
                             <i class="fa fa-bars drag-bars"></i>
                         </span>
 
                         <span class="icon-holder">
                             <span class="project-icon"
-                                :style="{ 'background-color': '#' + project.colorHex }">
+                                :style="{ 'background-color': '#' + resource.colorHex }">
                             </span>
                         </span>
                         <span class="text-holder">
                             <span class="project-title">
-                                {{ project.name }}
+                                {{ resource.name }}
                             </span>
-                            <span class="counter" v-if="resourceTaskCounts[project.id] !== 0">
-                                {{ resourceTaskCounts[project.id] }}
+                            <span class="counter" v-if="resourceTaskCounts[resource.id] !== 0">
+                                {{ resourceTaskCounts[resource.id] }}
                             </span>
                         </span>
 
-                        <span class="dropdown-container" @click.stop="toggleDropdown(project)">
-                            <span :class="{'dropdown-toggle': true, 'is-active': dropdownActiveOn && (dropdownActiveOn.id == project.id)}">
+                        <span class="dropdown-container" @click.stop="toggleDropdown(resource)">
+                            <span :class="{'dropdown-toggle': true, 'is-active': dropdownActiveOn && (dropdownActiveOn.id == resource.id)}">
                                 <i class="fa fa-ellipsis-h"></i>
                             </span>
-                            <div class="dropdown" v-if="dropdownActiveOn && (dropdownActiveOn.id == project.id)">
+                            <div class="dropdown" v-if="dropdownActiveOn && (dropdownActiveOn.id == resource.id)">
                                 <ul class="dropdown-options">
                                     <li class="dropdown-option"
-                                        @click.stop="toggleDropdown(project);
-                                                     openEditorForUpdate(project)">
+                                        @click.stop="toggleDropdown(resource);
+                                                     openEditorForUpdate(resource)">
                                         Edit Project
                                     </li>
                                     <li class="dropdown-option"
-                                        @click.stop="toggleDropdown(project);
-                                                     deleteProject(project)">
+                                        @click.stop="toggleDropdown(resource);
+                                                     deleteProject(resource)">
                                         Delete Project
                                     </li>
                                 </ul>

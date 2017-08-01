@@ -14,7 +14,7 @@ interface ProjectEditor extends Vue {
     isColorChooserOpen: boolean
 
     // props
-    projectToEdit: Project | null
+    resourceToEdit: Project | null
 
     // computed
     buttonText: string
@@ -29,8 +29,8 @@ let ProjectEditorOptions = {
     data: function() {
         return {
             project: {
-                name: (this.projectToEdit === null) ? '' : this.projectToEdit.name,
-                colorHex: (this.projectToEdit === null) ? '000000' : this.projectToEdit.colorHex,
+                name: (this.resourceToEdit === null) ? '' : this.resourceToEdit.name,
+                colorHex: (this.resourceToEdit === null) ? '000000' : this.resourceToEdit.colorHex,
             },
             isColorChooserOpen: false
         };
@@ -38,7 +38,7 @@ let ProjectEditorOptions = {
 
     computed: {
         buttonText(): string {
-            if (this.projectToEdit === null) {
+            if (this.resourceToEdit === null) {
                 return 'Add Project';
             } else {
                 return 'Save';
@@ -47,7 +47,7 @@ let ProjectEditorOptions = {
     },
 
     props: {
-        projectToEdit: { default: null }
+        resourceToEdit: { default: null }
     },
 
     methods: {
@@ -60,9 +60,9 @@ let ProjectEditorOptions = {
                 return; // Nothing to be done
             }
 
-            if (this.projectToEdit) {
+            if (this.resourceToEdit) {
                 this.$store.dispatch('updateProject', {
-                    id: this.projectToEdit.id,
+                    id: this.resourceToEdit.id,
                     name: this.project.name,
                     colorHex: this.project.colorHex
                 } as UpdateProjectPayload);
