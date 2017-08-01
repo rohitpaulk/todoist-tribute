@@ -1,19 +1,19 @@
 import Vue, { ComponentOptions } from 'vue';
 import * as _ from 'lodash';
 
-import { Project } from '../models';
-import { CreateProjectPayload, UpdateProjectPayload } from '../store';
+import { Label } from '../models';
+import { CreateLabelPayload, UpdateLabelPayload } from '../store';
 
 
-interface ProjectEditor extends Vue {
+interface LabelEditor extends Vue {
     // data
-    project: {
+    label: {
         name: string
         colorHex: string
     }
 
     // props
-    resourceToEdit: Project | null
+    resourceToEdit: Label | null
 
     // computed
     buttonText: string
@@ -24,10 +24,10 @@ interface ProjectEditor extends Vue {
 }
 
 
-let ProjectEditorOptions = {
+let LabelEditorOptions = {
     data: function() {
         return {
-            project: {
+            label: {
                 name: (this.resourceToEdit === null) ? '' : this.resourceToEdit.name,
                 colorHex: (this.resourceToEdit === null) ? '000000' : this.resourceToEdit.colorHex,
             }
@@ -37,7 +37,7 @@ let ProjectEditorOptions = {
     computed: {
         buttonText(): string {
             if (this.resourceToEdit === null) {
-                return 'Add Project';
+                return 'Add Label';
             } else {
                 return 'Save';
             }
@@ -54,21 +54,21 @@ let ProjectEditorOptions = {
         },
 
         submitChanges: function() {
-            if (_.trim(this.project.name) === '') {
+            if (_.trim(this.label.name) === '') {
                 return; // Nothing to be done
             }
 
             if (this.resourceToEdit) {
-                this.$store.dispatch('updateProject', {
+                this.$store.dispatch('updateLabel', {
                     id: this.resourceToEdit.id,
-                    name: this.project.name,
-                    colorHex: this.project.colorHex
-                } as UpdateProjectPayload);
+                    name: this.label.name,
+                    colorHex: this.label.colorHex
+                } as UpdateLabelPayload);
             } else {
-                this.$store.dispatch('createProject', {
-                    name: this.project.name,
-                    colorHex: this.project.colorHex
-                } as CreateProjectPayload);
+                this.$store.dispatch('createLabel', {
+                    name: this.label.name,
+                    colorHex: this.label.colorHex
+                } as CreateLabelPayload);
             }
 
             // TODO: Wait for promise to resolve?
@@ -86,18 +86,18 @@ let ProjectEditorOptions = {
                 <form @submit.prevent="submitChanges()"
                       @keydown.esc="emitClose()">
                     <div class="input-nodes-container">
-                        <color-chooser v-model="project.colorHex">
+                        <color-chooser v-model="label.colorHex">
 
                             <template scope="props" slot="icon">
-                                <div class="color-icon project-icon"
-                                     :style="{'background-color': '#' + props.colorHex}">
-                                </div>
+                                <i class="fa fa-tag label-icon"
+                                    :style="{'color': '#' + props.colorHex}">
+                                </i>
                             </template>
 
                         </color-chooser>
 
                         <input type="text"
-                               v-model="project.name"
+                               v-model="label.name"
                                ref="text-input"
                                class="text-input" />
                     </div>
@@ -111,7 +111,6 @@ let ProjectEditorOptions = {
             </div>
         </div>
     `
+} as ComponentOptions<LabelEditor>;
 
-} as ComponentOptions<ProjectEditor>;
-
-export { ProjectEditorOptions };
+export { LabelEditorOptions };

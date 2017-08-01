@@ -50,10 +50,7 @@ let ColorChooserOptions = {
             <div class="color-chooser-toggle"
                  @click.prevent="toggleDropdown()">
 
-                <div class="color-icon color-icon-project"
-                    :style="{'background-color': '#' + colorHex}">
-                </div>
-
+                 <slot name="icon" :colorHex="colorHex"></slot>
             </div>
             <color-chooser-dropdown v-if="isDropdownOpen"
                 @select="colorSelected">

@@ -95,14 +95,14 @@ $color-light-gray: #ddd;
     }
 }
 
-.project-list-container .resource-item, .autocomplete-item {
-    span.project-icon {
-        display: block;
-        width: $project-icon-diameter;
-        height: $project-icon-diameter;
-        border-radius: $project-icon-diameter / 2;
-    }
+.project-icon {
+    display: block;
+    width: $project-icon-diameter;
+    height: $project-icon-diameter;
+    border-radius: $project-icon-diameter / 2;
+}
 
+.project-list-container .resource-item, .autocomplete-item {
     span.icon-holder {
         display: inline-block;
         margin-right: 8px;
@@ -271,7 +271,7 @@ $color-light-gray: #ddd;
     }
 }
 
-.left-menu .project-form {
+.left-menu .resource-form {
     margin-top: 7px;
 
     .input-nodes-container {
@@ -279,7 +279,7 @@ $color-light-gray: #ddd;
     }
 }
 
-.content .task-form, .left-menu .project-form {
+.content .task-form, .left-menu .resource-form {
     .input-nodes-container {
         margin-bottom: 7px;
         font-size: 14px;

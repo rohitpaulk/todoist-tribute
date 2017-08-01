@@ -9,14 +9,6 @@
     &:hover {
         cursor: pointer;
     }
-
-    .color-icon {
-        display: inline-block;
-        text-align: center;
-        width: $project-icon-diameter;
-        height: $project-icon-diameter;
-        border-radius: $project-icon-diameter / 2;
-    }
 }
 
 .color-chooser .color-chooser-dropdown {

@@ -11,6 +11,7 @@ import { ViewListOptions } from "./components/view_list";
 import { TabSwitcherOptions } from "./components/tab_switcher";
 import { ResourceListOptions } from "./components/resource_list";
 import { ProjectEditorOptions } from "./components/project_editor";
+import { LabelEditorOptions } from "./components/label_editor";
 import { ColorChooserOptions } from "./components/color_chooser/input";
 import { ColorChooserDropdownOptions } from "./components/color_chooser/dropdown";
 import { TuduStoreOptions } from "./store";
@@ -26,6 +27,7 @@ Vue.component('view-list', ViewListOptions);
 Vue.component('tab-switcher', TabSwitcherOptions);
 Vue.component('resource-list', ResourceListOptions);
 Vue.component('project-editor', ProjectEditorOptions);
+Vue.component('label-editor', LabelEditorOptions);
 Vue.component('color-chooser', ColorChooserOptions);
 Vue.component('color-chooser-dropdown', ColorChooserDropdownOptions);
 

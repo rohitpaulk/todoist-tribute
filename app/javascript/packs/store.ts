@@ -344,4 +344,5 @@ let storeOptions = {
 export { storeOptions as TuduStoreOptions }
 export { CreateTaskPayload, UpdateTaskPayload, ReorderTasksPayload }
 export { CreateProjectPayload, UpdateProjectPayload }
+export { CreateLabelPayload, UpdateLabelPayload }
 export { Scope, ScopeType }
