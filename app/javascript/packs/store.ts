@@ -27,7 +27,7 @@ interface TuduStoreOptions {
 
 interface CreateTaskPayload {
     title: string
-    project: Project
+    projectId: string
 }
 
 interface UpdateTaskPayload extends CreateTaskPayload {
@@ -239,7 +239,7 @@ let storeOptions = {
         },
 
         createTask({commit, getters}, payload: CreateTaskPayload) {
-            getters.api.createTask(payload.title, payload.project.id).then(function(task: Task) {
+            getters.api.createTask(payload.title, payload.projectId).then(function(task: Task) {
                 commit('addTask', task)
             });
         },
@@ -250,7 +250,7 @@ let storeOptions = {
 
             let apiPayload = {
                 title: payload.title,
-                project_id: payload.project.id
+                project_id: payload.projectId
             };
 
             getters.api.updateTask(id, apiPayload).then(function(task: Task) {

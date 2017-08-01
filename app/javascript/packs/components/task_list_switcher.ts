@@ -64,7 +64,7 @@ let TaskListSwitcherOptions = {
             <keep-alive>
                 <component :is="componentName"
                     :tasks="tasks"
-                    :default-project="null"
+                    :default-project="scope.type === 'project' ? scope.resource : null"
                     :key="componentKey"
                     v-for="localScope in Array.from(scopeIds)"
                     v-if="(scope.type === localScope.type) && (scope.resource.id === localScope.id)">

@@ -24,7 +24,7 @@ interface TaskEditor extends Vue {
 
     // computed
     taskTitle: string
-    taskProject: Project
+    taskProjectId: string
     textInputNode: TextInputNode
     projectPillNode: ProjectPillNode | null
     allProjects: Project[]
@@ -124,11 +124,20 @@ let taskEditorOptions = {
             return this.textInputNode.data.text;
         },
 
-        taskProject: function() {
+        taskProjectId: function(): string {
+            // We consider three sources with decreasing precedence:
+            //
+            // 1. A project the user specified via the editor
+            // 2. A project that the task already belongs to. Valid only when
+            //    editing tasks.
+            // 2. The initialProject prop passed in. Valid only when creating
+            //    a new task.
             if (this.projectPillNode !== null) {
-                return this.projectPillNode.data.project;
+                return this.projectPillNode.data.project.id;
+            } else if (this.taskToEdit) {
+                return this.taskToEdit.projectId;
             } else {
-                return this.initialProject;
+                return this.initialProject.id;
             }
         },
 
@@ -173,12 +182,12 @@ let taskEditorOptions = {
                 this.$store.dispatch('updateTask', {
                     id: this.taskToEdit.id,
                     title: this.taskTitle,
-                    project: this.taskProject
+                    project: this.taskProjectId
                 });
             } else {
                 this.$store.dispatch('createTask', {
                     title: this.taskTitle,
-                    project: this.taskProject
+                    project: this.taskProjectId
                 });
             }
 

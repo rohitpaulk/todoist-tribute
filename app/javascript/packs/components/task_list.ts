@@ -148,7 +148,7 @@ let taskListOptions = {
                     <task-editor
                         v-if="taskBeingEdited && (taskBeingEdited.id === task.id)"
                         @close="hideTaskForm()"
-                        :initial-project="project"
+                        :initial-project="defaultProject"
                         :task-to-edit="task">
                     </task-editor>
                     <div v-else
