@@ -1,14 +1,24 @@
 import Vuex, { StoreOptions } from 'vuex';
 import * as _ from 'lodash';
 
-import { Task, Project } from './models';
+import { Label, Project, Task } from './models';
 import { API } from './API'
 
+interface Scope {
+    type: "project" | "label"
+    resource: Project | Label
+}
 
 interface TuduStoreOptions {
     tasks: Task[]
     projects: Project[]
-    activeProject: Project
+
+    // 'Scope' is what the user has currently filtered tasks by. This could be
+    // a project, label, filter etc.
+    activeScope: Scope
+
+    // URL of the backend API. This is injected by the application.
+    // TODO: Convert this to an API object instead?
     apiUrl: string
 }
 
@@ -35,6 +45,16 @@ interface UpdateProjectPayload extends CreateProjectPayload {
     id: string
 }
 
+function filterTasksByScope(tasks: Task[], scope: Scope): Task[] {
+    if (scope.type === 'project') {
+        return tasks.filter(function(task: Task) {
+            return task.projectId === scope.resource.id;
+        });
+    } else {
+        throw "Labels not implemented yet!";
+    }
+}
+
 let storeOptions = {
     strict: true, // Disable on production?
 
@@ -42,15 +62,24 @@ let storeOptions = {
         tasks: [],
         projects: [],
         // TODO: Look into avoiding hardcoding this
-        activeProject: {id: '1', name: 'Inbox', colorHex: "000000", sortOrder: 1 },
+        activeScope: {
+            type:'project',
+            resource: {id: '1', name: 'Inbox', colorHex: "000000", sortOrder: 1 }
+        },
         apiUrl: '' // Filled by the application
     },
 
     getters: {
-        tasksForActiveProject: function(state): Task[] {
-            return state.tasks.filter(function(task: Task) {
-                return task.projectId === state.activeProject.id
-            });
+        tasksForActiveScope: function(state): Task[] {
+            return filterTasksByScope(state.tasks, state.activeScope);
+        },
+
+        activeProject: function(state): Project | null {
+            if (state.activeScope.type === 'project') {
+                return state.activeScope.resource;
+            } else {
+                return null;
+            }
         },
 
         inboxProject: function(state): Project | undefined {
@@ -117,7 +146,7 @@ let storeOptions = {
         },
 
         setActiveProject(state, project: Project) {
-            state.activeProject = project;
+            state.activeScope = {type: "project", resource: project};
         },
 
         addProject(state, project: Project) {

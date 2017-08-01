@@ -21,4 +21,4 @@ interface Label {
     sortOrder: number
 }
 
-export { Task, Project };
+export { Label, Project, Task };

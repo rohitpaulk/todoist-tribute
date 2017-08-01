@@ -20,14 +20,14 @@
                             <view-list
                                 :inbox-project="$store.getters.inboxProject"
                                 :inbox-project-task-count="$store.getters.inboxProjectTaskCount"
-                                :selected-project="$store.state.activeProject">
+                                :selected-project="$store.getters.activeProject">
                             </view-list>
                         </div>
                         <tab-switcher :tabs="['Projects', 'Labels', 'Filters']">
                             <div class="resource-list-container" slot="Projects">
                                 <resource-list
                                     :resources="$store.getters.projectsWithoutInbox"
-                                    :selected-resource="$store.state.activeProject"
+                                    :selected-resource="$store.getters.activeProject"
                                     :resource-task-counts="$store.getters.projectTaskCounts">
                                 </resource-list>
                             </div>
@@ -46,13 +46,15 @@
 
                     </div><div class="content">
                         <div class="section-header">
-                            <h2 v-text="$store.state.activeProject.name">
+                            <!-- TODO: make this work for labels too? -->
+                            <h2 v-text="$store.getters.activeProject.name">
                             </h2>
                         </div>
 
                         <div>
+                            <!-- TODO: Change this to work with multiple scope types! -->
                             <task-list-switcher
-                                :tasks="$store.getters.tasksForActiveProject"
+                                :tasks="$store.getters.tasksForActiveScope"
                                 :project="$store.state.activeProject">
                             </task-list-switcher>
                         </div>
