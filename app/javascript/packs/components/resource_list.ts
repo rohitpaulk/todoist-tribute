@@ -16,26 +16,28 @@ interface ResourceList extends Vue {
     resourceTaskCounts: {[key: string]: number}
 
     // data
-    isAddingProject: boolean
+    isAddingResource: boolean
+    resourceBeingEdited: Resource | null
     dropdownActiveOn: Project | null
-    projectBeingEdited: Project | null
     dragState?: DragState
     dragOperationInProgress: boolean
 
     // methods
-    showProjectForm(): void
-    hideProjectForm(): void
+    openEditorForCreate(): void
+    closeEditorForCreate(): void
+    openEditorForUpdate(resource: Resource): void
+    closeEditorForUpdate(): void
     resetDropdown(): void
 }
 
 let resourceListOptions = {
     data: function() {
         return {
-            dragState: undefined,
-            dragOperationInProgress: false,
-            isAddingProject: false,
+            isAddingResource: false,
+            resourceBeingEdited: null,
             dropdownActiveOn: null,
-            projectBeingEdited: null
+            dragState: undefined,
+            dragOperationInProgress: false
         }
     },
 
@@ -121,14 +123,20 @@ let resourceListOptions = {
             }
         },
 
-        showProjectForm: function() {
-            this.isAddingProject = true;
-            this.projectBeingEdited = null;
+        openEditorForCreate() {
+            this.isAddingResource = true;
         },
 
-        hideProjectForm: function() {
-            this.isAddingProject = false;
-            this.projectBeingEdited = null;
+        closeEditorForCreate() {
+            this.isAddingResource = false;
+        },
+
+        openEditorForUpdate(resource: Resource) {
+            this.resourceBeingEdited = resource;
+        },
+
+        closeEditorForUpdate() {
+            this.resourceBeingEdited = null;
         },
 
         deleteProject(project: Project) {
@@ -141,7 +149,7 @@ let resourceListOptions = {
         editProject(project: Project) {
             this.resetDropdown();
 
-            this.projectBeingEdited = project;
+            this.resourceBeingEdited = project;
         },
 
         toggleDropdown: function(project: Project) {
@@ -161,8 +169,8 @@ let resourceListOptions = {
         <div>
             <ul class="resource-list">
                 <template v-for="(project, index) in localResources">
-                    <project-editor v-if="projectBeingEdited && (projectBeingEdited.id === project.id)"
-                                    @close="hideProjectForm()"
+                    <project-editor v-if="resourceBeingEdited && (resourceBeingEdited.id === project.id)"
+                                    @close="closeEditorForUpdate()"
                                     :project-to-edit="project">
                     </project-editor>
                     <li v-else
@@ -199,7 +207,7 @@ let resourceListOptions = {
                             </span>
                             <div class="dropdown" v-if="dropdownActiveOn && (dropdownActiveOn.id == project.id)">
                                 <ul class="dropdown-options">
-                                    <li class="dropdown-option" @click.stop="editProject(project)">
+                                    <li class="dropdown-option" @click.stop="openEditorForUpdate(project)">
                                         Edit Project
                                     </li>
                                     <li class="dropdown-option" @click.stop="deleteProject(project)">
@@ -214,10 +222,10 @@ let resourceListOptions = {
             </ul>
 
             <project-editor
-                v-if="isAddingProject"
-                @close="hideProjectForm()">
+                v-if="isAddingResource"
+                @close="closeEditorForCreate()">
             </project-editor>
-            <div v-else class="add-project" @click="showProjectForm()">
+            <div v-else class="add-project" @click="openEditorForCreate()">
                 <span class="icon-holder">
                     <span class="add-icon">
                         +

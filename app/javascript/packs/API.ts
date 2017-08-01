@@ -12,7 +12,8 @@ interface APITask {
 interface APIProject {
     name: string,
     id: number, // TODO: Change this to string on backend?
-    color_hex: string
+    color_hex: string,
+    sort_order: number
 }
 
 class API {
@@ -168,7 +169,8 @@ class API {
         return {
             name: data.name,
             id: String(data.id), // TODO: Make API return string
-            colorHex: data.color_hex
+            colorHex: data.color_hex,
+            sortOrder: data.sort_order
         };
     }
 }
