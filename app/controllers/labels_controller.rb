@@ -37,14 +37,14 @@ class LabelsController < ApplicationController
   end
 
   def update
-    label = Label.find(params[:label_id])
+    label = Label.find(params[:id])
     label.update!(label_params)
 
     render json: label
   end
 
-  def delete
-    Label.find(params[:label_id]).delete
+  def destroy
+    Label.find(params[:id]).delete
 
     render json: {}
   end

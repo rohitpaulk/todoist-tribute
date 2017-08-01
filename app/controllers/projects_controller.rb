@@ -37,14 +37,14 @@ class ProjectsController < ApplicationController
   end
 
   def update
-    project = Project.find(params[:project_id])
+    project = Project.find(params[:id])
     project.update!(project_params)
 
     render json: project
   end
 
-  def delete
-    Project.find(params[:project_id]).delete
+  def destroy
+    Project.find(params[:id]).delete
 
     render json: {}
   end
