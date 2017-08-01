@@ -1,0 +1,22 @@
+language: ruby
+
+services:
+  - postgresql
+
+cache:
+  bundler: true
+  yarn: true
+  directories:
+    - node_modules
+
+install:
+  - bundle install
+  - yarn install
+
+before_script:
+  - createdb tudu_testing
+  - RAILS_ENV=test bundle exec rake db:migrate
+
+script:
+  - rake test
+  - npm test
