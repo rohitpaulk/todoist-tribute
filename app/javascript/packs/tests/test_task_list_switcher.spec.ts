@@ -2,7 +2,9 @@ import assert = require('assert');
 import 'mocha';
 import * as Vue from 'vue';
 
-import { TaskListSwitcher, TaskListSwitcherOptions } from '../components/task_list_switcher';
+import { Project } from '../models';
+import { Scope } from '../store';
+import { TaskListSwitcher, TaskListSwitcherOptions } from '../components/task_list/task_list_switcher';
 import { fakeProject } from './factory.spec';
 
 describe('Task List Switcher', function() {
@@ -12,22 +14,34 @@ describe('Task List Switcher', function() {
         return new Component({propsData: propsData}) as TaskListSwitcher;
     }
 
-    it('should initialize with a single projectId', function() {
+    function getScopeFromProject(project: Project): Scope {
+        return {type: "project", resource: project};
+    }
+
+    it('should initialize with a single scopeId', function() {
         let project = fakeProject({name: "Fake This"});
-        let switcher = getComponentInstance({project: project, tasks: []});
-        assert.equal(switcher.projectIds.size, 1);
+        let switcher = getComponentInstance({
+            scope: getScopeFromProject(project),
+            tasks: []
+        });
+        assert.equal(switcher.scopeIds.size, 1);
+        assert.equal(Array.from(switcher.scopeIds)[0].type, 'project');
+        assert.equal(Array.from(switcher.scopeIds)[0].id, project.id);
     });
 
     it ('should add projectIds when a new projectId is added', function(done) {
         let first_project = fakeProject({id: '240'});
         let second_project = fakeProject({id: '360'});
-        let switcher = getComponentInstance({project: first_project, tasks: []});
+        let switcher = getComponentInstance({
+            scope: getScopeFromProject(first_project),
+            tasks: []
+        });
 
-        switcher.project = second_project;
+        switcher.scope = getScopeFromProject(second_project);
 
         // Watchers are run async, so we queue the assertion for the nextTick
         Vue.nextTick(function() {
-            assert.equal(switcher.projectIds.size, 2);
+            assert.equal(switcher.scopeIds.size, 2);
             done();
         });
     });
