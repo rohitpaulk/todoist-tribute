@@ -68,7 +68,6 @@ let taskListOptions = {
     },
 
     created: function() {
-        this.$store.dispatch('refreshTasks');
         let taskList = this;
 
         Mousetrap.bind('a', function() {

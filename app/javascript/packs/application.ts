@@ -35,7 +35,9 @@ new Vue({
     el: '#vue-root',
     store,
     created: function() {
+        // TODO: Move to a single init function
+        this.$store.dispatch('refreshTasks');
         this.$store.dispatch('refreshProjects');
-        // TODO: Refresh labels too
+        this.$store.dispatch('refreshLabels');
     }
 });
