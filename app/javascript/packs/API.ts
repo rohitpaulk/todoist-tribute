@@ -1,17 +1,25 @@
-import { Task, Project } from './models';
+import { Task, Project, Label } from './models';
 import axios, { AxiosPromise } from 'axios';
 
 interface APITask {
-    title: string,
     id: number, // TODO: Change this to string on backend?
+    title: string,
     sort_order: number,
     indent_level: number,
     project_id: number // TODO: Change this to string on backend?
 }
 
 interface APIProject {
-    name: string,
     id: number, // TODO: Change this to string on backend?
+    name: string,
+    color_hex: string,
+    sort_order: number,
+    is_inbox: boolean
+}
+
+interface APILabel {
+    id: number, // TODO: Change this to string on backend?
+    name: string,
     color_hex: string,
     sort_order: number
 }
@@ -105,6 +113,73 @@ class API {
         return API.PromiseForVoid(axiosPromise);
     }
 
+    getLabels(): Promise<Label[]> {
+        let url = this.url + "api/v1/labels.json";
+        let axiosPromise = axios.get(url);
+
+        return API.PromiseForMultipleLabels(axiosPromise);
+    }
+
+    reorderLabels(labelIds: string[]): Promise<Label[]> {
+        let url = this.url + "api/v1/labels/reorder.json";
+        let axiosPromise = axios.post(url, {
+            label_ids: labelIds.map(x => Number(x))
+        });
+
+        return API.PromiseForMultipleLabels(axiosPromise);
+    }
+
+    createLabel(name: string, colorHex: string): Promise<Label> {
+        let url = this.url + "api/v1/labels.json";
+        let axiosPromise = axios.post(url, {
+            name: name,
+            color_hex: colorHex
+        });
+
+        return API.PromiseForSingleLabel(axiosPromise);
+    }
+
+    updateLabel(id: string, name: string, colorHex: string): Promise<Label> {
+        let url = this.url + "api/v1/labels/" + id + ".json";
+        let axiosPromise = axios.put(url, {
+            name: name,
+            color_hex: colorHex
+        });
+
+        return API.PromiseForSingleLabel(axiosPromise);
+    }
+
+    deleteLabel(id: string): Promise<void> {
+        let url = this.url + "api/v1/labels/" + id + ".json";
+        let axiosPromise = axios.delete(url);
+
+        return API.PromiseForVoid(axiosPromise);
+    }
+
+    static PromiseForMultipleTasks(axiosPromise: AxiosPromise): Promise<Task[]> {
+        return API.PromiseForMultipleResources(axiosPromise, API.TaskFromAPI);
+    }
+
+    static PromiseForSingleTask(axiosPromise: AxiosPromise): Promise<Task> {
+        return API.PromiseForSingleResource(axiosPromise, API.TaskFromAPI);
+    }
+
+    static PromiseForMultipleProjects(axiosPromise: AxiosPromise): Promise<Project[]> {
+        return API.PromiseForMultipleResources(axiosPromise, API.ProjectFromAPI);
+    }
+
+    static PromiseForSingleProject(axiosPromise: AxiosPromise): Promise<Project> {
+        return API.PromiseForSingleResource(axiosPromise, API.ProjectFromAPI);
+    }
+
+    static PromiseForMultipleLabels(axiosPromise: AxiosPromise): Promise<Label[]> {
+        return API.PromiseForMultipleResources(axiosPromise, API.LabelFromAPI);
+    }
+
+    static PromiseForSingleLabel(axiosPromise: AxiosPromise): Promise<Label> {
+        return API.PromiseForSingleResource(axiosPromise, API.LabelFromAPI);
+    }
+
     static PromiseForVoid(axiosPromise: AxiosPromise): Promise<void> {
         return new Promise(function(resolve, reject) {
             let resolver = function(axiosResponse) {
@@ -115,40 +190,20 @@ class API {
         })
     }
 
-    static PromiseForMultipleTasks(axiosPromise: AxiosPromise): Promise<Task[]> {
+    static PromiseForSingleResource<T>(axiosPromise: AxiosPromise, mapFunc: (any) => T): Promise<T> {
         return new Promise(function(resolve, reject) {
             let resolver = function(axiosResponse) {
-                resolve(axiosResponse.data.map(API.TaskFromAPI));
+                resolve(mapFunc(axiosResponse.data));
             };
 
             axiosPromise.then(resolver, API.error);
         })
     }
 
-    static PromiseForSingleTask(axiosPromise: AxiosPromise): Promise<Task> {
+    static PromiseForMultipleResources<T>(axiosPromise: AxiosPromise, mapFunc: (any) => T): Promise<T[]> {
         return new Promise(function(resolve, reject) {
             let resolver = function(axiosResponse) {
-                resolve(API.TaskFromAPI(axiosResponse.data));
-            };
-
-            axiosPromise.then(resolver, API.error);
-        })
-    }
-
-    static PromiseForMultipleProjects(axiosPromise: AxiosPromise): Promise<Project[]> {
-        return new Promise(function(resolve, reject) {
-            let resolver = function(axiosResponse) {
-                resolve(axiosResponse.data.map(API.ProjectFromAPI));
-            };
-
-            axiosPromise.then(resolver, API.error);
-        })
-    }
-
-    static PromiseForSingleProject(axiosPromise: AxiosPromise): Promise<Project> {
-        return new Promise(function(resolve, reject) {
-            let resolver = function(axiosResponse) {
-                resolve(API.ProjectFromAPI(axiosResponse.data));
+                resolve(axiosResponse.data.map(mapFunc));
             };
 
             axiosPromise.then(resolver, API.error);
@@ -166,6 +221,15 @@ class API {
     }
 
     static ProjectFromAPI(data: APIProject): Project {
+        return {
+            name: data.name,
+            id: String(data.id), // TODO: Make API return string
+            colorHex: data.color_hex,
+            sortOrder: data.sort_order
+        };
+    }
+
+    static LabelFromAPI(data: APILabel): Label {
         return {
             name: data.name,
             id: String(data.id), // TODO: Make API return string
