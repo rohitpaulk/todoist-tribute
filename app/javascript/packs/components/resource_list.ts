@@ -10,11 +10,9 @@ interface Resource {
     id: string
 }
 
-interface ResourceList extends Vue {
-    // props
-    resources: Resource[]
-    selectedResource: Resource
-    resourceTaskCounts: {[key: string]: number}
+interface ComponentProps {
+    // The type of scope that the resources in this list can activate.
+    scopeType: ScopeType
 
     // The component to be used as an editor for creating/updating resources.
     //
@@ -23,16 +21,20 @@ interface ResourceList extends Vue {
     //   - Accept a resource-to-edit property.
     editorComponent: string
 
-    // The type of scope that the resources in this list can activate.
-    scopeType: ScopeType
+    resources: Resource[]
+    selectedResource: Resource
+    resourceTaskCounts: {[key: string]: number}
+}
 
-    // data
+interface ComponentData {
     isAddingResource: boolean
     resourceBeingEdited: Resource | null
     dropdownActiveOn: Project | null
     dragState?: DragState
     dragOperationInProgress: boolean
+}
 
+interface ResourceList extends Vue, ComponentProps, ComponentData {
     // methods
     openEditorForCreate(): void
     closeEditorForCreate(): void
