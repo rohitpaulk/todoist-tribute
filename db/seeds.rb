@@ -9,24 +9,27 @@
 puts "Creating projects..."
 
 inbox = Project.create!(name: "Inbox", color_hex: "555555")
-blue_project = Project.create!(name: "Blue project", color_hex: "4286f4")
-red_project = Project.create!(name: "Project Red", color_hex: "c14b4b")
+disney = Project.create!(name: "Disney", color_hex: "0072C6")
+pixar = Project.create!(name: "Pixar", color_hex: "FFCC00")
 
 puts "Created projects"
 
 puts "Creating labels..."
 
-green_label = Label.create!(name: "Home", color_hex: "339966")
-red_label = Label.create!(name: "Work", color_hex: "c14b4b")
+easy = Label.create!(name: "easy", color_hex: "339966")
+hard = Label.create!(name: "hard", color_hex: "c14b4b")
 
 puts "Created labels"
 
 puts "Creating tasks..."
 
-Task.create!(sort_order: 1, title: 'This is the first task', project: inbox)
-Task.create!(sort_order: 2, title: 'and the second...', project: inbox, labels: [green_label, red_label])
-Task.create!(sort_order: 3, title: 'the 3rd!', project: inbox, labels: [green_label])
-Task.create!(sort_order: 1, title: 'First task in red project', project: red_project)
-Task.create!(sort_order: 2, title: 'Second task in red project', project: red_project)
+Task.create!(sort_order: 1, title: 'First task', project: inbox, labels: [easy])
+Task.create!(sort_order: 2, title: 'and the second...', project: inbox)
+Task.create!(sort_order: 3, title: 'the 3rd!', project: inbox)
+
+Task.create!(sort_order: 1, title: 'Fire mickey', project: disney, labels: [hard])
+Task.create!(sort_order: 2, title: 'Promote donald', project: disney, labels: [easy])
+
+Task.create!(sort_order: 1, title: 'Hire steve', project: pixar)
 
 puts "Tasks created."

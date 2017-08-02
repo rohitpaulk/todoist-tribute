@@ -164,6 +164,7 @@ let taskListOptions = {
                         </span>
 
                         <task-item :task="task"
+                            :showProjectTag="false"
                             @intentToEdit="setTaskBeingEdited"
                             @intentToComplete="completeTask">
                         </task-item>
