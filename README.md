@@ -8,11 +8,13 @@ Here's how it looks:
 
 Visit [a live instance](http://thetuduapp.herokuapp.com/) to check it out!
 
+You can also deploy your own copy to heroku:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/rohitpaulk/todoist-tribute)
+
 ### Under the hood
 
 The backend is written in [Ruby](https://www.ruby-lang.org/en/) + [Rails](https://github.com/rails/rails), and the frontend in [Typescript](https://www.typescriptlang.org/) + [Vue.js](https://vuejs.org/).
-
-
 
 ### Current Status
 
