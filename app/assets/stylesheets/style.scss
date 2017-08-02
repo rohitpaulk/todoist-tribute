@@ -383,9 +383,12 @@ $color-gray: #bbb;
 }
 
 .content .task-list .task-item {
+    padding-top: 13px;
+    padding-bottom: 13px;
+
     & > span {
         display: inline-block;
-        vertical-align: middle;
+        vertical-align: top;
     }
 
     .icon-holder {
@@ -424,13 +427,11 @@ $color-gray: #bbb;
 
     span.text-holder {
         line-height: 20px;
-        margin-top: 13px;
-        margin-bottom: 13px;
     }
 
     span.right-holder {
         float: right;
-        line-height: 45px;
+        line-height: 18px;
         font-size: 10px;
         color: $color-gray;
     }

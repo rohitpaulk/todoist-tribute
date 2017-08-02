@@ -1,5 +1,5 @@
 import Vue, { ComponentOptions } from 'vue';
-import { Task, Project } from '../../models';
+import { Label, Task, Project } from '../../models';
 
 
 interface TaskItem extends Vue {
@@ -25,6 +25,10 @@ let TaskItemOptions = {
     computed: {
         project(): Project | null {
             return this.$store.getters.projectFromId(this.task.projectId);
+        },
+
+        labels(): Label[] {
+            return this.$store.getters.labelsFromId(this.task.labelIds);
         }
     },
 

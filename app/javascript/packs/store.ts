@@ -164,9 +164,9 @@ let storeOptions = {
             return result;
         },
 
-        labelFromId(state): (string) => Label {
-            return function(id: string) {
-                return state.labels.find((x) => x.id === id)!;
+        labelsFromIds(state): (string) => Label[] {
+            return function(idList: string[]) {
+                return state.labels.filter((x) => _.includes(idList, x.id));
             };
         },
 
