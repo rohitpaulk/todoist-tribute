@@ -1,10 +1,14 @@
 import Vue, { ComponentOptions } from 'vue';
-import { Task } from '../../models';
+import { Task, Project } from '../../models';
 
 
 interface TaskItem extends Vue {
     // props
     task: Task
+
+    // In some views (project view, for example), we don't want to show the
+    // project pill on task items.
+    showProjectTag: boolean
 
     // methods
     emitIntentToComplete(task: Task): void
@@ -14,7 +18,14 @@ interface TaskItem extends Vue {
 
 let TaskItemOptions = {
     props: {
-        task: { required: true }
+        task: { required: true },
+        showProjectTag: { default: true }
+    },
+
+    computed: {
+        project(): Project | null {
+            return this.$store.getters.projectFromId(this.task.projectId);
+        }
     },
 
     methods: {
@@ -31,8 +42,6 @@ let TaskItemOptions = {
         <div class="task-item"
              @click="emitIntentToEdit(task)">
 
-            <!-- TODO: slot for dragbars needed? -->
-
             <span class="icon-holder">
                 <span class="checkbox"
                       @click.stop="emitIntentToComplete(task)">
@@ -41,6 +50,18 @@ let TaskItemOptions = {
             <span class="text-holder">
                 <span class="task-title">
                     {{ task.title }}
+                </span>
+            </span>
+            <span class="right-holder">
+                <span class="project-tag" v-if="showProjectTag">
+                    <span class="project-title">
+                        {{ project.name }}
+                    </span>
+                    <span class="icon-wrapper">
+                        <span class="project-icon"
+                            :style="{ 'background-color': '#' + project.colorHex }">
+                        </span>
+                    </span>
                 </span>
             </span>
         </div>

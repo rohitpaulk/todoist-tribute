@@ -164,6 +164,18 @@ let storeOptions = {
             return result;
         },
 
+        labelFromId(state): (string) => Label {
+            return function(id: string) {
+                return state.labels.find((x) => x.id === id)!;
+            };
+        },
+
+        projectFromId(state): (string) => Project {
+            return function(id: string) {
+                return state.projects.find((x) => x.id === id)!;
+            };
+        },
+
         api: function(state): API {
             return new API(state.apiUrl);
         }
@@ -304,6 +316,7 @@ let storeOptions = {
             getters.api.deleteProject(id).then(function() {
                 commit('removeProject', id);
             });
+            // TODO: Refresh tasks too? Could contain null references
         },
 
         refreshLabels({commit, getters}) {

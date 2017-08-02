@@ -20,6 +20,7 @@ $color-black-text: #303333;
 $color-very-very-light-gray: #f5f5f5;
 $color-very-light-gray: #eee;
 $color-light-gray: #ddd;
+$color-gray: #bbb;
 
 
 // Styling
@@ -425,6 +426,22 @@ $color-light-gray: #ddd;
         line-height: 20px;
         margin-top: 13px;
         margin-bottom: 13px;
+    }
+
+    span.right-holder {
+        float: right;
+        line-height: 45px;
+        font-size: 10px;
+        color: $color-gray;
+    }
+
+    span.project-tag > * {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    span.project-tag .project-icon {
+        margin-left: 3px;
     }
 }
 
