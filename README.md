@@ -33,7 +33,7 @@ The backend is written in [Ruby](https://www.ruby-lang.org/en/) + [Rails](https:
   - [x] Creating labels
   - [x] Editing labels
   - [x] Viewing tasks for a label
-  - [ ] Rendering labels in task-item
+  - [x] Rendering labels in task-item
   - [ ] Assigning labels via task-editor
 - [ ] Priorities
 - [ ] Due dates
