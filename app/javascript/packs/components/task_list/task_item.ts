@@ -28,7 +28,7 @@ let TaskItemOptions = {
         },
 
         labels(): Label[] {
-            return this.$store.getters.labelsFromId(this.task.labelIds);
+            return this.$store.getters.labelsFromIds(this.task.labelIds);
         }
     },
 
@@ -54,6 +54,16 @@ let TaskItemOptions = {
             <span class="text-holder">
                 <span class="task-title">
                     {{ task.title }}
+                </span>
+                <span class="label-tags" v-if="labels.length != 0">
+                    <span class="label-tag" v-for="(label, index) in labels">
+                        <span class="label-name"
+                              :style="{'color': '#' + label.colorHex }"
+                              v-text="label.name">
+                        </span><span class="label-separator"
+                                     v-if="index != (labels.length-1)">,
+                        </span>
+                    </span>
                 </span>
             </span>
             <span class="right-holder">

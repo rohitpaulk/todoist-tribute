@@ -429,6 +429,12 @@ $color-gray: #bbb;
         line-height: 20px;
     }
 
+    span.text-holder .label-tags {
+        display: block;
+        font-size: 11px;
+        margin-top: 2px;
+    }
+
     span.right-holder {
         float: right;
         line-height: 18px;
