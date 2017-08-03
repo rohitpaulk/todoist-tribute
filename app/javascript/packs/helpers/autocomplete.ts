@@ -20,8 +20,9 @@ interface State {
     activeSuggestionIndex: number
 }
 
-interface TypedSuggestion extends Suggestion {
+interface SuggestionList {
     type: "project" | "label"
+    suggestions: Suggestion[]
 }
 
 interface Suggestion {
@@ -81,22 +82,21 @@ function _removeAutocompleteTextFromInput(nodeList: EditorNodeList, state: State
     return newNodeList;
 }
 
-const CHAR_CODE_POUND_SIGN = 35;
 const CHAR_CODE_SPACE = 32;
 
 let EventHandlers = {
     onKeyPress(event, definitions: Definition[], nodePosition: number, nodeList: EditorNodeList): EventHandlerAction[] {
-        // TODO: Use definitions!
-
         let caretPosition = (event.target.selectionStart);
         let textNode = EditorNodeAccessors.getTextNodeAt(nodeList, nodePosition);
         let characterBeforeCursor = textNode.data.text[caretPosition-1];
 
-        let keyIsPoundSign = (event.charCode === CHAR_CODE_POUND_SIGN);
         let previousCharacterIsSpace = (characterBeforeCursor === ' ');
         let isValidStartPoint = previousCharacterIsSpace || (caretPosition === 0);
+        let hasMatchingDefinition = _.find(definitions, function(definition: Definition) {
+            return definition.triggerCharCode === event.charCode;
+        });
 
-        if (keyIsPoundSign && isValidStartPoint) {
+        if (hasMatchingDefinition && isValidStartPoint) {
             return [{
                 type: "update_autocomplete_state",
                 state: {

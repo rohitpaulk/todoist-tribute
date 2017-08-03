@@ -51,9 +51,6 @@ let editorNodesFromTask = function(task: Task): EditorNode[] {
     return [EditorNodeConstructors.inputNodeFromText(task.title)];
 }
 
-const CHAR_CODE_POUND_SIGN = 35;
-const CHAR_CODE_SPACE = 32;
-
 let taskEditorOptions = {
     name: 'task-editor',
 
