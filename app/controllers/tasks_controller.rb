@@ -17,7 +17,7 @@ class TasksController < ApplicationController
     end
 
     project = Project.find(project_id)
-    task = Task.create_with_next_sort_order!(project, title: title)
+    task = Task.create_with_next_sort_order!(project, task_params)
 
     # TODO: Support in-between sort_orders
 
@@ -52,6 +52,6 @@ class TasksController < ApplicationController
   end
 
   def task_params
-    params.permit(:is_completed, :title, :project_id)
+    params.permit(:is_completed, :title, :project_id, label_ids: [])
   end
 end

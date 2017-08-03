@@ -135,9 +135,15 @@ let EventHandlers = {
         if (activeSelection) {
             let newNodeList = _removeAutocompleteTextFromInput(nodeList, state);
 
-            let projectNode = EditorNodeConstructors.pillNodeFromProject(activeSelection);
-            let position = state.nodePosition + 1; // Place project node after text
-            newNodeList = EditorNodeMutators.addOrReplaceProjectNode(newNodeList, position, projectNode)
+            let position = state.nodePosition + 1; // Place pill node after text
+
+            if (state.definitionType === 'label') {
+                let labelNode = EditorNodeConstructors.pillNodeFromLabel(activeSelection);
+                newNodeList = EditorNodeMutators.addLabelNode(newNodeList, position, labelNode);
+            } else if (state.definitionType === 'project') {
+                let projectNode = EditorNodeConstructors.pillNodeFromProject(activeSelection);
+                newNodeList = EditorNodeMutators.addOrReplaceProjectNode(newNodeList, position, projectNode)
+            }
 
             actions.push({
                 type: "update_editor_nodes",

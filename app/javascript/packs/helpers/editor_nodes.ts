@@ -132,8 +132,18 @@ let Mutators = {
         return nodeList; // TODO
     },
 
-    upsertLabelNode(nodeList: EditorNodeList, pos: number, node: LabelPillNode): EditorNodeList {
-        return nodeList; // TODO
+    addLabelNode(nodeList: EditorNodeList, pos: number, node: LabelPillNode): EditorNodeList {
+        let newNodes = nodeList.nodes.slice();
+
+        // Inserted in reverse order, will appear as [PILL_NODE] [EMPTY_TEXT_NODE]
+        newNodes.splice(pos, 0, Constructors.inputNodeFromText(''));
+        newNodes.splice(pos, 0, node);
+
+        nodeList.nodes = newNodes;
+
+        nodeList.activeNodeIndex = pos + 1;
+
+        return nodeList;
     },
 
     addOrReplaceProjectNode(nodeList: EditorNodeList, pos: number, node: ProjectPillNode): EditorNodeList {

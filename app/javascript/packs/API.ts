@@ -44,11 +44,12 @@ class API {
         return API.PromiseForMultipleTasks(axiosPromise);
     }
 
-    createTask(title: string, projectId: string): Promise<Task> {
+    createTask(title: string, projectId: string, labelIds: string[]): Promise<Task> {
         let url = this.url + "api/v1/tasks.json";
         let axiosPromise = axios.post(url, {
             title: title,
-            project_id: projectId
+            project_id: projectId,
+            label_ids: labelIds
         });
 
         return API.PromiseForSingleTask(axiosPromise);

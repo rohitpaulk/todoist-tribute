@@ -66,7 +66,7 @@ let taskListOptions = {
         },
 
         autocompleteDefinitions() {
-            this.$store.getters.autocompleteDefinitions;
+            return this.$store.getters.autocompleteDefinitions;
         }
     },
 

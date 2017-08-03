@@ -27,7 +27,7 @@ interface TaskEditor extends Vue {
     taskProjectId: string
     textFromEditor: string
     projectIdFromEditor: string | null
-    labelIDsFromEditor: string[]
+    labelIdsFromEditor: string[]
     isAutocompleting: boolean
     autocompleteSelection: AutocompleteSuggestion
     autocompleteSuggestions: AutocompleteSuggestion[]
@@ -55,6 +55,7 @@ let editorNodesFromTask = function(task: Task, store): EditorNode[] {
     });
 
     nodes.push(EditorNodeConstructors.inputNodeFromText(task.title));
+    nodes.unshift(EditorNodeConstructors.inputNodeFromText(''));
 
     return nodes;
 }
@@ -133,6 +134,12 @@ let taskEditorOptions = {
             }
         },
 
+        labelIdsFromEditor: function(): string[] {
+            let labelNodes = EditorNodeAccessors.getLabelNodes(this.editorNodes);
+
+            return labelNodes.map((x) => x.data.label.id);
+        },
+
         textFromEditor: function(): String {
             let textNodes = EditorNodeAccessors.getTextNodes(this.editorNodes);
 
@@ -158,12 +165,14 @@ let taskEditorOptions = {
                 this.$store.dispatch('updateTask', {
                     id: this.taskToEdit.id,
                     title: taskTitle,
-                    projectId: this.taskProjectId
+                    projectId: this.taskProjectId,
+                    labelIds: this.labelIdsFromEditor
                 });
             } else {
                 this.$store.dispatch('createTask', {
                     title: taskTitle,
-                    projectId: this.taskProjectId
+                    projectId: this.taskProjectId,
+                    labelIds: this.labelIdsFromEditor
                 });
             }
 
@@ -301,11 +310,11 @@ let taskEditorOptions = {
 
     mounted: function() {
         this.focusActiveNode();
+        this.$forceUpdate(); // Trigger updated
     },
 
     updated: function() {
         this.focusActiveNode();
-        (this.$refs['text-input-' + this.editorNodes.activeNodeIndex][0] as HTMLElement).focus();
 
         let refs = this.$refs;
         let activeNodeIndex = this.editorNodes.activeNodeIndex;
@@ -347,21 +356,18 @@ let taskEditorOptions = {
                                     @keydown.tab="tabOnTextInput($event, nodePosition)"
                                     @keydown.down.prevent="shiftAutocompleteSelectionDown()"
                                     @keydown.up.prevent="shiftAutocompleteSelectionUp()"
-                                    @keypress="keyPressOnTextInput($event, nodePosition)">
-                                </input>
-                                <div class="fake-text-input"
+                                    @keypress="keyPressOnTextInput($event, nodePosition)" /><!--
+
+                                --><div class="fake-text-input"
                                      :ref="'fake-text-input-' + nodePosition"
                                      v-text="editorNode.data.text">
                                 </div>
-                            </template>
-                            </input>
-                            <div class="project-pill"
-                                v-if="editorNode.type === 'ProjectPillNode'">
+                            </template><!--
+                            --><div class="project-pill" v-if="editorNode.type === 'ProjectPillNode'">
                                 <i class="fa fa-folder-o"></i> {{ editorNode.data.project.name }}
-                            </div>
-                            <div class="project-pill"
-                                v-if="editorNode.type === 'LabelPillNode'">
-                                @ {{ editorNode.data.label.name }}
+                            </div><!--
+                            --><div class="project-pill" v-if="editorNode.type === 'LabelPillNode'">
+                                @{{ editorNode.data.label.name }}
                             </div>
                         </template>
 
