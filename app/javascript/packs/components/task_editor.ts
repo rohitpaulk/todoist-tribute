@@ -50,12 +50,14 @@ let emptyEditorNodes = function(): EditorNode[] {
 
 let editorNodesFromTask = function(task: Task, store): EditorNode[] {
     let labels = store.getters.labelsFromIds(task.labelIds);
-    let nodes: EditorNode[] = labels.map(function(label) {
-        return EditorNodeConstructors.pillNodeFromLabel(label);
+    let nodes: EditorNode[] = _.flatMap(labels, function(label) {
+        return [
+            EditorNodeConstructors.inputNodeFromText(''),
+            EditorNodeConstructors.pillNodeFromLabel(label),
+        ];
     });
 
     nodes.push(EditorNodeConstructors.inputNodeFromText(task.title));
-    nodes.unshift(EditorNodeConstructors.inputNodeFromText(''));
 
     return nodes;
 }
@@ -248,6 +250,30 @@ let taskEditorOptions = {
             }
         },
 
+        leftOnTextInput: function(event, nodePosition: number) {
+            let caretPosition = (event.target.selectionStart);
+            let isMovingToPreviousElement = (caretPosition === 0);
+
+            // TODO: Move to mutators
+            if (this.editorNodes.activeNodeIndex !== 0 && isMovingToPreviousElement) {
+                event.preventDefault();
+                this.editorNodes.activeNodeIndex -= 2;
+                this.focusActiveNode();
+            }
+        },
+
+        rightOnTextInput: function(event, nodePosition: number) {
+            // TODO: Move to mutators
+            let caretPosition = (event.target.selectionStart);
+            let isMovingToNextElement = (caretPosition === event.target.value.length);
+
+            if (this.editorNodes.activeNodeIndex !== this.editorNodes.nodes.length - 1 && isMovingToNextElement) {
+                event.preventDefault();
+                this.editorNodes.activeNodeIndex += 2;
+                this.focusActiveNode();
+            }
+        },
+
         enterOnTextInput: function() {
             if (this.isAutocompleting) {
                 this.completeAutocomplete();
@@ -354,6 +380,8 @@ let taskEditorOptions = {
                                     @keydown.delete="backspaceOnTextInput($event, nodePosition)"
                                     @keydown.enter.prevent="enterOnTextInput($event, nodePosition)"
                                     @keydown.tab="tabOnTextInput($event, nodePosition)"
+                                    @keydown.left="leftOnTextInput($event, nodePosition)"
+                                    @keydown.right="rightOnTextInput($event, nodePosition)"
                                     @keydown.down.prevent="shiftAutocompleteSelectionDown()"
                                     @keydown.up.prevent="shiftAutocompleteSelectionUp()"
                                     @keypress="keyPressOnTextInput($event, nodePosition)" /><!--
