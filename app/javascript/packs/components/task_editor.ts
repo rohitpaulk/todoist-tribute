@@ -4,7 +4,7 @@ import Vue, { ComponentOptions } from 'vue';
 import { Task, Project } from '../models';
 import { API } from '../API';
 import { CreateTaskPayload, UpdateTaskPayload } from '../store';
-import { EditorNode, EditorNodeList, ProjectPillNode, TextInputNode } from '../helpers/editor_nodes'
+import { EditorNode, EditorNodeList, LabelPillNode, TextInputNode } from '../helpers/editor_nodes'
 import { Constructors as EditorNodeConstructors } from '../helpers/editor_nodes'
 import { Mutators as EditorNodeMutators } from '../helpers/editor_nodes'
 import { Accessors as EditorNodeAccessors } from '../helpers/editor_nodes'
@@ -27,6 +27,7 @@ interface TaskEditor extends Vue {
     taskProjectId: string
     textFromEditor: string
     projectIdFromEditor: string | null
+    labelIDsFromEditor: string[]
     isAutocompleting: boolean
     autocompleteSelection: AutocompleteSuggestion
     autocompleteSuggestions: AutocompleteSuggestion[]
@@ -47,8 +48,15 @@ let emptyEditorNodes = function(): EditorNode[] {
     return [EditorNodeConstructors.inputNodeFromText('')];
 }
 
-let editorNodesFromTask = function(task: Task): EditorNode[] {
-    return [EditorNodeConstructors.inputNodeFromText(task.title)];
+let editorNodesFromTask = function(task: Task, store): EditorNode[] {
+    let labels = store.getters.labelsFromIds(task.labelIds);
+    let nodes: EditorNode[] = labels.map(function(label) {
+        return EditorNodeConstructors.pillNodeFromLabel(label);
+    });
+
+    nodes.push(EditorNodeConstructors.inputNodeFromText(task.title));
+
+    return nodes;
 }
 
 let taskEditorOptions = {
@@ -58,7 +66,8 @@ let taskEditorOptions = {
         let nodes: EditorNode[];
 
         if (this.taskToEdit !== null) {
-            nodes = editorNodesFromTask(this.taskToEdit);
+            // TODO: Find way around passing store
+            nodes = editorNodesFromTask(this.taskToEdit, this.$store);
         } else {
             nodes = emptyEditorNodes();
         }
@@ -349,6 +358,10 @@ let taskEditorOptions = {
                             <div class="project-pill"
                                 v-if="editorNode.type === 'ProjectPillNode'">
                                 <i class="fa fa-folder-o"></i> {{ editorNode.data.project.name }}
+                            </div>
+                            <div class="project-pill"
+                                v-if="editorNode.type === 'LabelPillNode'">
+                                @ {{ editorNode.data.label.name }}
                             </div>
                         </template>
 

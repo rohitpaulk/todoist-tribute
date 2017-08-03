@@ -63,6 +63,10 @@ let taskListOptions = {
             });
 
             return classObjectMap;
+        },
+
+        autocompleteDefinitions() {
+            this.$store.getters.autocompleteDefinitions;
         }
     },
 
@@ -149,7 +153,7 @@ let taskListOptions = {
                         @close="hideTaskForm()"
                         :initial-project="defaultProject"
                         :task-to-edit="task"
-                        :autocomplete-definitions="this.$store.getters.autocompleteDefinitions">
+                        :autocomplete-definitions="autocompleteDefinitions">
                     </task-editor>
                     <div v-else
                          :class="dragItemClasses[task.id]"
@@ -176,7 +180,7 @@ let taskListOptions = {
                 v-if="isAddingTask"
                 @close="hideTaskForm()"
                 :initial-project="defaultProject"
-                :autocomplete-definitions="this.$store.getters.autocompleteDefinitions">
+                :autocomplete-definitions="autocompleteDefinitions">
             </task-editor>
             <div v-else class="add-task" @click="openAddTaskForm()">
                 <span class="icon-holder">

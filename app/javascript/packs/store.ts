@@ -54,6 +54,7 @@ type CreateLabelPayload = CreateProjectPayload;
 type UpdateLabelPayload = UpdateProjectPayload;
 
 const CHAR_CODE_POUND_SIGN = 35;
+const CHAR_CODE_AT_SIGN = 64;
 
 function filterTasksByScope(tasks: Task[], scope: Scope): Task[] {
     if (scope.type === 'project') {
@@ -91,6 +92,11 @@ let storeOptions = {
                     type: "project",
                     triggerCharCode: CHAR_CODE_POUND_SIGN,
                     suggestions: state.projects
+                },
+                {
+                    type: "label",
+                    triggerCharCode: CHAR_CODE_AT_SIGN,
+                    suggestions: state.labels
                 }
             ];
         },

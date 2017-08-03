@@ -18,6 +18,8 @@ interface State {
 
     // Index of the active suggestion in the suggestion list.
     activeSuggestionIndex: number
+
+    definitionType: "project" | "label"
 }
 
 interface SuggestionList {
@@ -53,13 +55,13 @@ function _getQuery(nodeList: EditorNodeList, state: State): string {
 function getAutocompleteSuggestions(definitions: Definition[], state: State, nodeList: EditorNodeList): Suggestion[] {
     let query = _getQuery(nodeList, state);
 
-    // TODO: Support labels too!
-    let projectSuggestions = definitions[0].suggestions;
+    let definition = _.find(definitions, (x) => x.type === state.definitionType);
+    let allSuggestions = definition!.suggestions;
 
     if (query === '') {
-        return projectSuggestions
+        return allSuggestions
     } else {
-        let fuse = new Fuse(projectSuggestions, {keys: ["name"]});
+        let fuse = new Fuse(allSuggestions, {keys: ["name"]});
         return fuse.search(query);
     }
 }
@@ -92,17 +94,18 @@ let EventHandlers = {
 
         let previousCharacterIsSpace = (characterBeforeCursor === ' ');
         let isValidStartPoint = previousCharacterIsSpace || (caretPosition === 0);
-        let hasMatchingDefinition = _.find(definitions, function(definition: Definition) {
+        let matchingDefinition = _.find(definitions, function(definition: Definition) {
             return definition.triggerCharCode === event.charCode;
         });
 
-        if (hasMatchingDefinition && isValidStartPoint) {
+        if (matchingDefinition && isValidStartPoint) {
             return [{
                 type: "update_autocomplete_state",
                 state: {
                     nodePosition: nodePosition,
                     triggerPosition: caretPosition + 1, // Why the +1?
-                    activeSuggestionIndex: 0
+                    activeSuggestionIndex: 0,
+                    definitionType: matchingDefinition.type
                 }
             }];
         } else {
