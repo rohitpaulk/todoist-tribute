@@ -52,7 +52,8 @@ let taskListOptions = {
                     <task-editor
                         v-if="taskBeingEdited && (taskBeingEdited.id === task.id)"
                         @close="closeEditor()"
-                        :task-to-edit="task">
+                        :task-to-edit="task"
+                        :autocomplete-definitions="this.$store.getters.autocompleteDefinitions">
                     </task-editor>
                     <task-item
                         v-else

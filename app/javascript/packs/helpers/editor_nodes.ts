@@ -1,7 +1,5 @@
 import * as _ from 'lodash';
 
-import { Label, Project } from '../models';
-
 // This is the data structure that powers the task editor. The task editor
 // supports entering projects/labels inline with the help of autocomplete. If
 // a user accepts an autocomplete suggestion, a 'pill' node is added to the list.
@@ -31,6 +29,12 @@ type EditorNodeList = {
 
 type EditorNode = ProjectPillNode | LabelPillNode | TextInputNode;
 
+type PillResource = {
+    id: string,
+    name: string,
+    colorHex: string
+};
+
 interface TextInputNode {
     type: 'TextInputNode',
     data: {
@@ -41,19 +45,19 @@ interface TextInputNode {
 interface ProjectPillNode {
     type: 'ProjectPillNode'
     data: {
-        project: Project
+        project: PillResource
     }
 }
 
 interface LabelPillNode {
     type: 'LabelPillNode'
     data: {
-        label: Label
+        label: PillResource
     }
 }
 
 let Constructors = {
-    pillNodeFromProject(project: Project): ProjectPillNode {
+    pillNodeFromProject(project: PillResource): ProjectPillNode {
         return {
             type: 'ProjectPillNode',
             data: {
@@ -71,7 +75,7 @@ let Constructors = {
         };
     },
 
-    pillNodeFromLabel(label: Label): LabelPillNode {
+    pillNodeFromLabel(label: PillResource): LabelPillNode {
         return {
             type: 'LabelPillNode',
             data: {

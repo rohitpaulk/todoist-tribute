@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 
 import { Label, Project, Task } from './models';
 import { API } from './API'
+import { AutocompleteDefinition } from './helpers/autocomplete';
 
 type ScopeType = "project" | "label"
 
@@ -52,6 +53,7 @@ interface UpdateProjectPayload extends CreateProjectPayload {
 type CreateLabelPayload = CreateProjectPayload;
 type UpdateLabelPayload = UpdateProjectPayload;
 
+const CHAR_CODE_POUND_SIGN = 35;
 
 function filterTasksByScope(tasks: Task[], scope: Scope): Task[] {
     if (scope.type === 'project') {
@@ -83,6 +85,16 @@ let storeOptions = {
     },
 
     getters: {
+        autocompleteDefinitions: function(state): AutocompleteDefinition[] {
+            return [
+                {
+                    type: "project",
+                    triggerCharCode: CHAR_CODE_POUND_SIGN,
+                    suggestions: state.projects
+                }
+            ];
+        },
+
         tasksForActiveScope: function(state): Task[] {
             return filterTasksByScope(state.tasks, state.activeScope);
         },

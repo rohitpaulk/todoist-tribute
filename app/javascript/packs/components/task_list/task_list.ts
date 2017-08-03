@@ -148,7 +148,8 @@ let taskListOptions = {
                         v-if="taskBeingEdited && (taskBeingEdited.id === task.id)"
                         @close="hideTaskForm()"
                         :initial-project="defaultProject"
-                        :task-to-edit="task">
+                        :task-to-edit="task"
+                        :autocomplete-definitions="this.$store.getters.autocompleteDefinitions">
                     </task-editor>
                     <div v-else
                          :class="dragItemClasses[task.id]"
@@ -174,7 +175,8 @@ let taskListOptions = {
             <task-editor
                 v-if="isAddingTask"
                 @close="hideTaskForm()"
-                :initial-project="defaultProject">
+                :initial-project="defaultProject"
+                :autocomplete-definitions="this.$store.getters.autocompleteDefinitions">
             </task-editor>
             <div v-else class="add-task" @click="openAddTaskForm()">
                 <span class="icon-holder">
