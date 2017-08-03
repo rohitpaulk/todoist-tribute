@@ -27,7 +27,6 @@ interface TaskEditor extends Vue {
     taskProjectId: string
     textFromEditor: string
     projectFromEditor: Project | null
-    allProjects: Project[]
     isAutocompleting: boolean
     autocompleteSelection: Project // Revisit when different types are added
     autocompleteSuggestions: Project[]
@@ -84,10 +83,11 @@ let taskEditorOptions = {
         },
 
         autocompleteSuggestions: function(): Project[] {
+            let allProjects = this.$store.state.projects;
             if (this.autocompleteQuery === '') {
-                return this.allProjects
+                return allProjects
             } else {
-                let fuse = new Fuse(this.allProjects, {keys: ["name"]});
+                let fuse = new Fuse(allProjects, {keys: ["name"]});
 
                 return fuse.search(this.autocompleteQuery);
             }
@@ -117,10 +117,6 @@ let taskEditorOptions = {
             //       box, this will fail.
 
             return node.data.text.slice(caretPosition);
-        },
-
-        allProjects: function(): Project[] {
-            return this.$store.state.projects;
         },
 
         taskProjectId: function(): string {
