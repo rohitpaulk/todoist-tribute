@@ -193,7 +193,7 @@ let taskEditorOptions = {
             let isDeletingPreviousElement = (caretPosition === 0);
             if (isDeletingPreviousElement) {
                 event.preventDefault();
-                this.editorNodes = EditorNodeMutators.removeNonInputNodeBefore(this.editorNodes, nodePosition);
+                this.editorNodes = EditorNodeMutators.removePillNodeBefore(this.editorNodes, nodePosition);
             }
 
             let node = (this.editorNodes[nodePosition] as TextInputNode);

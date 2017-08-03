@@ -82,7 +82,7 @@ let Constructors = {
 };
 
 let Mutators = {
-    removeNonInputNodeBefore(nodeList: EditorNodeList, pos: number): EditorNodeList {
+    removePillNodeBefore(nodeList: EditorNodeList, pos: number): EditorNodeList {
         if (pos === 0) {
             return nodeList; // No nodes before
         }

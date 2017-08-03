@@ -23,7 +23,7 @@ describe('Mutator - removeNonInputNodeBefore', function() {
             activeNodeIndex: 0
         };
 
-        let newNodeList = Mutators.removeNonInputNodeBefore(_.cloneDeep(nodeList), 0);
+        let newNodeList = Mutators.removePillNodeBefore(_.cloneDeep(nodeList), 0);
 
         assert.deepStrictEqual(nodeList, newNodeList);
     });
@@ -38,7 +38,7 @@ describe('Mutator - removeNonInputNodeBefore', function() {
             activeNodeIndex: 2
         };
 
-        let newNodeList = Mutators.removeNonInputNodeBefore(_.cloneDeep(nodeList), 2);
+        let newNodeList = Mutators.removePillNodeBefore(_.cloneDeep(nodeList), 2);
 
         assert.equal(Accessors.getProjectNode(newNodeList), null);
     });
@@ -53,7 +53,7 @@ describe('Mutator - removeNonInputNodeBefore', function() {
             activeNodeIndex: 2
         };
 
-        let newNodeList = Mutators.removeNonInputNodeBefore(_.cloneDeep(nodeList), 2);
+        let newNodeList = Mutators.removePillNodeBefore(_.cloneDeep(nodeList), 2);
 
         assert.equal(newNodeList.nodes.length, 1);
         assert.deepStrictEqual(newNodeList.nodes[0], {
