@@ -8,12 +8,13 @@ import { CreateTaskPayload, UpdateTaskPayload } from '../store';
 import { EditorNode, ProjectPillNode, TextInputNode } from '../helpers/editor_nodes'
 import { Constructors as EditorNodeConstructors } from '../helpers/editor_nodes'
 import { Mutators as EditorNodeMutators } from '../helpers/editor_nodes'
+import { Accessors as EditorNodeAccessors } from '../helpers/editor_nodes'
 
 interface TaskEditor extends Vue {
     // data
     editorNodes: EditorNode[]
     autocompleteState: {
-        nodePosition: number // Not really needed now, will come in handy later
+        nodePosition: number
         caretPosition: number
         activeSuggestionIndex: number
     } | null
@@ -23,10 +24,9 @@ interface TaskEditor extends Vue {
     taskToEdit: Task | null
 
     // computed
-    taskTitle: string
     taskProjectId: string
-    textInputNode: TextInputNode
-    projectPillNode: ProjectPillNode | null
+    textFromEditor: string
+    projectFromEditor: Project | null
     allProjects: Project[]
     isAutocompleting: boolean
     autocompleteSelection: Project // Revisit when different types are added
@@ -43,12 +43,12 @@ interface TaskEditor extends Vue {
     shiftAutocompleteSelectionUp: () => void
 }
 
-let emptyEditorNodes = function(project: Project): EditorNode[] {
-    return [EditorNodeConstructors.textInputNodeFromText('')];
+let emptyEditorNodes = function(): EditorNode[] {
+    return [EditorNodeConstructors.inputNodeFromText('')];
 }
 
-let editorNodesFromTask = function(task: Task, project: Project): EditorNode[] {
-    return [EditorNodeConstructors.textInputNodeFromText(task.title)];
+let editorNodesFromTask = function(task: Task): EditorNode[] {
+    return [EditorNodeConstructors.inputNodeFromText(task.title)];
 }
 
 const CHAR_CODE_POUND_SIGN = 35;
@@ -61,9 +61,9 @@ let taskEditorOptions = {
         let editorNodes: EditorNode[] = [];
 
         if (this.taskToEdit !== null) {
-            editorNodes = editorNodesFromTask(this.taskToEdit, this.initialProject);
+            editorNodes = editorNodesFromTask(this.taskToEdit);
         } else {
-            editorNodes = emptyEditorNodes(this.initialProject);
+            editorNodes = emptyEditorNodes();
         }
 
         return {
@@ -106,22 +106,20 @@ let taskEditorOptions = {
                 throw "autocompleteQuery called when not autocompleting!"
             }
 
-            let node = this.textInputNode;
+            let nodePosition = this.autocompleteState.nodePosition;
             let caretPosition = this.autocompleteState.caretPosition;
+
+            let node = EditorNodeAccessors.getTextNodeAt(this.editorNodes, nodePosition)
 
             // TODO: Make this better with tracking live current cursor position!
             //       If someone triggers an autocomplete in the middle of a text
             //       box, this will fail.
 
-            return this.textInputNode.data.text.slice(caretPosition);
+            return node.data.text.slice(caretPosition);
         },
 
         allProjects: function(): Project[] {
             return this.$store.state.projects;
-        },
-
-        taskTitle: function(): String {
-            return this.textInputNode.data.text;
         },
 
         taskProjectId: function(): string {
@@ -132,8 +130,8 @@ let taskEditorOptions = {
             //    editing tasks.
             // 2. The initialProject prop passed in. Valid only when creating
             //    a new task.
-            if (this.projectPillNode !== null) {
-                return this.projectPillNode.data.project.id;
+            if (this.projectFromEditor) {
+                return this.projectFromEditor.id;
             } else if (this.taskToEdit) {
                 return this.taskToEdit.projectId;
             } else {
@@ -141,28 +139,30 @@ let taskEditorOptions = {
             }
         },
 
-        textInputNode: function(): TextInputNode {
+        projectFromEditor: function(): Project | null {
+            // TODO: Revise when new types are added
             if (this.editorNodes.length > 2) {
                 throw "AssertionError: More than two editor nodes present!";
             }
 
-            if (this.editorNodes.length === 1) {
-                return this.editorNodes[0] as TextInputNode;
-            } else {
-                return this.editorNodes[1] as TextInputNode;
-            }
-        },
+            let projectNode = EditorNodeAccessors.getProjectNode(this.editorNodes);
 
-        projectPillNode: function(): ProjectPillNode | null {
-            if (this.editorNodes.length > 2) {
-                throw "AssertionError: More than two editor nodes present!";
-            }
-
-            if (this.editorNodes.length === 2) {
-                return this.editorNodes[0] as ProjectPillNode;
+            if (projectNode) {
+                return projectNode.data.project;
             } else {
                 return null;
             }
+        },
+
+        textFromEditor: function(): String {
+            // TODO: Revise when new types are added
+            if (this.editorNodes.length > 2) {
+                throw "AssertionError: More than two editor nodes present!";
+            }
+
+            let textNodes = EditorNodeAccessors.getTextNodes(this.editorNodes);
+
+            return textNodes.map((x) => x.data.text).join(' ');
         }
     },
 
@@ -172,8 +172,10 @@ let taskEditorOptions = {
         },
 
         submitChanges: function() {
+            let taskTitle = _.trim(this.textFromEditor);
+
             // Validate task properties
-            if (_.trim(this.taskTitle) === '') {
+            if (taskTitle === '') {
                 alert('empty!');
                 return;
             }
@@ -181,12 +183,12 @@ let taskEditorOptions = {
             if (this.taskToEdit) {
                 this.$store.dispatch('updateTask', {
                     id: this.taskToEdit.id,
-                    title: this.taskTitle,
+                    title: taskTitle,
                     projectId: this.taskProjectId
                 });
             } else {
                 this.$store.dispatch('createTask', {
-                    title: this.taskTitle,
+                    title: taskTitle,
                     projectId: this.taskProjectId
                 });
             }
@@ -204,13 +206,7 @@ let taskEditorOptions = {
             }
 
             let node = (this.editorNodes[nodePosition] as TextInputNode);
-            let lastChar = _.last(Array.from(node.data.text))
             let nextCaretPosition = caretPosition - 1;
-
-            // If the selection wasn't at the start, then there must be SOME content
-            if (typeof(lastChar) === undefined) {
-                throw "AssertionError: Expected atleast one character to be present"
-            }
 
             if (this.isAutocompleting && (nextCaretPosition <= this.autocompleteState!.caretPosition)) {
                 this.cancelAutocomplete();
@@ -226,20 +222,23 @@ let taskEditorOptions = {
         },
 
         completeAutocomplete(): void {
+            this.removeAutocompleteTextFromInput();
+
             // TODO: Revise when other types are added.
-            let projectNode = EditorNodeConstructors.projectPillNodeFromProject(this.autocompleteSelection);
+            let projectNode = EditorNodeConstructors.pillNodeFromProject(this.autocompleteSelection);
             this.editorNodes = EditorNodeMutators.addOrReplaceProjectNode(this.editorNodes, projectNode)
 
-            this.removeAutocompleteTextFromInput();
             this.cancelAutocomplete();
         },
 
         removeAutocompleteTextFromInput(): void {
-            let node = this.textInputNode; // TODO: Revise when other types are added
+            let nodePosition = this.autocompleteState!.nodePosition;
+            let text = EditorNodeAccessors.getTextNodeAt(this.editorNodes, nodePosition).data.text;
             let caretPosition = this.autocompleteState!.caretPosition;
-            let strippedText = node.data.text.slice(0, caretPosition - 1);
+            let strippedText = text.slice(0, caretPosition - 1);
 
-            this.editorNodes = EditorNodeMutators.replaceTextInTextInputNode(this.editorNodes, strippedText);
+            let newNode = EditorNodeConstructors.inputNodeFromText(strippedText);
+            this.editorNodes = EditorNodeMutators.replaceTextNodeAt(this.editorNodes, nodePosition, newNode);
         },
 
         onSelectFromAutocompleteBox(index): void {
