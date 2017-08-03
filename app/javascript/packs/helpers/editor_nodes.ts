@@ -88,13 +88,34 @@ let Mutators = {
         }
 
         let newNodes = nodeList.nodes.slice();
-        if (nodeList[pos - 1].type !== 'TextInputNode') {
-            newNodes.splice(pos - 1, 1);
+
+        let pillNodePosition = pos - 1;
+        let firstInputNode = newNodes[pillNodePosition - 1];
+        let pillNode = newNodes[pillNodePosition];
+        let secondInputNode = newNodes[pillNodePosition + 1];
+
+        if (firstInputNode.type !== 'TextInputNode') {
+            throw "AssertionError: Expected a TextInputNode before the pill node being removed"
         }
 
-        nodeList.nodes = newNodes;
+        if (pillNode.type === 'TextInputNode') {
+            throw "AssertionError: Expected a pill node before TextInputNode"
+        }
 
-        // TODO: If there was a text element before both, merge that with this!
+        if (secondInputNode.type !== 'TextInputNode') {
+            throw "AssertionError: Expected a TextInputNode after the pill node being removed"
+        }
+
+        let secondNodeText = secondInputNode.data.text;
+
+        // Remove both pill & input node
+        newNodes.splice(pillNodePosition, 2);
+
+        // Concatenate text from both input nodes
+        firstInputNode.data.text += secondNodeText
+
+        nodeList.nodes = newNodes;
+        nodeList.activeNodeIndex = pillNodePosition - 1;
 
         return nodeList;
     },
@@ -114,12 +135,19 @@ let Mutators = {
     addOrReplaceProjectNode(nodeList: EditorNodeList, pos: number, node: ProjectPillNode): EditorNodeList {
         let hasProjectNode = !!Accessors.getProjectNode(nodeList);
 
-        let newNodes = nodeList.nodes.slice();
+        // TODO: Clear these assumptions!
+        if (pos != nodeList.nodes.length) {
+            throw "AssertionError: Expected autocomplete to be at end of list";
+        }
 
+        let newNodes = nodeList.nodes.slice();
         if (hasProjectNode) {
-            newNodes[0] = node;
+            let projectNodeIndex = _.findIndex(nodeList.nodes, (x) => x.type === 'ProjectPillNode');
+            newNodes[projectNodeIndex] = node;
         } else {
-            newNodes.unshift(node);
+            newNodes.push(node);
+            newNodes.push(Constructors.inputNodeFromText(''));
+            nodeList.activeNodeIndex = newNodes.length - 1;
         }
 
         nodeList.nodes = newNodes;

@@ -41,6 +41,7 @@ interface TaskEditor extends Vue {
     submitChanges: () => void
     shiftAutocompleteSelectionDown: () => void
     shiftAutocompleteSelectionUp: () => void
+    focusActiveNode: () => void
 }
 
 let emptyEditorNodes = function(): EditorNode[] {
@@ -140,11 +141,6 @@ let taskEditorOptions = {
         },
 
         projectFromEditor: function(): Project | null {
-            // TODO: Revise when new types are added
-            if (this.editorNodes.nodes.length > 2) {
-                throw "AssertionError: More than two editor nodes present!";
-            }
-
             let projectNode = EditorNodeAccessors.getProjectNode(this.editorNodes);
 
             if (projectNode) {
@@ -155,11 +151,6 @@ let taskEditorOptions = {
         },
 
         textFromEditor: function(): String {
-            // TODO: Revise when new types are added
-            if (this.editorNodes.nodes.length > 2) {
-                throw "AssertionError: More than two editor nodes present!";
-            }
-
             let textNodes = EditorNodeAccessors.getTextNodes(this.editorNodes);
 
             return textNodes.map((x) => x.data.text).join(' ');
@@ -201,8 +192,8 @@ let taskEditorOptions = {
             let caretPosition = (event.target.selectionStart);
             let isDeletingPreviousElement = (caretPosition === 0);
             if (isDeletingPreviousElement) {
+                event.preventDefault();
                 this.editorNodes = EditorNodeMutators.removeNonInputNodeBefore(this.editorNodes, nodePosition);
-                return;
             }
 
             let node = (this.editorNodes[nodePosition] as TextInputNode);
@@ -221,12 +212,19 @@ let taskEditorOptions = {
             }
         },
 
-        completeAutocomplete(): void {
-            this.removeAutocompleteTextFromInput();
+        tabOnTextInput: function(event, nodePosition) {
+            // Use nodeposition to check if this is the active autocomplete node?
+            if (this.isAutocompleting) {
+                event.preventDefault();
+                this.completeAutocomplete();
+            }
+        },
 
-            // TODO: Revise when other types are added.
+        completeAutocomplete(): void {
             let projectNode = EditorNodeConstructors.pillNodeFromProject(this.autocompleteSelection);
             let position = this.autocompleteState!.nodePosition + 1; // Place project node after
+
+            this.removeAutocompleteTextFromInput();
             this.editorNodes = EditorNodeMutators.addOrReplaceProjectNode(this.editorNodes, position, projectNode)
 
             this.cancelAutocomplete();
@@ -292,11 +290,63 @@ let taskEditorOptions = {
             if (this.autocompleteState!.activeSuggestionIndex < (this.autocompleteSuggestions.length - 1)) {
                 this.autocompleteState!.activeSuggestionIndex++;
             }
+        },
+
+        getInputWidth(nodePosition: number): string {
+            let fakeNodeList = this.$refs['fake-text-input-' + nodePosition];
+
+            if (fakeNodeList && fakeNodeList[0]) {
+                console.log(fakeNodeList[0]);
+                let width = fakeNodeList[0].getBoundingClientRect().width + 12;
+                return width + "px";
+            } else {
+                // Not instantiated yet?
+                return "2px";
+            }
+        },
+
+        focusLastCharacter(): void {
+            this.editorNodes.activeNodeIndex = this.editorNodes.nodes.length - 1;
+            this.focusActiveNode();
+
+            // Set selection to last character?
+        },
+
+        focusActiveNode(): void {
+            (this.$refs['text-input-' + this.editorNodes.activeNodeIndex][0] as HTMLElement).focus();
+        },
+
+        setActiveNode(nodePosition: number): void {
+            this.editorNodes.activeNodeIndex = nodePosition;
         }
     },
 
     mounted: function() {
-        (this.$refs['text-input'][0] as HTMLElement).focus();
+        this.focusActiveNode();
+    },
+
+    updated: function() {
+        this.focusActiveNode();
+        (this.$refs['text-input-' + this.editorNodes.activeNodeIndex][0] as HTMLElement).focus();
+
+        let refs = this.$refs;
+        let activeNodeIndex = this.editorNodes.activeNodeIndex;
+        _.forEach(this.editorNodes.nodes, function(node, position) {
+            if (node.type !== 'TextInputNode') {
+                return;
+            }
+
+            let fakeElement = refs['fake-text-input-' + position][0];
+            let actualElement = refs['text-input-' + position][0];
+            let width = fakeElement.getBoundingClientRect().width + 2;
+            if (position === activeNodeIndex) {
+                width = width + 8;
+            } else {
+                width = width;
+            }
+
+            actualElement.style.width = width + "px";
+        });
     },
 
     // TODO: binding size is a hack. Better ways?
@@ -305,19 +355,27 @@ let taskEditorOptions = {
         <div class="task-editor">
             <div class="task-form">
                 <form @submit.prevent="submitChanges()" @keydown.esc="emitClose()">
-                    <div class="input-nodes-container">
+                    <div class="input-nodes-container" @click="focusLastCharacter()">
                         <template v-for="(editorNode, nodePosition) in editorNodes.nodes">
-                            <input v-if="editorNode.type === 'TextInputNode'"
-                                type="text"
-                                class="text-input"
-                                :ref="nodePosition === editorNodes.activeNodeIndex ? 'text-input' : null"
-                                v-model="editorNode.data.text"
-                                :size="Math.max(editorNode.data.text.length, 50)"
-                                @keydown.delete="backspaceOnTextInput($event, nodePosition)"
-                                @keydown.enter.prevent="enterOnTextInput($event, nodePosition)"
-                                @keydown.down.prevent="shiftAutocompleteSelectionDown()"
-                                @keydown.up.prevent="shiftAutocompleteSelectionUp()"
-                                @keypress="keyPressOnTextInput($event, nodePosition)">
+                            <template v-if="editorNode.type === 'TextInputNode'">
+                                <input
+                                    type="text"
+                                    class="text-input"
+                                    :ref="'text-input-' + nodePosition"
+                                    v-model="editorNode.data.text"
+                                    @click.stop="setActiveNode(nodePosition)"
+                                    @keydown.delete="backspaceOnTextInput($event, nodePosition)"
+                                    @keydown.enter.prevent="enterOnTextInput($event, nodePosition)"
+                                    @keydown.tab="tabOnTextInput($event, nodePosition)"
+                                    @keydown.down.prevent="shiftAutocompleteSelectionDown()"
+                                    @keydown.up.prevent="shiftAutocompleteSelectionUp()"
+                                    @keypress="keyPressOnTextInput($event, nodePosition)">
+                                </input>
+                                <div class="fake-text-input"
+                                     :ref="'fake-text-input-' + nodePosition"
+                                     v-text="editorNode.data.text">
+                                </div>
+                            </template>
                             </input>
                             <div class="project-pill"
                                 v-if="editorNode.type === 'ProjectPillNode'">

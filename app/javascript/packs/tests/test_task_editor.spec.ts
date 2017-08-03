@@ -15,9 +15,8 @@ describe('Task Editor', function() {
     }
 
     it('should initialize with a single empty editorNode', function() {
-
         let taskEditor = getComponentInstance({});
-        let editorNodes = taskEditor.editorNodes;
+        let editorNodes = taskEditor.editorNodes.nodes;
         assert.equal(editorNodes.length, 1);
         assert.equal(editorNodes[0].type, "TextInputNode");
         assert.equal((editorNodes[0] as TextInputNode).data.text, '');
@@ -27,7 +26,7 @@ describe('Task Editor', function() {
         let taskEditor = getComponentInstance({
             taskToEdit: fakeTask({title: 'Dummy'})
         });
-        let editorNodes = taskEditor.editorNodes;
+        let editorNodes = taskEditor.editorNodes.nodes;
 
         assert.equal(editorNodes.length, 1);
         assert.equal(editorNodes[0].type, "TextInputNode");
