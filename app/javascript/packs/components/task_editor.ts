@@ -5,14 +5,14 @@ import Vue, { ComponentOptions } from 'vue';
 import { Task, Project } from '../models';
 import { API } from '../API';
 import { CreateTaskPayload, UpdateTaskPayload } from '../store';
-import { EditorNode, ProjectPillNode, TextInputNode } from '../helpers/editor_nodes'
+import { EditorNode, EditorNodeList, ProjectPillNode, TextInputNode } from '../helpers/editor_nodes'
 import { Constructors as EditorNodeConstructors } from '../helpers/editor_nodes'
 import { Mutators as EditorNodeMutators } from '../helpers/editor_nodes'
 import { Accessors as EditorNodeAccessors } from '../helpers/editor_nodes'
 
 interface TaskEditor extends Vue {
     // data
-    editorNodes: EditorNode[]
+    editorNodes: EditorNodeList
     autocompleteState: {
         nodePosition: number
         caretPosition: number
@@ -58,16 +58,16 @@ let taskEditorOptions = {
     name: 'task-editor',
 
     data: function() {
-        let editorNodes: EditorNode[] = [];
+        let nodes: EditorNode[];
 
         if (this.taskToEdit !== null) {
-            editorNodes = editorNodesFromTask(this.taskToEdit);
+            nodes = editorNodesFromTask(this.taskToEdit);
         } else {
-            editorNodes = emptyEditorNodes();
+            nodes = emptyEditorNodes();
         }
 
         return {
-            editorNodes: editorNodes,
+            editorNodes: {nodes: nodes, activeNodeIndex: nodes.length - 1},
             autocompleteState: null
         }
     },
@@ -141,7 +141,7 @@ let taskEditorOptions = {
 
         projectFromEditor: function(): Project | null {
             // TODO: Revise when new types are added
-            if (this.editorNodes.length > 2) {
+            if (this.editorNodes.nodes.length > 2) {
                 throw "AssertionError: More than two editor nodes present!";
             }
 
@@ -156,7 +156,7 @@ let taskEditorOptions = {
 
         textFromEditor: function(): String {
             // TODO: Revise when new types are added
-            if (this.editorNodes.length > 2) {
+            if (this.editorNodes.nodes.length > 2) {
                 throw "AssertionError: More than two editor nodes present!";
             }
 
@@ -226,7 +226,8 @@ let taskEditorOptions = {
 
             // TODO: Revise when other types are added.
             let projectNode = EditorNodeConstructors.pillNodeFromProject(this.autocompleteSelection);
-            this.editorNodes = EditorNodeMutators.addOrReplaceProjectNode(this.editorNodes, projectNode)
+            let position = this.autocompleteState!.nodePosition + 1; // Place project node after
+            this.editorNodes = EditorNodeMutators.addOrReplaceProjectNode(this.editorNodes, position, projectNode)
 
             this.cancelAutocomplete();
         },
@@ -305,11 +306,11 @@ let taskEditorOptions = {
             <div class="task-form">
                 <form @submit.prevent="submitChanges()" @keydown.esc="emitClose()">
                     <div class="input-nodes-container">
-                        <template v-for="(editorNode, nodePosition) in editorNodes">
+                        <template v-for="(editorNode, nodePosition) in editorNodes.nodes">
                             <input v-if="editorNode.type === 'TextInputNode'"
                                 type="text"
                                 class="text-input"
-                                ref="text-input"
+                                :ref="nodePosition === editorNodes.activeNodeIndex ? 'text-input' : null"
                                 v-model="editorNode.data.text"
                                 :size="Math.max(editorNode.data.text.length, 50)"
                                 @keydown.delete="backspaceOnTextInput($event, nodePosition)"
