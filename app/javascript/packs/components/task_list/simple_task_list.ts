@@ -54,20 +54,20 @@ let taskListOptions = {
     template: `
         <div>
             <div class="task-list simple-task-list">
-                <template v-for="task in tasks">
-                    <task-editor
-                        v-if="taskBeingEdited && (taskBeingEdited.id === task.id)"
-                        @close="closeEditor()"
-                        :task-to-edit="task"
-                        :autocomplete-definitions="autocompleteDefinitions">
-                    </task-editor>
-                    <task-item
-                        v-else
-                        :task="task"
-                        @intentToEdit="openEditor"
-                        @intentToComplete="completeTask">
-                    </task-item>
-                </template>
+                <task-editor
+                    v-for="task in tasks"
+                    v-if="taskBeingEdited && (taskBeingEdited.id === task.id)"
+                    :key="'editor-' + task.id"
+                    @close="closeEditor()"
+                    :task-to-edit="task"
+                    :autocomplete-definitions="autocompleteDefinitions">
+                </task-editor>
+                <task-item
+                    v-else
+                    :task="task"
+                    @intentToEdit="openEditor"
+                    @intentToComplete="completeTask">
+                </task-item>
             </div>
         </div>
     `

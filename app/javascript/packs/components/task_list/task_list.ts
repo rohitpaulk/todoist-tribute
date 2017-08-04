@@ -147,34 +147,34 @@ let taskListOptions = {
     template: `
         <div>
             <div class="task-list draggable-task-list">
-                <template v-for="task in localTasks">
-                    <task-editor
-                        v-if="taskBeingEdited && (taskBeingEdited.id === task.id)"
-                        @close="hideTaskForm()"
-                        :initial-project="defaultProject"
-                        :task-to-edit="task"
-                        :autocomplete-definitions="autocompleteDefinitions">
-                    </task-editor>
-                    <div v-else
-                         :class="dragItemClasses[task.id]"
-                         @drop="onDrop($event)"
-                         @dragover.prevent
-                         @dragenter="onDragEnter($event, task)">
+                <task-editor
+                    v-for="task in localTasks"
+                    :key="'editor' + task.id"
+                    v-if="taskBeingEdited && (taskBeingEdited.id === task.id)"
+                    @close="hideTaskForm()"
+                    :initial-project="defaultProject"
+                    :task-to-edit="task"
+                    :autocomplete-definitions="autocompleteDefinitions">
+                </task-editor>
+                <div v-else
+                        :class="dragItemClasses[task.id]"
+                        @drop="onDrop($event)"
+                        @dragover.prevent
+                        @dragenter="onDragEnter($event, task)">
 
-                        <span class="dragbars-holder"
-                                draggable="true"
-                                @dragstart="onDragStart($event, task)"
-                                @dragend="onDragEnd()">
-                            <i class="fa fa-bars drag-bars"></i>
-                        </span>
+                    <span class="dragbars-holder"
+                            draggable="true"
+                            @dragstart="onDragStart($event, task)"
+                            @dragend="onDragEnd()">
+                        <i class="fa fa-bars drag-bars"></i>
+                    </span>
 
-                        <task-item :task="task"
-                            :showProjectTag="false"
-                            @intentToEdit="setTaskBeingEdited"
-                            @intentToComplete="completeTask">
-                        </task-item>
-                    </div>
-                </template>
+                    <task-item :task="task"
+                        :showProjectTag="false"
+                        @intentToEdit="setTaskBeingEdited"
+                        @intentToComplete="completeTask">
+                    </task-item>
+                </div>
             </div>
             <task-editor
                 v-if="isAddingTask"

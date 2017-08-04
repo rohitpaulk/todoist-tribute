@@ -335,7 +335,6 @@ let taskEditorOptions = {
     },
 
     mounted: function() {
-        this.focusActiveNode();
         this.$forceUpdate(); // Trigger updated
     },
 
