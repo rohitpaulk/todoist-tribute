@@ -17,7 +17,9 @@ puts "Created projects"
 puts "Creating labels..."
 
 easy = Label.create!(name: "easy", color_hex: "339966")
-hard = Label.create!(name: "hard", color_hex: "c14b4b")
+medium = Label.create!(name: "medium", color_hex: "A8C8E4")
+hard = Label.create!(name: "hard", color_hex: "FFCC00")
+super_hard = Label.create!(name: "super-hard", color_hex: "AC193D")
 
 puts "Created labels"
 
@@ -28,7 +30,7 @@ Task.create!(sort_order: 2, title: 'and the second...', project: inbox)
 Task.create!(sort_order: 3, title: 'the 3rd!', project: inbox)
 
 Task.create!(sort_order: 1, title: 'Fire mickey', project: disney, labels: [hard])
-Task.create!(sort_order: 2, title: 'Promote donald', project: disney, labels: [easy])
+Task.create!(sort_order: 2, title: 'Promote donald', project: disney, labels: [medium])
 
 Task.create!(sort_order: 1, title: 'Hire steve', project: pixar)
 
