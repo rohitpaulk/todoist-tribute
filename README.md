@@ -4,7 +4,7 @@ This is a clone of the [Todoist](https://todoist.com/) web-app.
 
 Here's how it looks:
 
-![](/app/assets/images/2.gif)
+![](/app/assets/images/week3.gif)
 
 Visit [a live instance](http://thetuduapp.herokuapp.com/) to check it out!
 
@@ -15,6 +15,10 @@ You can also deploy your own copy to heroku:
 ### Under the hood
 
 The backend is written in [Ruby](https://www.ruby-lang.org/en/) + [Rails](https://github.com/rails/rails), and the frontend in [Typescript](https://www.typescriptlang.org/) + [Vue.js](https://vuejs.org/).
+
+A few interesting files to look at:
+
+- [editor_nodes.ts]( https://github.com/rohitpaulk/todoist-tribute/blob/master/app/javascript/packs/helpers/editor_nodes.ts)
 
 ### Current Status
 
