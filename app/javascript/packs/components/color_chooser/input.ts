@@ -10,7 +10,9 @@ interface ColorChooser extends Vue {
 
     // methods
     toggleDropdown(): void
+    openDropdown(): void
     closeDropdown(): void
+    handleClickOutsideDropdown(event)
 }
 
 
@@ -32,10 +34,27 @@ let ColorChooserOptions = {
 
     methods: {
         toggleDropdown() {
-            this.isDropdownOpen = !this.isDropdownOpen;
+            if (this.isDropdownOpen) {
+                this.closeDropdown();
+            } else {
+                this.openDropdown();
+            }
+        },
+
+        handleClickOutsideDropdown: function(event) {
+            let dropdownHTMLElement = (this.$refs['dropdown'] as Vue).$el;
+            if (!dropdownHTMLElement.contains(event.target)) {
+                this.closeDropdown();
+            }
+        },
+
+        openDropdown: function(): void {
+            document.addEventListener('click', this.handleClickOutsideDropdown, false);
+            this.isDropdownOpen = true;
         },
 
         closeDropdown() {
+            document.removeEventListener('click', this.handleClickOutsideDropdown, false);
             this.isDropdownOpen = false;
         },
 
@@ -48,12 +67,13 @@ let ColorChooserOptions = {
     template: `
         <div class="color-chooser">
             <div class="color-chooser-toggle"
-                 @click.prevent="toggleDropdown()">
+                 @click.stop="toggleDropdown()">
 
                  <slot name="icon" :colorHex="colorHex"></slot>
             </div>
             <color-chooser-dropdown v-if="isDropdownOpen"
-                @select="colorSelected">
+                                    ref="dropdown"
+                                    @select="colorSelected">
             </color-chooser-dropdown>
         </div>
     `

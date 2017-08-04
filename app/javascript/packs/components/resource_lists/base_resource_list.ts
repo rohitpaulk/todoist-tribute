@@ -45,7 +45,9 @@ interface BaseResourceList extends Vue, ComponentProps, ComponentData {
     closeEditorForCreate(): void
     openEditorForUpdate(resource: Resource): void
     closeEditorForUpdate(): void
-    resetDropdown(): void
+    handleClickOutsideDropdown(event)
+    openDropdown(resource: Resource): void
+    closeDropdown(): void
 }
 
 let resourceListOptions = {
@@ -160,21 +162,34 @@ let resourceListOptions = {
         },
 
         deleteResource(resource: Resource) {
-            this.resetDropdown();
+            this.closeDropdown();
             this.$store.dispatch(this.resourceActions.delete, resource.id);
 
             // TODO: Switch out TaskList with Inbox?
         },
 
-        toggleDropdown: function(resource: Resource) {
-            if (this.dropdownActiveOnId !== null) {
-                this.resetDropdown();
-            } else {
-                this.dropdownActiveOnId = resource.id;
+        handleClickOutsideDropdown: function(event) {
+            let dropdownElement = (this.$refs['dropdown'][0] as HTMLElement);
+            if (!dropdownElement.contains(event.target)) {
+                this.closeDropdown();
             }
         },
 
-        resetDropdown: function(): void {
+        toggleDropdown: function(resource: Resource) {
+            if (this.dropdownActiveOnId === null) {
+                this.openDropdown(resource);
+            } else {
+                this.closeDropdown();
+            }
+        },
+
+        openDropdown: function(resource: Resource): void {
+            document.addEventListener('click', this.handleClickOutsideDropdown, false);
+            this.dropdownActiveOnId = resource.id;
+        },
+
+        closeDropdown: function(): void {
+            document.removeEventListener('click', this.handleClickOutsideDropdown, false);
             this.dropdownActiveOnId = null;
         }
     },
@@ -218,7 +233,7 @@ let resourceListOptions = {
                             <span :class="{'dropdown-toggle': true, 'is-active': dropdownActiveOnId == resource.id}">
                                 <i class="fa fa-ellipsis-h"></i>
                             </span>
-                            <div class="dropdown" v-if="dropdownActiveOnId == resource.id">
+                            <div class="dropdown" v-if="dropdownActiveOnId == resource.id" ref="dropdown">
                                 <ul class="dropdown-options">
                                     <li class="dropdown-option"
                                         @click.stop="toggleDropdown(resource);
