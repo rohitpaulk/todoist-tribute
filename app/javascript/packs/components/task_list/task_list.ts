@@ -11,7 +11,11 @@ interface TaskList extends Vue {
     // data
     dragState?: DragState
     dragOperationInProgress: boolean
-    isAddingTask: boolean
+
+    // A hash for the new task creator. Needed to prevent picking up old editor
+    // instances when a new one is rendered as soon as the old one is closed.
+    taskCreatorHash: string | null
+
     taskBeingEdited: Task | null
 
     // props
@@ -20,10 +24,14 @@ interface TaskList extends Vue {
 
     // computed
     localTasks: Task[]
+    isAddingTask: boolean
 
     // methods
     openAddTaskForm: () => void
-    hideTaskForm: () => void
+    closeAddTaskForm: () => void
+
+    openEditTaskForm(task): void
+    closeEditTaskForm(): void
 }
 
 let taskListOptions = {
@@ -31,7 +39,7 @@ let taskListOptions = {
         return {
             dragState: undefined,
             dragOperationInProgress: false,
-            isAddingTask: false,
+            taskCreatorHash: null,
             taskBeingEdited: null
         }
     },
@@ -42,6 +50,10 @@ let taskListOptions = {
     },
 
     computed: {
+        isAddingTask(): boolean {
+            return this.taskCreatorHash !== null;
+        },
+
         localTasks(): Task[] {
             if (this.dragState === undefined) {
                 return this.tasks;
@@ -86,12 +98,18 @@ let taskListOptions = {
         },
 
         openAddTaskForm: function() {
-            this.isAddingTask = true;
-            this.taskBeingEdited = null;
+            this.taskCreatorHash = Math.random().toString(36);
         },
 
-        hideTaskForm: function() {
-            this.isAddingTask = false;
+        closeAddTaskForm: function() {
+            this.taskCreatorHash = null;
+        },
+
+        openEditTaskForm: function(task) {
+            this.taskBeingEdited = task;
+        },
+
+        closeEditTaskForm: function() {
             this.taskBeingEdited = null;
         },
 
@@ -137,10 +155,6 @@ let taskListOptions = {
                 // The drag was aborted halfway
                 this.dragState = undefined;
             }
-        },
-
-        setTaskBeingEdited: function(task) {
-            this.taskBeingEdited = task;
         }
     },
 
@@ -149,18 +163,18 @@ let taskListOptions = {
             <div class="task-list draggable-task-list">
                 <task-editor
                     v-for="task in localTasks"
-                    :key="'editor' + task.id"
+                    :key="'editor-editing-' + task.id"
                     v-if="taskBeingEdited && (taskBeingEdited.id === task.id)"
-                    @close="hideTaskForm()"
+                    @close="closeEditTaskForm()"
                     :initial-project="defaultProject"
                     :task-to-edit="task"
                     :autocomplete-definitions="autocompleteDefinitions">
                 </task-editor>
                 <div v-else
-                        :class="dragItemClasses[task.id]"
-                        @drop="onDrop($event)"
-                        @dragover.prevent
-                        @dragenter="onDragEnter($event, task)">
+                     :class="dragItemClasses[task.id]"
+                     @drop="onDrop($event)"
+                     @dragover.prevent
+                     @dragenter="onDragEnter($event, task)">
 
                     <span class="dragbars-holder"
                             draggable="true"
@@ -171,14 +185,16 @@ let taskListOptions = {
 
                     <task-item :task="task"
                         :showProjectTag="false"
-                        @intentToEdit="setTaskBeingEdited"
+                        @intentToEdit="openEditTaskForm"
                         @intentToComplete="completeTask">
                     </task-item>
                 </div>
             </div>
             <task-editor
                 v-if="isAddingTask"
-                @close="hideTaskForm()"
+                :key="'editor-creating-' + taskCreatorHash"
+                @close="closeAddTaskForm()"
+                @closeAndOpenBelow="closeAddTaskForm(); openAddTaskForm()"
                 :initial-project="defaultProject"
                 :autocomplete-definitions="autocompleteDefinitions">
             </task-editor>

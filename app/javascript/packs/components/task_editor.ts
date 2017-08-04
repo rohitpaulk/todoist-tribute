@@ -34,6 +34,7 @@ interface TaskEditor extends Vue {
 
     // methods
     emitClose: () => void,
+    emitCloseAndOpenBelow: () => void,
     cancelAutocomplete: () => void
     completeAutocomplete: () => void
     removeAutocompleteTextFromInput: () => void
@@ -162,6 +163,10 @@ let taskEditorOptions = {
             this.$emit('close');
         },
 
+        emitCloseAndOpenBelow: function() {
+            this.$emit('closeAndOpenBelow');
+        },
+
         submitChanges: function() {
             let taskTitle = _.trim(this.textFromEditor);
 
@@ -178,16 +183,19 @@ let taskEditorOptions = {
                     projectId: this.taskProjectId,
                     labelIds: this.labelIdsFromEditor
                 });
+
+                // TODO: Only after promise resolves!
+                this.emitClose();
             } else {
                 this.$store.dispatch('createTask', {
                     title: taskTitle,
                     projectId: this.taskProjectId,
                     labelIds: this.labelIdsFromEditor
                 });
-            }
 
-            // TODO: Only after promise resolves!
-            this.emitClose();
+                // TODO: Only after promise resolves!
+                this.emitCloseAndOpenBelow();
+            }
         },
 
         completeAutocomplete(): void {
