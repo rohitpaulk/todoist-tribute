@@ -33,6 +33,7 @@ let ProjectListOptions = {
             :resources="projects"
             :selected-resource="selectedProject"
             :resource-task-counts="projectTaskCounts"
+            resource-name="Project"
             :resource-actions="{
                 reorder: 'reorderProjects',
                 delete: 'deleteProject'

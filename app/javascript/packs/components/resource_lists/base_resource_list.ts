@@ -23,6 +23,9 @@ interface ComponentProps {
         reorder: string
         delete: string
     }
+
+    // Used to render buttons/links etc.
+    resourceName: string
 }
 
 interface ComponentData {
@@ -61,7 +64,8 @@ let resourceListOptions = {
         selectedResource: { },
         resourceTaskCounts: { required: true },
         editorComponent: { required: true },
-        resourceActions: { required: true }
+        resourceActions: { required: true },
+        resourceName: { required: true }
     },
 
     computed: {
@@ -155,7 +159,7 @@ let resourceListOptions = {
             this.resourceBeingEdited = null;
         },
 
-        deleteProject(resource: Resource) {
+        deleteResource(resource: Resource) {
             this.resetDropdown();
             this.$store.dispatch(this.resourceActions.delete, resource.id);
 
@@ -219,12 +223,12 @@ let resourceListOptions = {
                                     <li class="dropdown-option"
                                         @click.stop="toggleDropdown(resource);
                                                      openEditorForUpdate(resource)">
-                                        Edit Project
+                                        Edit {{ resourceName }}
                                     </li>
                                     <li class="dropdown-option"
                                         @click.stop="toggleDropdown(resource);
-                                                     deleteProject(resource)">
-                                        Delete Project
+                                                     deleteResource(resource)">
+                                        Delete {{ resourceName }}
                                     </li>
                                 </ul>
                             </div>
@@ -245,7 +249,7 @@ let resourceListOptions = {
                     </span>
                 </span>
                 <span class="text-holder">
-                    <a href="#" class="add-project-link">Add Project</a>
+                    <a href="#" class="add-project-link">Add {{ resourceName }}</a>
                 </span>
             </div>
         </div>

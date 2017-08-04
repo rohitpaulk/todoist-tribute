@@ -33,6 +33,7 @@ let LabelListOptions = {
             :resources="labels"
             :selected-resource="selectedLabel"
             :resource-task-counts="labelTaskCounts"
+            resource-name="Label"
             :resource-actions="{
                 reorder: 'reorderLabels',
                 delete: 'deleteLabel'

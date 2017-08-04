@@ -146,6 +146,14 @@ let taskEditorOptions = {
             let textNodes = EditorNodeAccessors.getTextNodes(this.editorNodes);
 
             return textNodes.map((x) => x.data.text).join(' ');
+        },
+
+        buttonText(): string {
+            if (this.taskToEdit === null) {
+                return 'Add Task';
+            } else {
+                return 'Save';
+            }
         }
     },
 
@@ -406,7 +414,7 @@ let taskEditorOptions = {
                         </autocomplete-box>
                     </div>
 
-                    <button type="submit">Add Task</button>
+                    <button type="submit">{{ buttonText }}</button>
                     <a href="#" class="cancel-link" @click="emitClose()">Cancel</a>
                 </form>
             </div>
