@@ -14,10 +14,10 @@ import * as _ from 'lodash';
 //
 // Constraints
 //
-// - All pill nodes must be surrounded by text input nodes on both sides.
-// - All pill nodes must have interstitial text input nodes. This is needed to
-//   allow the user to navigate with the cursor.
-// - Consecutive text input nodes aren't allowed, merge contents if needed
+// - All pill nodes must be surrounded by text input nodes on both sides. Some
+//   of these inputs might be empty, they're used to display cursors as
+//   feedback when navigating using cursor keys.
+// - Consecutive text input nodes aren't allowed\
 // - Only one project node must be present (since a task can only belong to one
 //   project)
 // - Multiple label nodes may be present, even if they have duplicate labels.
@@ -94,9 +94,12 @@ let Mutators = {
         let newNodes = nodeList.nodes.slice();
 
         let pillNodePosition = pos - 1;
-        let firstInputNode = newNodes[pillNodePosition - 1];
+        let firstInputPosition = pillNodePosition - 1;
+        let secondInputPosition = pillNodePosition + 1;
+
+        let firstInputNode = newNodes[firstInputPosition];
         let pillNode = newNodes[pillNodePosition];
-        let secondInputNode = newNodes[pillNodePosition + 1];
+        let secondInputNode = newNodes[secondInputPosition];
 
         if (firstInputNode.type !== 'TextInputNode') {
             throw "AssertionError: Expected a TextInputNode before the pill node being removed"
@@ -112,24 +115,16 @@ let Mutators = {
 
         let secondNodeText = secondInputNode.data.text;
 
-        // Remove both pill & input node
+        // Remove both pill & second input node
         newNodes.splice(pillNodePosition, 2);
 
         // Concatenate text from both input nodes
         firstInputNode.data.text += secondNodeText
 
+        nodeList.activeNodeIndex = firstInputPosition;
         nodeList.nodes = newNodes;
-        nodeList.activeNodeIndex = pillNodePosition - 1;
 
         return nodeList;
-    },
-
-    insertTextNode(nodeList: EditorNodeList, pos: number, node: TextInputNode): EditorNodeList {
-        // If nodePosition is last, not allowed!
-        // If nodePosition is adjacent to a textNode, not allowed!
-
-        // If nodePosition is adjacent to a textNode, not allowed!
-        return nodeList; // TODO
     },
 
     addLabelNode(nodeList: EditorNodeList, pos: number, node: LabelPillNode): EditorNodeList {
@@ -149,19 +144,15 @@ let Mutators = {
     addOrReplaceProjectNode(nodeList: EditorNodeList, pos: number, node: ProjectPillNode): EditorNodeList {
         let hasProjectNode = !!Accessors.getProjectNode(nodeList);
 
-        // TODO: Clear these assumptions!
-        if (pos != nodeList.nodes.length) {
-            throw "AssertionError: Expected autocomplete to be at end of list";
-        }
-
         let newNodes = nodeList.nodes.slice();
         if (hasProjectNode) {
             let projectNodeIndex = _.findIndex(nodeList.nodes, (x) => x.type === 'ProjectPillNode');
             newNodes[projectNodeIndex] = node;
         } else {
-            newNodes.push(node);
-            newNodes.push(Constructors.inputNodeFromText(''));
-            nodeList.activeNodeIndex = newNodes.length - 1;
+            newNodes.splice(pos, 0, Constructors.inputNodeFromText(''));
+            newNodes.splice(pos, 0, node);
+
+            nodeList.activeNodeIndex = pos + 1;
         }
 
         nodeList.nodes = newNodes;
@@ -178,8 +169,8 @@ let Mutators = {
         }
 
         newNodes[pos] = newNode;
-
         nodeList.nodes = newNodes;
+
         return nodeList;
     }
 };
