@@ -1,37 +1,36 @@
-import * as Fuse from 'fuse.js';
 import * as _ from 'lodash';
 import Vue, { ComponentOptions } from 'vue';
 
 import { Task, Project } from '../models';
 import { API } from '../API';
 import { CreateTaskPayload, UpdateTaskPayload } from '../store';
-import { EditorNode, ProjectPillNode, TextInputNode } from '../helpers/editor_nodes'
+import { EditorNode, EditorNodeList, LabelPillNode, TextInputNode } from '../helpers/editor_nodes'
 import { Constructors as EditorNodeConstructors } from '../helpers/editor_nodes'
 import { Mutators as EditorNodeMutators } from '../helpers/editor_nodes'
+import { Accessors as EditorNodeAccessors } from '../helpers/editor_nodes'
+import { AutocompleteState, AutocompleteDefinition, AutocompleteSuggestion } from '../helpers/autocomplete';
+import { getAutocompleteSuggestions } from '../helpers/autocomplete';
+import { AutocompleteEventHandlers } from '../helpers/autocomplete';
+import { EventHandlerAction } from '../helpers/event_handler_actions';
 
 interface TaskEditor extends Vue {
     // data
-    editorNodes: EditorNode[]
-    autocompleteState: {
-        nodePosition: number // Not really needed now, will come in handy later
-        caretPosition: number
-        activeSuggestionIndex: number
-    } | null
+    editorNodes: EditorNodeList
+    autocompleteState: AutocompleteState | null
 
     // prop
     initialProject: Project
     taskToEdit: Task | null
+    autocompleteDefinitions: AutocompleteDefinition[]
 
     // computed
-    taskTitle: string
     taskProjectId: string
-    textInputNode: TextInputNode
-    projectPillNode: ProjectPillNode | null
-    allProjects: Project[]
+    textFromEditor: string
+    projectIdFromEditor: string | null
+    labelIdsFromEditor: string[]
     isAutocompleting: boolean
-    autocompleteSelection: Project // Revisit when different types are added
-    autocompleteSuggestions: Project[]
-    autocompleteQuery: string
+    autocompleteSelection: AutocompleteSuggestion
+    autocompleteSuggestions: AutocompleteSuggestion[]
 
     // methods
     emitClose: () => void,
@@ -41,40 +40,51 @@ interface TaskEditor extends Vue {
     submitChanges: () => void
     shiftAutocompleteSelectionDown: () => void
     shiftAutocompleteSelectionUp: () => void
+    focusActiveNode: () => void
+    runEventHandlerActions: (actions: EventHandlerAction[]) => void
 }
 
-let emptyEditorNodes = function(project: Project): EditorNode[] {
-    return [EditorNodeConstructors.textInputNodeFromText('')];
+let emptyEditorNodes = function(): EditorNode[] {
+    return [EditorNodeConstructors.inputNodeFromText('')];
 }
 
-let editorNodesFromTask = function(task: Task, project: Project): EditorNode[] {
-    return [EditorNodeConstructors.textInputNodeFromText(task.title)];
-}
+let editorNodesFromTask = function(task: Task, store): EditorNode[] {
+    let labels = store.getters.labelsFromIds(task.labelIds);
+    let nodes: EditorNode[] = _.flatMap(labels, function(label) {
+        return [
+            EditorNodeConstructors.inputNodeFromText(''),
+            EditorNodeConstructors.pillNodeFromLabel(label),
+        ];
+    });
 
-const CHAR_CODE_POUND_SIGN = 35;
-const CHAR_CODE_SPACE = 32;
+    nodes.push(EditorNodeConstructors.inputNodeFromText(task.title));
+
+    return nodes;
+}
 
 let taskEditorOptions = {
     name: 'task-editor',
 
     data: function() {
-        let editorNodes: EditorNode[] = [];
+        let nodes: EditorNode[];
 
         if (this.taskToEdit !== null) {
-            editorNodes = editorNodesFromTask(this.taskToEdit, this.initialProject);
+            // TODO: Find way around passing store
+            nodes = editorNodesFromTask(this.taskToEdit, this.$store);
         } else {
-            editorNodes = emptyEditorNodes(this.initialProject);
+            nodes = emptyEditorNodes();
         }
 
         return {
-            editorNodes: editorNodes,
+            editorNodes: {nodes: nodes, activeNodeIndex: nodes.length - 1},
             autocompleteState: null
         }
     },
 
     props: {
-        initialProject: { required: true },
-        taskToEdit: { default: null }
+        initialProject: { },
+        taskToEdit: { default: null },
+        autocompleteDefinitions: { required: true }
     },
 
     computed: {
@@ -82,46 +92,21 @@ let taskEditorOptions = {
             return (this.autocompleteState !== null)
         },
 
-        autocompleteSuggestions: function(): Project[] {
-            if (this.autocompleteQuery === '') {
-                return this.allProjects
-            } else {
-                let fuse = new Fuse(this.allProjects, {keys: ["name"]});
-
-                return fuse.search(this.autocompleteQuery);
+        autocompleteSuggestions: function(): AutocompleteSuggestion[] {
+            if (!this.autocompleteState) {
+                throw "AssertionError: autocompleteSuggestions() called when not active"
             }
+
+            return getAutocompleteSuggestions(this.autocompleteDefinitions, this.autocompleteState, this.editorNodes)
         },
 
-        autocompleteSelection: function(): Project {
+        autocompleteSelection: function(): AutocompleteSuggestion {
             if (this.autocompleteState === null) {
                 throw "autocompleteSelection called when not autocompleting!"
             }
 
             let index = this.autocompleteState.activeSuggestionIndex;
             return this.autocompleteSuggestions[index]; // What if this is null?
-        },
-
-        autocompleteQuery: function(): string {
-            if (this.autocompleteState === null) {
-                throw "autocompleteQuery called when not autocompleting!"
-            }
-
-            let node = this.textInputNode;
-            let caretPosition = this.autocompleteState.caretPosition;
-
-            // TODO: Make this better with tracking live current cursor position!
-            //       If someone triggers an autocomplete in the middle of a text
-            //       box, this will fail.
-
-            return this.textInputNode.data.text.slice(caretPosition);
-        },
-
-        allProjects: function(): Project[] {
-            return this.$store.state.projects;
-        },
-
-        taskTitle: function(): String {
-            return this.textInputNode.data.text;
         },
 
         taskProjectId: function(): string {
@@ -132,8 +117,8 @@ let taskEditorOptions = {
             //    editing tasks.
             // 2. The initialProject prop passed in. Valid only when creating
             //    a new task.
-            if (this.projectPillNode !== null) {
-                return this.projectPillNode.data.project.id;
+            if (this.projectIdFromEditor) {
+                return this.projectIdFromEditor;
             } else if (this.taskToEdit) {
                 return this.taskToEdit.projectId;
             } else {
@@ -141,28 +126,26 @@ let taskEditorOptions = {
             }
         },
 
-        textInputNode: function(): TextInputNode {
-            if (this.editorNodes.length > 2) {
-                throw "AssertionError: More than two editor nodes present!";
-            }
+        projectIdFromEditor: function(): string | null {
+            let projectNode = EditorNodeAccessors.getProjectNode(this.editorNodes);
 
-            if (this.editorNodes.length === 1) {
-                return this.editorNodes[0] as TextInputNode;
-            } else {
-                return this.editorNodes[1] as TextInputNode;
-            }
-        },
-
-        projectPillNode: function(): ProjectPillNode | null {
-            if (this.editorNodes.length > 2) {
-                throw "AssertionError: More than two editor nodes present!";
-            }
-
-            if (this.editorNodes.length === 2) {
-                return this.editorNodes[0] as ProjectPillNode;
+            if (projectNode) {
+                return projectNode.data.project.id;
             } else {
                 return null;
             }
+        },
+
+        labelIdsFromEditor: function(): string[] {
+            let labelNodes = EditorNodeAccessors.getLabelNodes(this.editorNodes);
+
+            return labelNodes.map((x) => x.data.label.id);
+        },
+
+        textFromEditor: function(): String {
+            let textNodes = EditorNodeAccessors.getTextNodes(this.editorNodes);
+
+            return textNodes.map((x) => x.data.text).join(' ');
         }
     },
 
@@ -172,8 +155,10 @@ let taskEditorOptions = {
         },
 
         submitChanges: function() {
+            let taskTitle = _.trim(this.textFromEditor);
+
             // Validate task properties
-            if (_.trim(this.taskTitle) === '') {
+            if (taskTitle === '') {
                 alert('empty!');
                 return;
             }
@@ -181,13 +166,15 @@ let taskEditorOptions = {
             if (this.taskToEdit) {
                 this.$store.dispatch('updateTask', {
                     id: this.taskToEdit.id,
-                    title: this.taskTitle,
-                    projectId: this.taskProjectId
+                    title: taskTitle,
+                    projectId: this.taskProjectId,
+                    labelIds: this.labelIdsFromEditor
                 });
             } else {
                 this.$store.dispatch('createTask', {
-                    title: this.taskTitle,
-                    projectId: this.taskProjectId
+                    title: taskTitle,
+                    projectId: this.taskProjectId,
+                    labelIds: this.labelIdsFromEditor
                 });
             }
 
@@ -195,25 +182,95 @@ let taskEditorOptions = {
             this.emitClose();
         },
 
+        completeAutocomplete(): void {
+            let actions = AutocompleteEventHandlers.onIntentToComplete(
+                this.autocompleteDefinitions,
+                this.autocompleteState!,
+                this.editorNodes
+            )
+
+            this.runEventHandlerActions(actions);
+        },
+
+        runEventHandlerActions(actions: EventHandlerAction[]): void {
+            let taskEditor = this;
+            _.each(actions, function(action) {
+                if (action.type === 'cancel_autocomplete') {
+                    taskEditor.cancelAutocomplete();
+                }
+
+                if (action.type === 'update_autocomplete_state') {
+                    taskEditor.autocompleteState = action.state;
+                }
+
+                if (action.type === 'update_editor_nodes') {
+                    taskEditor.editorNodes = action.editorNodes;
+                }
+            });
+        },
+
+        onSelectFromAutocompleteBox(index): void {
+            this.autocompleteState!.activeSuggestionIndex = index;
+            this.completeAutocomplete();
+        },
+
+        keyPressOnTextInput: function(event, nodePosition: number) {
+            let actions: EventHandlerAction[] = [];
+
+            if (this.isAutocompleting) {
+                actions = AutocompleteEventHandlers.onKeyPressWhileAutocompleting(
+                    event,
+                    this.autocompleteState!
+                );
+            } else {
+                actions = AutocompleteEventHandlers.onKeyPress(
+                    event,
+                    this.autocompleteDefinitions,
+                    nodePosition,
+                    this.editorNodes
+                );
+            }
+
+            this.runEventHandlerActions(actions);
+        },
+
         backspaceOnTextInput: function(event, nodePosition: number) {
             let caretPosition = (event.target.selectionStart);
             let isDeletingPreviousElement = (caretPosition === 0);
             if (isDeletingPreviousElement) {
-                this.editorNodes = EditorNodeMutators.removeNonInputNodeBefore(this.editorNodes, nodePosition);
-                return;
+                event.preventDefault();
+                this.editorNodes = EditorNodeMutators.removePillNodeBefore(this.editorNodes, nodePosition);
             }
 
             let node = (this.editorNodes[nodePosition] as TextInputNode);
-            let lastChar = _.last(Array.from(node.data.text))
             let nextCaretPosition = caretPosition - 1;
 
-            // If the selection wasn't at the start, then there must be SOME content
-            if (typeof(lastChar) === undefined) {
-                throw "AssertionError: Expected atleast one character to be present"
-            }
-
-            if (this.isAutocompleting && (nextCaretPosition <= this.autocompleteState!.caretPosition)) {
+            if (this.isAutocompleting && (nextCaretPosition <= this.autocompleteState!.triggerPosition)) {
                 this.cancelAutocomplete();
+            }
+        },
+
+        leftOnTextInput: function(event, nodePosition: number) {
+            let caretPosition = (event.target.selectionStart);
+            let isMovingToPreviousElement = (caretPosition === 0);
+
+            // TODO: Move to mutators
+            if (this.editorNodes.activeNodeIndex !== 0 && isMovingToPreviousElement) {
+                event.preventDefault();
+                this.editorNodes.activeNodeIndex -= 2;
+                this.focusActiveNode();
+            }
+        },
+
+        rightOnTextInput: function(event, nodePosition: number) {
+            // TODO: Move to mutators
+            let caretPosition = (event.target.selectionStart);
+            let isMovingToNextElement = (caretPosition === event.target.value.length);
+
+            if (this.editorNodes.activeNodeIndex !== this.editorNodes.nodes.length - 1 && isMovingToNextElement) {
+                event.preventDefault();
+                this.editorNodes.activeNodeIndex += 2;
+                this.focusActiveNode();
             }
         },
 
@@ -225,56 +282,10 @@ let taskEditorOptions = {
             }
         },
 
-        completeAutocomplete(): void {
-            // TODO: Revise when other types are added.
-            let projectNode = EditorNodeConstructors.projectPillNodeFromProject(this.autocompleteSelection);
-            this.editorNodes = EditorNodeMutators.addOrReplaceProjectNode(this.editorNodes, projectNode)
-
-            this.removeAutocompleteTextFromInput();
-            this.cancelAutocomplete();
-        },
-
-        removeAutocompleteTextFromInput(): void {
-            let node = this.textInputNode; // TODO: Revise when other types are added
-            let caretPosition = this.autocompleteState!.caretPosition;
-            let strippedText = node.data.text.slice(0, caretPosition - 1);
-
-            this.editorNodes = EditorNodeMutators.replaceTextInTextInputNode(this.editorNodes, strippedText);
-        },
-
-        onSelectFromAutocompleteBox(index): void {
-            this.autocompleteState!.activeSuggestionIndex = index;
-            this.completeAutocomplete();
-        },
-
-        keyPressOnTextInput: function(event, nodePosition: number) {
-            let caretPosition = (event.target.selectionStart);
-            let characterBeforeCursor = event.target.value[caretPosition-1];
-
-            let keyIsPoundSign = (event.charCode === CHAR_CODE_POUND_SIGN);
-            let previousCharacterIsSpace = (characterBeforeCursor === ' ');
-            let isValidStartPoint = previousCharacterIsSpace || (caretPosition === 0);
-
-            if (!this.isAutocompleting && keyIsPoundSign && isValidStartPoint) {
-                this.autocompleteState = {
-                    nodePosition: nodePosition,
-                    caretPosition: caretPosition + 1, // Why the +1?
-                    activeSuggestionIndex: 0
-                }
-
-                // TODO: Disable cursor movements when autocomplete is active
-
-                return;
-            }
-
+        tabOnTextInput: function(event, nodePosition) {
             if (this.isAutocompleting) {
-                // Reset the active suggestion, because the user pressed a key.
-                this.autocompleteState!.activeSuggestionIndex = 0;
-            }
-
-            let keyIsSpace = (event.charCode === CHAR_CODE_SPACE);
-            if (this.isAutocompleting && keyIsSpace) {
-                this.cancelAutocomplete();
+                event.preventDefault();
+                this.completeAutocomplete();
             }
         },
 
@@ -292,11 +303,63 @@ let taskEditorOptions = {
             if (this.autocompleteState!.activeSuggestionIndex < (this.autocompleteSuggestions.length - 1)) {
                 this.autocompleteState!.activeSuggestionIndex++;
             }
+        },
+
+        getInputWidth(nodePosition: number): string {
+            let fakeNodeList = this.$refs['fake-text-input-' + nodePosition];
+
+            if (fakeNodeList && fakeNodeList[0]) {
+                console.log(fakeNodeList[0]);
+                let width = fakeNodeList[0].getBoundingClientRect().width + 12;
+                return width + "px";
+            } else {
+                // Not instantiated yet?
+                return "2px";
+            }
+        },
+
+        focusLastCharacter(): void {
+            this.editorNodes.activeNodeIndex = this.editorNodes.nodes.length - 1;
+            this.focusActiveNode();
+
+            // Set selection to last character?
+        },
+
+        focusActiveNode(): void {
+            (this.$refs['text-input-' + this.editorNodes.activeNodeIndex][0] as HTMLElement).focus();
+        },
+
+        setActiveNode(nodePosition: number): void {
+            this.editorNodes.activeNodeIndex = nodePosition;
         }
     },
 
     mounted: function() {
-        (this.$refs['text-input'][0] as HTMLElement).focus();
+        this.focusActiveNode();
+        this.$forceUpdate(); // Trigger updated
+    },
+
+    updated: function() {
+        this.focusActiveNode();
+
+        let refs = this.$refs;
+        let activeNodeIndex = this.editorNodes.activeNodeIndex;
+        _.forEach(this.editorNodes.nodes, function(node, position) {
+            if (node.type !== 'TextInputNode') {
+                return;
+            }
+
+            let fakeElement = refs['fake-text-input-' + position][0];
+            let actualElement = refs['text-input-' + position][0];
+            let width = fakeElement.getBoundingClientRect().width + 2;
+            if (position === activeNodeIndex) {
+                width = width + 8;
+            } else {
+                width = width;
+            }
+
+            actualElement.style.width = width + "px";
+        });
     },
 
     // TODO: binding size is a hack. Better ways?
@@ -305,23 +368,34 @@ let taskEditorOptions = {
         <div class="task-editor">
             <div class="task-form">
                 <form @submit.prevent="submitChanges()" @keydown.esc="emitClose()">
-                    <div class="input-nodes-container">
-                        <template v-for="(editorNode, nodePosition) in editorNodes">
-                            <input v-if="editorNode.type === 'TextInputNode'"
-                                type="text"
-                                class="text-input"
-                                ref="text-input"
-                                v-model="editorNode.data.text"
-                                :size="Math.max(editorNode.data.text.length, 50)"
-                                @keydown.delete="backspaceOnTextInput($event, nodePosition)"
-                                @keydown.enter.prevent="enterOnTextInput($event, nodePosition)"
-                                @keydown.down.prevent="shiftAutocompleteSelectionDown()"
-                                @keydown.up.prevent="shiftAutocompleteSelectionUp()"
-                                @keypress="keyPressOnTextInput($event, nodePosition)">
-                            </input>
-                            <div class="project-pill"
-                                v-if="editorNode.type === 'ProjectPillNode'">
+                    <div class="input-nodes-container" @click="focusLastCharacter()">
+                        <template v-for="(editorNode, nodePosition) in editorNodes.nodes">
+                            <template v-if="editorNode.type === 'TextInputNode'">
+                                <input
+                                    type="text"
+                                    class="text-input"
+                                    :ref="'text-input-' + nodePosition"
+                                    v-model="editorNode.data.text"
+                                    @click.stop="setActiveNode(nodePosition)"
+                                    @keydown.delete="backspaceOnTextInput($event, nodePosition)"
+                                    @keydown.enter.prevent="enterOnTextInput($event, nodePosition)"
+                                    @keydown.tab="tabOnTextInput($event, nodePosition)"
+                                    @keydown.left="leftOnTextInput($event, nodePosition)"
+                                    @keydown.right="rightOnTextInput($event, nodePosition)"
+                                    @keydown.down.prevent="shiftAutocompleteSelectionDown()"
+                                    @keydown.up.prevent="shiftAutocompleteSelectionUp()"
+                                    @keypress="keyPressOnTextInput($event, nodePosition)" /><!--
+
+                                --><div class="fake-text-input"
+                                     :ref="'fake-text-input-' + nodePosition"
+                                     v-text="editorNode.data.text">
+                                </div>
+                            </template><!--
+                            --><div class="project-pill" v-if="editorNode.type === 'ProjectPillNode'">
                                 <i class="fa fa-folder-o"></i> {{ editorNode.data.project.name }}
+                            </div><!--
+                            --><div class="project-pill" v-if="editorNode.type === 'LabelPillNode'">
+                                @{{ editorNode.data.label.name }}
                             </div>
                         </template>
 

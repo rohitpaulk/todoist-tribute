@@ -1,13 +1,39 @@
 import * as _ from 'lodash';
 
-import { Project } from '../models'; // This dependency should not be required?
+// This is the data structure that powers the task editor. The task editor
+// supports entering projects/labels inline with the help of autocomplete. If
+// a user accepts an autocomplete suggestion, a 'pill' node is added to the list.
+//
+// x-------------------------------------------------------------------------x
+// | x--------------x x---------x x---------x                                |
+// | | Project Name | | Label 1 | | Label 2 | Text input for user is here |  |
+// | x--------------x x---------x x---------x                                |
+// x-------------------------------------------------------------------------x
+//
+// [ ProjectPillNode, LabelPillNode, LabelPillNode, TextInputNode ]
+//
+// Constraints
+//
+// - All pill nodes must be surrounded by text input nodes on both sides.
+// - All pill nodes must have interstitial text input nodes. This is needed to
+//   allow the user to navigate with the cursor.
+// - Consecutive text input nodes aren't allowed, merge contents if needed
+// - Only one project node must be present (since a task can only belong to one
+//   project)
+// - Multiple label nodes may be present, even if they have duplicate labels.
 
-interface ProjectPillNode {
-    type: 'ProjectPillNode'
-    data: {
-        project: Project
-    }
-}
+type EditorNodeList = {
+    nodes: EditorNode[]
+    activeNodeIndex: number
+};
+
+type EditorNode = ProjectPillNode | LabelPillNode | TextInputNode;
+
+type PillResource = {
+    id: string,
+    name: string,
+    colorHex: string
+};
 
 interface TextInputNode {
     type: 'TextInputNode',
@@ -16,10 +42,22 @@ interface TextInputNode {
     }
 }
 
-type EditorNode = ProjectPillNode | TextInputNode;
+interface ProjectPillNode {
+    type: 'ProjectPillNode'
+    data: {
+        project: PillResource
+    }
+}
+
+interface LabelPillNode {
+    type: 'LabelPillNode'
+    data: {
+        label: PillResource
+    }
+}
 
 let Constructors = {
-    projectPillNodeFromProject(project: Project): ProjectPillNode {
+    pillNodeFromProject(project: PillResource): ProjectPillNode {
         return {
             type: 'ProjectPillNode',
             data: {
@@ -28,7 +66,7 @@ let Constructors = {
         };
     },
 
-    textInputNodeFromText(text: string): TextInputNode {
+    inputNodeFromText(text: string): TextInputNode {
         return {
             type: 'TextInputNode',
             data: {
@@ -36,58 +74,145 @@ let Constructors = {
             }
         };
     },
-};
 
-let Mutators = {
-    removeNonInputNodeBefore(editorNodes: EditorNode[], nodePosition: number): EditorNode[] {
-        if (nodePosition === 0) {
-            return editorNodes; // No nodes before
-        }
-
-        let newNodes = editorNodes.slice();
-        if (editorNodes[nodePosition - 1].type !== 'TextInputNode') {
-            newNodes.splice(nodePosition - 1, 1);
-        }
-
-        // TODO: If there was a text element before both, merge that with this!
-
-        return newNodes;
-    },
-
-    addOrReplaceProjectNode(editorNodes: EditorNode[], projectNode: ProjectPillNode): EditorNode[] {
-         // TODO: Revisit when other node types are added
-        if (editorNodes.length > 2) {
-            throw "AssertionError: Expected 2 nodes at max"
-        }
-        let hasProjectNode = (editorNodes.length == 2);
-        let newNodes = editorNodes.slice();
-
-        if (hasProjectNode) {
-            newNodes[0] = projectNode;
-        } else {
-            newNodes.unshift(projectNode);
-        }
-
-        return newNodes;
-    },
-
-    replaceTextInTextInputNode(editorNodes: EditorNode[], text): EditorNode[] {
-         // TODO: Revisit when other node types are added
-        if (editorNodes.length > 2) {
-            throw "AssertionError: Expected 2 nodes at max"
-        }
-
-        let hasProjectNode = (editorNodes.length == 2);
-        let newNodes = editorNodes.slice();
-
-        if (hasProjectNode) {
-            (newNodes[1] as TextInputNode).data.text = text;
-        } else {
-            (newNodes[0] as TextInputNode).data.text = text;
-        }
-
-        return newNodes;
+    pillNodeFromLabel(label: PillResource): LabelPillNode {
+        return {
+            type: 'LabelPillNode',
+            data: {
+                label: label
+            }
+        };
     }
 };
 
-export { ProjectPillNode, TextInputNode, EditorNode, Constructors, Mutators }
+let Mutators = {
+    removePillNodeBefore(nodeList: EditorNodeList, pos: number): EditorNodeList {
+        if (pos === 0) {
+            return nodeList; // No nodes before
+        }
+
+        let newNodes = nodeList.nodes.slice();
+
+        let pillNodePosition = pos - 1;
+        let firstInputNode = newNodes[pillNodePosition - 1];
+        let pillNode = newNodes[pillNodePosition];
+        let secondInputNode = newNodes[pillNodePosition + 1];
+
+        if (firstInputNode.type !== 'TextInputNode') {
+            throw "AssertionError: Expected a TextInputNode before the pill node being removed"
+        }
+
+        if (pillNode.type === 'TextInputNode') {
+            throw "AssertionError: Expected a pill node before TextInputNode"
+        }
+
+        if (secondInputNode.type !== 'TextInputNode') {
+            throw "AssertionError: Expected a TextInputNode after the pill node being removed"
+        }
+
+        let secondNodeText = secondInputNode.data.text;
+
+        // Remove both pill & input node
+        newNodes.splice(pillNodePosition, 2);
+
+        // Concatenate text from both input nodes
+        firstInputNode.data.text += secondNodeText
+
+        nodeList.nodes = newNodes;
+        nodeList.activeNodeIndex = pillNodePosition - 1;
+
+        return nodeList;
+    },
+
+    insertTextNode(nodeList: EditorNodeList, pos: number, node: TextInputNode): EditorNodeList {
+        // If nodePosition is last, not allowed!
+        // If nodePosition is adjacent to a textNode, not allowed!
+
+        // If nodePosition is adjacent to a textNode, not allowed!
+        return nodeList; // TODO
+    },
+
+    addLabelNode(nodeList: EditorNodeList, pos: number, node: LabelPillNode): EditorNodeList {
+        let newNodes = nodeList.nodes.slice();
+
+        // Inserted in reverse order, will appear as [PILL_NODE] [EMPTY_TEXT_NODE]
+        newNodes.splice(pos, 0, Constructors.inputNodeFromText(''));
+        newNodes.splice(pos, 0, node);
+
+        nodeList.nodes = newNodes;
+
+        nodeList.activeNodeIndex = pos + 1;
+
+        return nodeList;
+    },
+
+    addOrReplaceProjectNode(nodeList: EditorNodeList, pos: number, node: ProjectPillNode): EditorNodeList {
+        let hasProjectNode = !!Accessors.getProjectNode(nodeList);
+
+        // TODO: Clear these assumptions!
+        if (pos != nodeList.nodes.length) {
+            throw "AssertionError: Expected autocomplete to be at end of list";
+        }
+
+        let newNodes = nodeList.nodes.slice();
+        if (hasProjectNode) {
+            let projectNodeIndex = _.findIndex(nodeList.nodes, (x) => x.type === 'ProjectPillNode');
+            newNodes[projectNodeIndex] = node;
+        } else {
+            newNodes.push(node);
+            newNodes.push(Constructors.inputNodeFromText(''));
+            nodeList.activeNodeIndex = newNodes.length - 1;
+        }
+
+        nodeList.nodes = newNodes;
+
+        return nodeList;
+    },
+
+    replaceTextNodeAt(nodeList: EditorNodeList, pos: number, newNode: TextInputNode): EditorNodeList {
+        let newNodes = nodeList.nodes.slice();
+        let oldNode = (newNodes[pos]);
+
+        if (oldNode.type !== "TextInputNode") {
+            throw "AssertionError: Expected node to be a text node, got: " + oldNode.type;
+        }
+
+        newNodes[pos] = newNode;
+
+        nodeList.nodes = newNodes;
+        return nodeList;
+    }
+};
+
+let Accessors = {
+    getProjectNode(nodeList: EditorNodeList): ProjectPillNode | null {
+        let projectPillNode = _.find(nodeList.nodes, (x) => x.type === 'ProjectPillNode');
+
+        if (projectPillNode) {
+            return projectPillNode as ProjectPillNode;
+        } else {
+            return null;
+        }
+    },
+
+    getLabelNodes(nodeList: EditorNodeList): LabelPillNode[] {
+        return _.filter(nodeList.nodes, (x) => x.type === 'LabelPillNode') as LabelPillNode[];
+    },
+
+    getTextNodes(nodeList: EditorNodeList): TextInputNode[] {
+        return _.filter(nodeList.nodes, (x) => x.type === 'TextInputNode') as TextInputNode[];
+    },
+
+    getTextNodeAt(nodeList: EditorNodeList, nodePosition: number) {
+        let node = nodeList.nodes[nodePosition];
+
+        if (node.type !== "TextInputNode") {
+            throw "AssertionError: Expected node to be a text node, got: " + node.type;
+        }
+
+        return node;
+    }
+};
+
+export { ProjectPillNode, TextInputNode, EditorNode, LabelPillNode, EditorNodeList };
+export { Constructors, Mutators, Accessors }

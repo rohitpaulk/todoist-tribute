@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 
 import { Label, Project, Task } from './models';
 import { API } from './API'
+import { AutocompleteDefinition } from './helpers/autocomplete';
 
 type ScopeType = "project" | "label"
 
@@ -28,6 +29,7 @@ interface TuduStoreOptions {
 interface CreateTaskPayload {
     title: string
     projectId: string
+    labelIds: string[]
 }
 
 interface UpdateTaskPayload extends CreateTaskPayload {
@@ -52,6 +54,8 @@ interface UpdateProjectPayload extends CreateProjectPayload {
 type CreateLabelPayload = CreateProjectPayload;
 type UpdateLabelPayload = UpdateProjectPayload;
 
+const CHAR_CODE_POUND_SIGN = 35;
+const CHAR_CODE_AT_SIGN = 64;
 
 function filterTasksByScope(tasks: Task[], scope: Scope): Task[] {
     if (scope.type === 'project') {
@@ -83,6 +87,21 @@ let storeOptions = {
     },
 
     getters: {
+        autocompleteDefinitions: function(state): AutocompleteDefinition[] {
+            return [
+                {
+                    type: "project",
+                    triggerCharCode: CHAR_CODE_POUND_SIGN,
+                    suggestions: state.projects
+                },
+                {
+                    type: "label",
+                    triggerCharCode: CHAR_CODE_AT_SIGN,
+                    suggestions: state.labels
+                }
+            ];
+        },
+
         tasksForActiveScope: function(state): Task[] {
             return filterTasksByScope(state.tasks, state.activeScope);
         },
@@ -251,7 +270,7 @@ let storeOptions = {
         },
 
         createTask({commit, getters}, payload: CreateTaskPayload) {
-            getters.api.createTask(payload.title, payload.projectId).then(function(task: Task) {
+            getters.api.createTask(payload.title, payload.projectId, payload.labelIds).then(function(task: Task) {
                 commit('addTask', task)
             });
         },
@@ -262,7 +281,8 @@ let storeOptions = {
 
             let apiPayload = {
                 title: payload.title,
-                project_id: payload.projectId
+                project_id: payload.projectId,
+                label_ids: payload.labelIds
             };
 
             getters.api.updateTask(id, apiPayload).then(function(task: Task) {

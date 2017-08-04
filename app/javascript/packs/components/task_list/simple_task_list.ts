@@ -27,6 +27,12 @@ let taskListOptions = {
         }
     },
 
+    computed: {
+        autocompleteDefinitions() {
+            return this.$store.getters.autocompleteDefinitions;
+        }
+    },
+
     props: {
         tasks: { required: true }
     },
@@ -52,7 +58,8 @@ let taskListOptions = {
                     <task-editor
                         v-if="taskBeingEdited && (taskBeingEdited.id === task.id)"
                         @close="closeEditor()"
-                        :task-to-edit="task">
+                        :task-to-edit="task"
+                        :autocomplete-definitions="autocompleteDefinitions">
                     </task-editor>
                     <task-item
                         v-else

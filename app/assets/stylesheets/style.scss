@@ -459,6 +459,18 @@ $color-gray: #bbb;
     .input-nodes-container {
         line-height: 24px;
 
+        input.text-input, .fake-text-input {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 300;
+        }
+
+        .fake-text-input {
+            position: absolute;
+            left: -100000000px;
+            white-space: pre; // Force width to scale with whitespace
+        }
+
         div.project-pill {
             font-family: 'Open Sans', sans-serif;
             font-size: 14px;
@@ -471,7 +483,7 @@ $color-gray: #bbb;
             color: white;
             border-radius: 2px;
             padding: 0px 5px 0px 5px;
-            margin-right: 5px;
+            margin-right: 2px;
         }
 
         .autocomplete-container {
