@@ -49,7 +49,7 @@ function _getQuery(nodeList: EditorNodeList, state: State): string {
     //       If someone triggers an autocomplete in the middle of a text
     //       box, this will fail.
 
-    return node.data.text.slice(triggerPosition);
+    return _.trim(node.data.text.slice(triggerPosition));
 }
 
 function getAutocompleteSuggestions(definitions: Definition[], state: State, nodeList: EditorNodeList): Suggestion[] {
