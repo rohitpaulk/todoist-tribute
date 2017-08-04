@@ -46,7 +46,7 @@ The backend is written in [Ruby](https://www.ruby-lang.org/en/) + [Rails](https:
       - [x] `a` to open editor at bottom of list
       - [ ] `A` to open editor at top of list
     - [ ] Task Editor
-      - [ ] `Enter` to create new task and open editor below
+      - [x] `Enter` to create new task and open editor below
       - [x] `Esc` to cancel
       - [ ] `Shift + Enter` to save and create new one below
       - [ ] `Ctrl + Enter` to save and create new one above
