@@ -78,4 +78,14 @@ class TaskTest < ActiveSupport::TestCase
 
     assert_equal(2, first_task.sort_order)
   end
+
+  test "Updating is_completed sets completed_at" do
+    task = FactoryGirl.create(:task)
+
+    assert_nil task.completed_at
+    task.update!(is_completed: true)
+
+    refute_nil task.completed_at
+    assert (task.completed_at - Time.now).abs < 5
+  end
 end

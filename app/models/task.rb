@@ -6,6 +6,11 @@ class Task < ApplicationRecord
   has_and_belongs_to_many :labels
 
   before_update :reset_sort_order_if_project_changed
+  before_update :set_completed_at, if: -> { is_completed_changed? && !is_completed_was }
+
+  def set_completed_at
+    self.completed_at = Time.now
+  end
 
   def self.reorder!(task_ids, project)
     # Pulled from Orderable
