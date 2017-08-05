@@ -201,7 +201,8 @@ let resourceListOptions = {
                     <component v-if="resourceBeingEdited && (resourceBeingEdited.id === resource.id)"
                                :is="editorComponent"
                                @close="closeEditorForUpdate()"
-                               :resource-to-edit="resource">
+                               :resource-to-edit="resource"
+                               :key="'editor-editing' + resource.id">
                     </component>
                     <li v-else
                         :class="resourceItemClasses[resource.id]"

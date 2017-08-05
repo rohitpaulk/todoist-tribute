@@ -252,7 +252,9 @@ let taskEditorOptions = {
 
         backspaceOnTextInput: function(event, nodePosition: number) {
             let caretPosition = (event.target.selectionStart);
-            let isDeletingPreviousElement = (caretPosition === 0);
+            let hasActiveSelection = (caretPosition != event.target.selectionEnd);
+            let cursorIsAtStart = (caretPosition === 0);
+            let isDeletingPreviousElement = cursorIsAtStart && !hasActiveSelection;
             if (isDeletingPreviousElement) {
                 event.preventDefault();
                 this.editorNodes = EditorNodeMutators.removePillNodeBefore(this.editorNodes, nodePosition);

@@ -52,7 +52,7 @@ let taskListOptions = {
     },
 
     template: `
-        <div>
+        <div class="task-list-container">
             <div class="task-list simple-task-list">
                 <task-editor
                     v-for="task in tasks"

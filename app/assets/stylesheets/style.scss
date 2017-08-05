@@ -354,6 +354,10 @@ $color-gray: #bbb;
     }
 }
 
+.content .task-list-container {
+    padding-bottom: 180px;
+}
+
 .content .task-list {
     padding-left: 10px;
     font-size: 14px;
@@ -457,6 +461,7 @@ $color-gray: #bbb;
     margin-top: 7px;
 
     .input-nodes-container {
+        cursor: text;
         line-height: 24px;
 
         input.text-input, .fake-text-input {
@@ -496,6 +501,11 @@ $color-gray: #bbb;
             width: 80%;
             border: 1px solid $color-light-gray;
             box-shadow: 0px 0px 10px 0px $color-light-gray;
+
+            .autocomplete-message {
+                padding: 10px 10px 10px 15px;
+                color: #777;
+            }
 
             overflow-y: scroll;
             text-overflow: ellipsis;

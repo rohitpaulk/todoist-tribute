@@ -29,7 +29,7 @@ let ProjectEditorOptions = {
         return {
             project: {
                 name: (this.resourceToEdit === null) ? '' : this.resourceToEdit.name,
-                colorHex: (this.resourceToEdit === null) ? '000000' : this.resourceToEdit.colorHex,
+                colorHex: (this.resourceToEdit === null) ? 'a8c8e4' : this.resourceToEdit.colorHex,
             }
         };
     },
