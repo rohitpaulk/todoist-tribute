@@ -38,6 +38,9 @@ let AutocompleteBoxOptions = {
 
     template: `
         <div class="autocomplete-container">
+            <div v-if="suggestions.length === 0" class="autocomplete-message">
+                No items found.
+            </div>
             <template v-for="(project, index) in suggestions">
                 <div :class="projectClasses[index]" @click="emitSelect(index)">
                     <span class="icon-holder">

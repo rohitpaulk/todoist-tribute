@@ -502,6 +502,11 @@ $color-gray: #bbb;
             border: 1px solid $color-light-gray;
             box-shadow: 0px 0px 10px 0px $color-light-gray;
 
+            .autocomplete-message {
+                padding: 10px 10px 10px 15px;
+                color: #777;
+            }
+
             overflow-y: scroll;
             text-overflow: ellipsis;
 
