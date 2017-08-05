@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170731202250) do
+ActiveRecord::Schema.define(version: 20170805233735) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,6 +52,7 @@ ActiveRecord::Schema.define(version: 20170731202250) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "project_id"
+    t.datetime "completed_at"
     t.index ["project_id", "sort_order"], name: "tasks_unique_sort_order", unique: true
   end
 
