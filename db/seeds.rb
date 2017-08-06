@@ -9,8 +9,8 @@
 puts "Creating projects..."
 
 inbox = Project.create!(name: "Inbox", color_hex: "555555")
-disney = Project.create!(name: "Disney", color_hex: "0072C6")
-pixar = Project.create!(name: "Pixar", color_hex: "FFCC00")
+errands = Project.create!(name: "🛵 Errands", color_hex: "0072C6")
+reading = Project.create!(name: "📚 Reading", color_hex: "FFCC00")
 
 puts "Created projects"
 
@@ -25,13 +25,18 @@ puts "Created labels"
 
 puts "Creating tasks..."
 
-Task.create!(sort_order: 1, title: 'First task', project: inbox, labels: [easy])
-Task.create!(sort_order: 2, title: 'and the second...', project: inbox)
-Task.create!(sort_order: 3, title: 'the 3rd!', project: inbox)
+Task.create!(sort_order: 1, title: 'This is a task. Click on it to edit.', project: inbox)
+Task.create!(sort_order: 2, title: 'Tasks belong to a single project. This one belongs in the inbox.', project: inbox)
+Task.create!(sort_order: 3, title: 'Tasks can also belong to multiple labels. Easy and hard, in this case.', project: inbox, labels: [easy, hard])
+Task.create!(sort_order: 4, title: 'When creating/editing a task, use # to assign projects and @ to assign labels.', project: inbox)
+Task.create!(sort_order: 5, title: 'Try clicking on different projects in the sidebar to view their tasks.', project: inbox)
 
-Task.create!(sort_order: 1, title: 'Fire mickey', project: disney, labels: [hard])
-Task.create!(sort_order: 2, title: 'Promote donald', project: disney, labels: [medium])
+Task.create!(sort_order: 1, title: 'Buy milk 🥛', project: errands, labels: [easy])
+Task.create!(sort_order: 2, title: 'Buy eggs 🥚', project: errands, labels: [medium])
+Task.create!(sort_order: 3, title: 'File taxes 📝', project: errands, labels: [hard])
 
-Task.create!(sort_order: 1, title: 'Hire steve', project: pixar)
+Task.create!(sort_order: 1, title: 'Code complete by Steve McConnell', project: reading)
+Task.create!(sort_order: 2, title: 'Practical Vim by Drew Neil', project: reading)
+Task.create!(sort_order: 3, title: 'Beautiful Code by Andy Oram', project: reading)
 
 puts "Tasks created."
