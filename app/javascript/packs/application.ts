@@ -49,8 +49,16 @@ new Vue({
     store,
     created: function() {
         // TODO: Move to a single init function
-        this.$store.dispatch('refreshTasks');
-        this.$store.dispatch('refreshProjects');
-        this.$store.dispatch('refreshLabels');
+        let vueInstance = this;
+        var refresh = function () {
+            vueInstance.$store.dispatch('refreshTasks');
+            vueInstance.$store.dispatch('refreshProjects');
+            vueInstance.$store.dispatch('refreshLabels');
+        };
+
+        // Reload state when tab is focused
+        window.addEventListener("focus", refresh);
+
+        refresh();
     }
 });
