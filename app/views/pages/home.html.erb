@@ -55,7 +55,7 @@
                         <div>
                             <task-list-switcher
                                 :tasks="$store.getters.tasksForActiveScope"
-                                :scope="$store.state.activeScope">
+                                :scope="$store.getters.activeScope">
                             </task-list-switcher>
                         </div>
                     </div>

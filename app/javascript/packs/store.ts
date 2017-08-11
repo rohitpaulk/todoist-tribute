@@ -12,14 +12,22 @@ interface Scope {
     resource: Project | Label
 }
 
+interface ScopeId {
+    type: ScopeType
+    resourceId: string
+}
+
 interface TuduStoreOptions {
     tasks: Task[]
     projects: Project[]
     labels: Label[]
 
-    // 'Scope' is what the user has currently filtered tasks by. This could be
+    // 'ScopeId' is what the user has currently filtered tasks by. This could be
     // a project, label, filter etc.
-    activeScope: Scope
+    //
+    // Callers use the `activeScope` getter to get a hydrated resource rather
+    // than just an ID.
+    activeScopeId: ScopeId
 
     // URL of the backend API. This is injected by the application.
     // TODO: Convert this to an API object instead?
@@ -57,16 +65,14 @@ type UpdateLabelPayload = UpdateProjectPayload;
 const CHAR_CODE_POUND_SIGN = 35;
 const CHAR_CODE_AT_SIGN = 64;
 
-function filterTasksByScope(tasks: Task[], scope: Scope): Task[] {
-    if (scope.type === 'project') {
-        let project = scope.resource;
+function filterTasksByScopeId(tasks: Task[], scopeId: ScopeId): Task[] {
+    if (scopeId.type === 'project') {
         return tasks.filter(function(task: Task) {
-            return task.projectId === project.id;
+            return task.projectId === scopeId.resourceId;
         });
     } else {
-        let label = scope.resource;
         return tasks.filter(function(task: Task) {
-            return _.includes(task.labelIds, label.id);
+            return _.includes(task.labelIds, scopeId.resourceId);
         });
     }
 }
@@ -76,12 +82,14 @@ let storeOptions = {
 
     state: {
         tasks: [],
-        projects: [],
+        projects: [
+            // TODO: Look into avoiding hardcoding this
+            {name: "Inbox", id: "1", sortOrder: 1, colorHex: "000000"}
+        ],
         labels: [],
-        // TODO: Look into avoiding hardcoding this
-        activeScope: {
+        activeScopeId: {
             type:'project',
-            resource: {id: '1', name: 'Inbox', colorHex: "000000", sortOrder: 1 }
+            resourceId: '1'
         },
         apiUrl: '' // Filled by the application
     },
@@ -103,34 +111,51 @@ let storeOptions = {
         },
 
         tasksForActiveScope: function(state): Task[] {
-            return filterTasksByScope(state.tasks, state.activeScope);
+            return filterTasksByScopeId(state.tasks, state.activeScopeId);
         },
 
-        activeScopeName: function(state): string {
-            return state.activeScope.resource.name;
+        activeScopeName: function(state, getters): string {
+            return getters.activeScope.resource.name;
+        },
+
+        activeScope: function(state, getters): Scope {
+            if (state.activeScopeId.type === 'project') {
+                return {
+                    type: 'project',
+                    resource: getters.projectFromId(state.activeScopeId.resourceId)
+                }
+            } else if (state.activeScopeId.type === 'label') {
+                return {
+                    type: 'label',
+                    resource: getters.labelFromId(state.activeScopeId.resourceId)
+                }
+            } else {
+                // TODO: Check this
+                throw "Typescript doesn't catch this?";
+            }
         },
 
         // Move active* to individual components?
 
-        activeProject: function(state): Project | null {
-            if (state.activeScope.type === 'project') {
-                return state.activeScope.resource;
+        activeProject: function(state, getters): Project | null {
+            if (state.activeScopeId.type === 'project') {
+                return getters.activeScope.resource;
             } else {
                 return null;
             }
         },
 
         activeProjectId: function(state): string | null {
-            if (state.activeScope.type === 'project') {
-                return state.activeScope.resource.id;
+            if (state.activeScopeId.type === 'project') {
+                return state.activeScopeId.resourceId;
             } else {
                 return null;
             }
         },
 
-        activeLabel: function(state): Label | null {
-            if (state.activeScope.type === 'label') {
-                return state.activeScope.resource;
+        activeLabel: function(state, getters): Label | null {
+            if (state.activeScopeId.type === 'label') {
+                return getters.activeScope.resource;
             } else {
                 return null;
             }
@@ -189,6 +214,12 @@ let storeOptions = {
             };
         },
 
+        labelFromId(state): (string) => Label {
+            return function(id: string) {
+                return state.labels.find((x) => x.id === id)!;
+            };
+        },
+
         projectFromId(state): (string) => Project {
             return function(id: string) {
                 return state.projects.find((x) => x.id === id)!;
@@ -202,7 +233,11 @@ let storeOptions = {
 
     mutations: {
         setActiveScope(state, scope: Scope) {
-            state.activeScope = scope;
+            state.activeScopeId = {type: scope.type, resourceId: scope.resource.id};
+        },
+
+        resetActiveScope(state) {
+            state.activeScopeId = {type: 'project', resourceId: '1'};
         },
 
         setTasks(state, tasks: Task[]) {
@@ -332,8 +367,12 @@ let storeOptions = {
             });
         },
 
-        deleteProject({commit, getters}, id: string) {
+        deleteProject({state, commit, getters}, id: string) {
             getters.api.deleteProject(id).then(function() {
+                if (state.activeScopeId.type === 'project' && state.activeScopeId.resourceId === id) {
+                    commit('resetActiveScope');
+                }
+
                 commit('removeProject', id);
             });
             // TODO: Refresh tasks too? Could contain null references
@@ -366,8 +405,12 @@ let storeOptions = {
             });
         },
 
-        deleteLabel({commit, getters}, id: string) {
+        deleteLabel({state, commit, getters}, id: string) {
             getters.api.deleteLabel(id).then(function() {
+                if (state.activeScopeId.type === 'label' && state.activeScopeId.resourceId === id) {
+                    commit('resetActiveScope');
+                }
+
                 commit('removeLabel', id);
             });
         },
