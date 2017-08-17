@@ -98,6 +98,7 @@ let taskListOptions = {
         },
 
         openAddTaskForm: function() {
+            this.closeEditTaskForm(); // Only keep a single editor open at a time
             this.taskCreatorHash = Math.random().toString(36);
         },
 
@@ -106,6 +107,7 @@ let taskListOptions = {
         },
 
         openEditTaskForm: function(task) {
+            this.closeAddTaskForm(); // Only keep a single editor open at a time
             this.taskBeingEdited = task;
         },
 
