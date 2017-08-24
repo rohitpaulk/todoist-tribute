@@ -4,7 +4,7 @@ IRB.conf[:PROMPT][:CUSTOM_RAILSBOT] = {
   :PROMPT_N=>nil,
   :PROMPT_S=>nil,
   :PROMPT_C=>nil,
-  :RETURN=>"%s\n",
+  :RETURN=>"=> %s\n",
   :AUTO_INDENT=>false
 }
 IRB.conf[:PROMPT_MODE] = :CUSTOM_RAILSBOT
