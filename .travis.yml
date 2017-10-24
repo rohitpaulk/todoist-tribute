@@ -14,6 +14,7 @@ cache:
     - node_modules
 
 install:
+  - sqlite3 --version
   - bundle install
   - yarn install
 
