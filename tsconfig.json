@@ -3,6 +3,7 @@
     "sourceMap": true,
     "lib": ["es2015", "es5", "es2015.iterable", "dom"],
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "module": "commonjs",
     "moduleResolution": "node",
     "experimentalDecorators": true,
