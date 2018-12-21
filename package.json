@@ -14,7 +14,7 @@
     "ignore-loader": "^0.1.2",
     "js-yaml": "^3.9.0",
     "mousetrap": "^1.6.1",
-    "node-sass": "^4.5.3",
+    "node-sass": "^4.11.0",
     "path-complete-extname": "^0.1.0",
     "rails-erb-loader": "^5.1.0",
     "ts-loader": "^2.3.2",
