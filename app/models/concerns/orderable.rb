@@ -13,29 +13,29 @@ module Orderable
     # OrderableClass.reorder!([1, 2, 3], {project_id: 1})
     # ```
     def reorder_within_scope!(item_ids, scope)
-      if scope.empty?
-        where_clause = 'true = true'
-      else
-        where_clause = scope.map{|k, v|
-          "#{k}=#{ActiveRecord::Base.connection.quote(v)}"
-        }.join(" AND ")
+      # TODO: Not atomic
+      all_ids_in_scope = self.where(scope).pluck(:id)
+      if Set.new(all_ids_in_scope) != Set.new(item_ids)
+        item_ids += (Set.new(all_ids_in_scope) - Set.new(item_ids)).to_a
       end
 
-      quoted_ids = item_ids.map {|x| ActiveRecord::Base.connection.quote(x) }
-      ids_array = "ARRAY[#{quoted_ids.join(', ')}]::int[]"
-      scoped_tasks_query ="SELECT id::int FROM #{self.table_name} WHERE #{where_clause}"
+      # UPDATE orderable_class AS t
+      #    SET sort_order = v.sort_order
+      #   FROM (
+      #     VALUES (1, 2), (2, 3)
+      #   ) AS v(id, sort_order)
+      #   WHERE t.id = v.id
+      values = item_ids.each_with_index.map { |id, index|
+        "(#{ActiveRecord::Base.connection.quote(id)}, #{index + 1})"
+      }
 
-      # TODO: Make this work with bigint!
-      #
-      # UPDATE orderable_class
-      #    SET sort_order = (idx([3, 4] + ([1, 2, 3, 4, 5] - [3, 4])), klass.id::int)
-      #  WHERE scoped_column_name = scoped_value
       self.connection.execute <<-SQL
-        UPDATE #{self.table_name}
-          SET sort_order = (
-            idx(#{ids_array} + (ARRAY(#{scoped_tasks_query}) - #{ids_array}), #{self.table_name}.id::int)
-          )
-        WHERE #{where_clause}
+        UPDATE #{self.table_name} AS t
+           SET sort_order = v.sort_order
+          FROM (
+            VALUES #{values.join(",")}
+          ) AS v(id, sort_order)
+          WHERE t.id = v.id
       SQL
     end
 
