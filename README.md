@@ -27,6 +27,12 @@ You'll need [Ruby](https://www.ruby-lang.org/en/), [bundler](http://bundler.io/)
 
 Hit [localhost:3000](http://localhost:3000/) and you should be ready to go!
 
+### Running tests
+
+- Run `createdb tudu_testing` to create a testing database
+- Run `rake test` to run Ruby tests
+- Run `yarn test` to run JS tests
+
 ### Under the hood
 
 The backend is written in [Ruby](https://www.ruby-lang.org/en/) + [Rails](https://github.com/rails/rails), and the frontend in [Typescript](https://www.typescriptlang.org/) + [Vue.js](https://vuejs.org/).

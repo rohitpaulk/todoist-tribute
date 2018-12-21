@@ -1,6 +1,6 @@
 import assert = require('assert');
 import 'mocha';
-import * as Vue from 'vue';
+import Vue from 'vue';
 
 import { Project } from '../models';
 import { Scope } from '../store';

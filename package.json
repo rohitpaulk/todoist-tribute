@@ -3,34 +3,34 @@
   "private": true,
   "dependencies": {
     "@types/lodash": "^4.14.71",
-    "@types/mocha": "^2.2.41",
-    "@types/node": "^8.0.17",
-    "autoprefixer": "^7.1.2",
-    "axios": "^0.16.2",
-    "compression-webpack-plugin": "^1.0.0",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.12.18",
+    "autoprefixer": "^9.4.3",
+    "axios": "^0.18.0",
+    "compression-webpack-plugin": "^2.0.0",
     "extract-text-webpack-plugin": "^3.0.0",
     "fuse.js": "^3.0.5",
     "glob": "^7.1.2",
     "ignore-loader": "^0.1.2",
     "js-yaml": "^3.9.0",
     "mousetrap": "^1.6.1",
-    "node-sass": "^4.5.3",
-    "path-complete-extname": "^0.1.0",
+    "node-sass": "^4.11.0",
+    "path-complete-extname": "^1.0.0",
     "rails-erb-loader": "^5.1.0",
-    "ts-loader": "^2.3.2",
-    "typescript": "^2.4.2",
+    "ts-loader": "^5.3.2",
+    "typescript": "^3.2.2",
     "vue": "^2.4.2",
-    "vuex": "^2.3.1",
-    "webpack": "^3.4.1",
-    "webpack-manifest-plugin": "^1.2.1",
+    "vuex": "^3.0.1",
+    "webpack": "^4.28.1",
+    "webpack-manifest-plugin": "^2.0.4",
     "webpack-merge": "^4.1.0"
   },
   "devDependencies": {
-    "mocha": "^3.4.2",
-    "ts-node": "^3.3.0",
-    "webpack-dev-server": "^2.6.1"
+    "mocha": "^5.2.0",
+    "ts-node": "^7.0.1",
+    "webpack-dev-server": "^3.1.11"
   },
   "scripts": {
-    "test": "mocha --compilers ts:ts-node/register app/javascript/packs/tests/**/*.ts"
+    "test": "mocha --require ts-node/register app/javascript/packs/tests/**/*.ts"
   }
 }

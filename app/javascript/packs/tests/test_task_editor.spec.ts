@@ -1,6 +1,6 @@
 import assert = require('assert');
-import * as Vue from 'vue';
-import * as Vuex from 'vuex';
+import Vue from 'vue';
+import Vuex from 'vuex';
 import 'mocha';
 
 import { TaskEditor, TaskEditorOptions } from '../components/task_editor';

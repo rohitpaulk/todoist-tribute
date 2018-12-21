@@ -1,4 +1,4 @@
-import * as Fuse from 'fuse.js';
+import Fuse from 'fuse.js';
 import * as _ from 'lodash';
 
 import { EditorNode, EditorNodeList } from './editor_nodes';
