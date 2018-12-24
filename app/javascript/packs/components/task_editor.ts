@@ -88,10 +88,7 @@ let taskEditorOptions = {
     props: {
         initialProject: { },
         taskToEdit: { default: null },
-        autocompleteDefinitions: { default: function() {
-                return []
-            }
-        }
+        autocompleteDefinitions: { default: () => [] }
     },
 
     computed: {
