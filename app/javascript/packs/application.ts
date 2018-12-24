@@ -5,6 +5,7 @@ import { TaskListOptions } from "./components/task_list/task_list";
 import { TaskItemOptions } from "./components/task_list/task_item";
 import { SimpleTaskListOptions } from "./components/task_list/simple_task_list";
 import { TaskListSwitcherOptions } from "./components/task_list/task_list_switcher";
+import { SelfAdjustingInputOptions } from "./components/self_adjusting_input";
 import { TaskEditorOptions } from "./components/task_editor";
 import { AutocompleteBoxOptions } from "./components/autocomplete_box";
 import { ViewListOptions } from "./components/view_list";
@@ -25,6 +26,7 @@ Vue.component('task-list-switcher', TaskListSwitcherOptions);
 Vue.component('task-item', TaskItemOptions);
 Vue.component('task-editor', TaskEditorOptions);
 Vue.component('autocomplete-box', AutocompleteBoxOptions);
+Vue.component('self-adjusting-input', SelfAdjustingInputOptions);
 
 Vue.component('view-list', ViewListOptions);
 Vue.component('tab-switcher', TabSwitcherOptions);

@@ -3,6 +3,7 @@ import Vue, { ComponentOptions } from 'vue';
 
 import { Task, Project } from '../models';
 import { API } from '../API';
+import { SelfAdjustingInput } from './self_adjusting_input';
 import { CreateTaskPayload, UpdateTaskPayload } from '../store';
 import { EditorNode, EditorNodeList, LabelPillNode, TextInputNode } from '../helpers/editor_nodes'
 import { Constructors as EditorNodeConstructors } from '../helpers/editor_nodes'
@@ -325,18 +326,6 @@ let taskEditorOptions = {
             }
         },
 
-        getInputWidth(nodePosition: number): string {
-            let fakeElement = this.$refs['fake-text-input-' + nodePosition][0];
-            let width = fakeElement.getBoundingClientRect().width + 2;
-            return width;
-        },
-
-        setInputWidth(nodePosition: number, width: number) {
-            let actualElement = this.$refs['text-input-' + nodePosition][0];
-            console.log(actualElement);
-            actualElement.style.width = width + "px";
-        },
-
         focusLastCharacter(): void {
             this.editorNodes.activeNodeIndex = this.editorNodes.nodes.length - 1;
             this.focusActiveNode();
@@ -345,11 +334,16 @@ let taskEditorOptions = {
         },
 
         focusActiveNode(): void {
-            (this.$refs['text-input-' + this.editorNodes.activeNodeIndex][0] as HTMLElement).focus();
+            let input = this.$refs['text-input-' + this.editorNodes.activeNodeIndex][0] as SelfAdjustingInput
+            input.focus();
         },
 
         setActiveNode(nodePosition: number): void {
             this.editorNodes.activeNodeIndex = nodePosition;
+        },
+
+        testClick(): void {
+            console.log("clicked");
         }
     },
 
@@ -358,28 +352,7 @@ let taskEditorOptions = {
     },
 
     updated: function() {
-        console.log("Updated fired");
         this.focusActiveNode();
-
-        let that = this;
-
-        let refs = this.$refs;
-        let activeNodeIndex = this.editorNodes.activeNodeIndex;
-        _.forEach(this.editorNodes.nodes, function(node, position) {
-            if (node.type !== 'TextInputNode') {
-                return;
-            }
-
-            let width = that.getInputWidth(position);
-            if (position === activeNodeIndex) {
-                width = width + 8;
-            } else {
-                width = width;
-            }
-
-            console.log("Updating text input node");
-            that.setInputWidth(position, width);
-        });
     },
 
     // TODO: binding size is a hack. Better ways?
@@ -391,9 +364,7 @@ let taskEditorOptions = {
                     <div class="input-nodes-container" @click="focusLastCharacter()">
                         <template v-for="(editorNode, nodePosition) in editorNodes.nodes">
                             <template v-if="editorNode.type === 'TextInputNode'">
-                                <input
-                                    type="text"
-                                    class="text-input"
+                                <self-adjusting-input
                                     :ref="'text-input-' + nodePosition"
                                     v-model="editorNode.data.text"
                                     @click.stop="setActiveNode(nodePosition)"
@@ -404,12 +375,7 @@ let taskEditorOptions = {
                                     @keydown.right="rightOnTextInput($event, nodePosition)"
                                     @keydown.down.prevent="shiftAutocompleteSelectionDown()"
                                     @keydown.up.prevent="shiftAutocompleteSelectionUp()"
-                                    @keypress="keyPressOnTextInput($event, nodePosition)" /><!--
-
-                                --><div class="fake-text-input"
-                                     :ref="'fake-text-input-' + nodePosition"
-                                     v-text="editorNode.data.text">
-                                </div>
+                                    @keypress="keyPressOnTextInput($event, nodePosition)" />
                             </template><!--
                             --><div class="project-pill" v-if="editorNode.type === 'ProjectPillNode'">
                                 <i class="fa fa-folder-o"></i> {{ editorNode.data.project.name }}
