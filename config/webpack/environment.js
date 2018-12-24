@@ -15,4 +15,8 @@ environment.loaders.append('ignore', {
     use: 'ignore-loader'
 })
 
+environment.config.set('resolve.alias', {
+  'vue': 'vue/dist/vue.js'
+});
+
 module.exports = environment
