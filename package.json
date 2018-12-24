@@ -2,7 +2,7 @@
   "name": "tudu",
   "private": true,
   "dependencies": {
-    "@rails/webpacker": "^4.0.0-rc.2",
+    "@rails/webpacker": "https://github.com/rails/webpacker",
     "@types/lodash": "^4.14.71",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.18",
@@ -35,7 +35,7 @@
     "ts-node": "^7.0.1",
     "vue-template-compiler": "^2.5.21",
     "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "3.1.14"
+    "webpack-dev-server": "^3.1.14"
   },
   "scripts": {
     "test": "mocha --require ts-node/register app/javascript/packs/tests/**/*.ts",

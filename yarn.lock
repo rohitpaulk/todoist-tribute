@@ -639,10 +639,9 @@
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
   integrity sha512-5a6wqoJV/xEdbRNKVo6I4hO3VjyDq//8q2f9I6PBAvMesJHFauXDorcNCsr9RzvsZnaWi5NYCcfyqP1QeFHFbw==
 
-"@rails/webpacker@^4.0.0-rc.2":
+"@rails/webpacker@https://github.com/rails/webpacker":
   version "4.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/@rails/webpacker/-/webpacker-4.0.0-rc.2.tgz#dd8f26f755a31b31162ddc5e045e337aafe78022"
-  integrity sha512-OiTepphCcTg2DE68o4CBMhCeAQ7qmVNSQMfGW3Qslez7GrVypZPUIoJ0o9Bx/VhkO42Sf1pvuQemYPaxn0wVmQ==
+  resolved "https://github.com/rails/webpacker#0d2db5fe9c19ab9bbfa10f662499326ffd138e02"
   dependencies:
     "@babel/core" "^7.2.0"
     "@babel/plugin-proposal-class-properties" "^7.2.1"
@@ -7351,7 +7350,7 @@ webpack-dev-middleware@3.4.0:
     range-parser "^1.0.3"
     webpack-log "^2.0.0"
 
-webpack-dev-server@3.1.14:
+webpack-dev-server@^3.1.14:
   version "3.1.14"
   resolved "https://registry.yarnpkg.com/webpack-dev-server/-/webpack-dev-server-3.1.14.tgz#60fb229b997fc5a0a1fc6237421030180959d469"
   integrity sha512-mGXDgz5SlTxcF3hUpfC8hrQ11yhAttuUQWf1Wmb+6zo3x6rb7b9mIfuQvAPLdfDRCGRGvakBWHdHOa0I9p/EVQ==
