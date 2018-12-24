@@ -1,4 +1,4 @@
-import * as Vue from 'vue';
+import Vue from 'vue';
 import Vuex from 'vuex'
 
 import { TaskListOptions } from "./components/task_list/task_list";
