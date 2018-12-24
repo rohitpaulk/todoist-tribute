@@ -11,6 +11,7 @@
     "glob": "^7.1.2",
     "ignore-loader": "^0.1.2",
     "js-yaml": "^3.9.0",
+    "mini-css-extract-plugin": "^0.5.0",
     "mousetrap": "^1.6.1",
     "node-sass": "^4.11.0",
     "path-complete-extname": "^1.0.0",
@@ -20,17 +21,22 @@
     "vue": "^2.4.2",
     "vuex": "^3.0.1",
     "webpack": "^4.28.1",
-    "mini-css-extract-plugin": "^0.5.0",
     "webpack-manifest-plugin": "^2.0.4",
     "webpack-merge": "^4.1.0"
   },
   "devDependencies": {
+    "@vue/test-utils": "^1.0.0-beta.27",
+    "jsdom": "^13.1.0",
+    "jsdom-global": "^3.0.2",
     "mocha": "^5.2.0",
+    "sinon": "^7.2.2",
     "ts-node": "^7.0.1",
+    "vue-template-compiler": "^2.5.21",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.11"
   },
   "scripts": {
-    "test": "mocha --require ts-node/register app/javascript/packs/tests/**/*.ts"
+    "test": "mocha --require ts-node/register app/javascript/packs/tests/**/*.ts",
+    "test_debug": "mocha --require ts-node/register --inspect-brk app/javascript/packs/tests/**/*.ts"
   }
 }
