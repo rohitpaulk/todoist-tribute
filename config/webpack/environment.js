@@ -10,4 +10,9 @@ environment.loaders.append('ts', {
     use: 'ts-loader'
 })
 
+environment.loaders.append('ignore', {
+    test: /\.spec\.ts$/,
+    use: 'ignore-loader'
+})
+
 module.exports = environment
