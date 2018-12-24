@@ -367,6 +367,7 @@ let taskEditorOptions = {
                                 <self-adjusting-input
                                     :ref="'text-input-' + nodePosition"
                                     v-model="editorNode.data.text"
+                                    v-bind:pixelsAhead="(nodePosition == editorNodes.activeNodeIndex) ? 8 : 2"
                                     @click.stop="setActiveNode(nodePosition)"
                                     @keydown.delete="backspaceOnTextInput($event, nodePosition)"
                                     @keydown.enter.prevent="enterOnTextInput($event, nodePosition)"

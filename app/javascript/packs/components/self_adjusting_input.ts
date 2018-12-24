@@ -14,7 +14,8 @@ interface SelfAdjustingInput extends Vue {
 
 let selfAdjustingInputOptions = {
     props: {
-        value: { required: true }
+        value: { required: true },
+        pixelsAhead: { default: 0 }
     },
 
     data: function() {
@@ -48,7 +49,7 @@ let selfAdjustingInputOptions = {
     computed: {
         inputStyles: function() {
             return {
-                width: ((this.lastKnownWidth || 2) + 2) + "px"
+                width: ((this.lastKnownWidth || 2) + this.pixelsAhead) + "px"
             }
         }
     },
