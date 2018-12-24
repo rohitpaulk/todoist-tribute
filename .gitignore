@@ -23,4 +23,8 @@
 .byebug_history
 .DS_Store
 /public/packs
-.vscode
+.vscode/public/packs
+/public/packs-test
+/node_modules
+yarn-debug.log*
+.yarn-integrity
