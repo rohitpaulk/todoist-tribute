@@ -43,6 +43,8 @@ interface TaskEditor extends Vue {
     shiftAutocompleteSelectionUp: () => void
     focusActiveNode: () => void
     runEventHandlerActions: (actions: EventHandlerAction[]) => void
+    getInputWidth: (nodePosition: number) => number
+    setInputWidth: (nodePosition: number, width: number) => void
 }
 
 let emptyEditorNodes = function(): EditorNode[] {
@@ -324,16 +326,15 @@ let taskEditorOptions = {
         },
 
         getInputWidth(nodePosition: number): string {
-            let fakeNodeList = this.$refs['fake-text-input-' + nodePosition];
+            let fakeElement = this.$refs['fake-text-input-' + nodePosition][0];
+            let width = fakeElement.getBoundingClientRect().width + 2;
+            return width;
+        },
 
-            if (fakeNodeList && fakeNodeList[0]) {
-                console.log(fakeNodeList[0]);
-                let width = fakeNodeList[0].getBoundingClientRect().width + 12;
-                return width + "px";
-            } else {
-                // Not instantiated yet?
-                return "2px";
-            }
+        setInputWidth(nodePosition: number, width: number) {
+            let actualElement = this.$refs['text-input-' + nodePosition][0];
+            console.log(actualElement);
+            actualElement.style.width = width + "px";
         },
 
         focusLastCharacter(): void {
@@ -357,7 +358,10 @@ let taskEditorOptions = {
     },
 
     updated: function() {
+        console.log("Updated fired");
         this.focusActiveNode();
+
+        let that = this;
 
         let refs = this.$refs;
         let activeNodeIndex = this.editorNodes.activeNodeIndex;
@@ -366,16 +370,15 @@ let taskEditorOptions = {
                 return;
             }
 
-            let fakeElement = refs['fake-text-input-' + position][0];
-            let actualElement = refs['text-input-' + position][0];
-            let width = fakeElement.getBoundingClientRect().width + 2;
+            let width = that.getInputWidth(position);
             if (position === activeNodeIndex) {
                 width = width + 8;
             } else {
                 width = width;
             }
 
-            actualElement.style.width = width + "px";
+            console.log("Updating text input node");
+            that.setInputWidth(position, width);
         });
     },
 
