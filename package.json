@@ -26,13 +26,17 @@
   },
   "devDependencies": {
     "@vue/test-utils": "^1.0.0-beta.27",
+    "jsdom": "^13.1.0",
+    "jsdom-global": "^3.0.2",
     "mocha": "^5.2.0",
+    "sinon": "^7.2.2",
     "ts-node": "^7.0.1",
     "vue-template-compiler": "^2.5.21",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.11"
   },
   "scripts": {
-    "test": "mocha --require ts-node/register app/javascript/packs/tests/**/*.ts"
+    "test": "mocha --require ts-node/register app/javascript/packs/tests/**/*.ts",
+    "test_debug": "mocha --require ts-node/register --inspect-brk app/javascript/packs/tests/**/*.ts"
   }
 }
