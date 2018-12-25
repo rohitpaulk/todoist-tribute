@@ -282,6 +282,7 @@ $color-gray: #bbb;
 
 .content .task-form, .left-menu .resource-form {
     .input-nodes-container {
+        border-radius: 2px;
         margin-bottom: 7px;
         font-size: 14px;
         width: 100%;
@@ -306,10 +307,11 @@ $color-gray: #bbb;
     }
 
     button, a {
-        font-size: 12px;
+        font-size: 13px;
     }
 
     button {
+        font-weight: bold;
         background-color: $color-red;
         color: #fff;
         padding: 8px 12px 8px 12px;
@@ -358,7 +360,6 @@ $color-gray: #bbb;
 }
 
 .content .task-list {
-    padding-left: 10px;
     font-size: 14px;
 }
 
@@ -368,13 +369,12 @@ $color-gray: #bbb;
 
 .content .task-list .drag-item {
     position: relative;
-    padding-left: $tasks-dragbar-holder-width;
+    padding-left: $content-left-padding;
 
-    // TODO: Find a way to hide dragbars!
     .dragbars-holder {
         position: absolute;
-        left: 0px;
         display: block;
+        left: $content-left-padding - $tasks-dragbar-holder-width;
         width: $tasks-dragbar-holder-width;
         line-height: $task-item-height;
 
