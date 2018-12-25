@@ -306,10 +306,11 @@ $color-gray: #bbb;
     }
 
     button, a {
-        font-size: 12px;
+        font-size: 13px;
     }
 
     button {
+        font-weight: bold;
         background-color: $color-red;
         color: #fff;
         padding: 8px 12px 8px 12px;
