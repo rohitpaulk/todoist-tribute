@@ -358,7 +358,6 @@ $color-gray: #bbb;
 }
 
 .content .task-list {
-    padding-left: 10px;
     font-size: 14px;
 }
 
@@ -368,13 +367,12 @@ $color-gray: #bbb;
 
 .content .task-list .drag-item {
     position: relative;
-    padding-left: $tasks-dragbar-holder-width;
+    padding-left: $content-left-padding;
 
-    // TODO: Find a way to hide dragbars!
     .dragbars-holder {
         position: absolute;
-        left: 0px;
         display: block;
+        left: $content-left-padding - $tasks-dragbar-holder-width;
         width: $tasks-dragbar-holder-width;
         line-height: $task-item-height;
 
