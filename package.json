@@ -12,7 +12,7 @@
     "fuse.js": "^3.0.5",
     "glob": "^7.1.2",
     "ignore-loader": "^0.1.2",
-    "js-yaml": "^3.9.0",
+    "js-yaml": "^3.13.1",
     "mini-css-extract-plugin": "^0.5.0",
     "mousetrap": "^1.6.1",
     "node-sass": "^4.11.0",
