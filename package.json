@@ -15,7 +15,7 @@
     "js-yaml": "^3.13.1",
     "mini-css-extract-plugin": "^0.5.0",
     "mousetrap": "^1.6.1",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.13.1",
     "path-complete-extname": "^1.0.0",
     "rails-erb-loader": "^5.1.0",
     "ts-loader": "^5.3.2",
